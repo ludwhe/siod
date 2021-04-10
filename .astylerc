@@ -1,0 +1,12 @@
+style=linux
+indent=tab=4
+break-blocks
+pad-oper
+pad-header
+unpad-paren
+delete-empty-lines
+align-pointer=name
+align-reference=name
+break-one-line-headers
+remove-braces
+attach-return-type
