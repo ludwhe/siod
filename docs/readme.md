@@ -1,1609 +1,2342 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<!-- 
-     This document is Copyright 1996-2007 by George J. Carrette, 
-     All Rights Reserved.
- -->  
-<html>
-<head><title>SIOD: Scheme in One Defun</title>
-</head>
-<body>
-<!-- Start of JDN Ad Creative -->
-<script type="text/javascript" language="JavaScript">
-monster_jdn_affiliate="4f9b169e-e3f6-4f56-b72f-4ccbe4d1fa9a";
-monster_jdn_ad_width=728;
-monster_jdn_ad_height=90;
-</script>
-<script type="text/javascript" language="JavaScript" src="http://jdn.monster.com/render/monster_jdn.js"></script>
-<!-- End JDN Ad Creative -->
-<H1>SIOD: Scheme in One Defun</H1>
-<B>SIOD</B> is a <I>small-footprint</I> implementation of the 
-Scheme programming language that is provided with some database, 
+# SIOD: Scheme in One Defun
+
+**SIOD** is a _small-footprint_ implementation of the
+Scheme programming language that is provided with some database,
 unix programming and cgi scripting extensions.
 
-<BLOCKQUOTE>This document is &copy; 1996-2007 by 
-<a href="http://alum.mit.edu/www/gjc/">George J. Carrette</a>,
-All Rights Reserved.</BLOCKQUOTE>
+This document is &copy; 1996-2007 by
+[George J. Carrette](http://alum.mit.edu/www/gjc/), All Rights Reserved.
 
-The reference home page for SIOD is
-<a href="http://alum.mit.edu/www/gjc/siod.html">this web page</a>,
-and the most recent release may be found on <a href="http://www.codeplex.com/siod">http://www.codeplex.com/siod</a>.
-<BR>Click <a href="http://alum.mit.edu/www/gjc/siodusers.html">here
-for a list of SIOD users</a>.
+The reference home page for SIOD is this web page,
+and the most recent release may be found on <http://www.codeplex.com/siod>.
 
-<P>
-<TABLE BORDER=1>
-<TR><TH>File</TH><TH>Format</TH><TH>Description</TH></TR>
-<TR><TD><a href="siod.tgz">siod.tgz</a></TD>
-    <TD>gzip tar</TD>
-    <TD>Source code, all versions</TD></TR>
-<TR><TD><a href="siod.zip">siod.zip</a></TD>
-    <TD><a href="http://www.info-zip.org/">INFO-ZIP</a> archive</TD>
-    <TD>Source code, all versions</TD></TR>
-<TR><TD><a href="http://alum.mit.edu/www/gjc/winsiod.html">winsiod.html</a></TD>
-    <TD>document</TD>
-    <TD>Windows binaries and unpacking instructions.
-    </TD></TR>
-</TABLE>
+Click
+[here for a list of SIOD users](http://alum.mit.edu/www/gjc/siodusers.html).
 
-<HR>
-<HR>
-<H2>Table of Contents</H2>
-<MENU>
-<LI><A href="#apology">Apology, discussion and motivation</A>.
-<LI><A href="#build">Building from Sources</A>.
-<LI><A href="#releasenotes">Release Notes</A>.
-<LI><A href="#scheme">What is Scheme</A>?
-<LI><A href="#builtin">Reference Section for built-in procedures</A>.
-<LI><A href="#ext">Reference Section for extension-provided procedures</A>.
-<LI><A href="#cmd">Command interfaces and some scripts provided</A>.
-<LI><A href="#scm">Some scheme coded library modules</A>.
-<LI><A href="#garbage">Garbage Collection</A>.
-<LI><A href="#porting">Porting</A>, to <A href="#tiny">tiny</a> machines.
-<LI><A href="#extwrite">Writing extensions in the C programming language</A>.
-<LI><A href="#extuse">LIBSIOD use as an extension language for C programs</A>.
-<LI><A href="#EVAL">Implementation of EVAL and environment representation</A>.
-<LI><a href="#WIN32">Windows NT and Windows 95 configuration</a>.
-<LI><a href="#UNIX">Unix configuration</a>.
-<LI><a href="#ref">References</a>.
-<LI><a href="#CONTRIB">Contributors</a>.
-<LI><a href="#ACK">Acknowledgements</a>.
+| File           | Format           | Description                                  |
+| -------------- | ---------------- | -------------------------------------------- |
+| siod.tgz       | gzip tar         | Source code, all versions                    |
+| siod.zip       | INFO-ZIP archive | Source code, all versions                    |
+| <./winsiod.md> | document         | Windows binaries and unpacking instructions. |
 
-</MENU>
+## Table of Contents
 
-<A name="apology"></a><H2>Apology, discussion and motivation</h2>
+- [Apology, discussion and motivation](#apology-discussion-and-motivation)
+- [Building from Sources](#building-from-sources)
+- [Release Notes](#release-notes)
+- [What is Scheme?](#what-is-scheme)
+- [Reference Section for built-in procedures](#reference-section-for-built-in-procedures)
+- [Reference Section for extension-provided procedures](#reference-section-for-extension-provided-procedures)
+- [Command interfaces and some scripts provided](#command-interfaces-and-some-scripts-provided)
+- [Some scheme coded library modules](#some-scheme-coded-library-modules)
+- [Garbage Collection](#garbage-collection)
+- [Porting](#porting) to [tiny](#porting-to-tiny-machines) machines
+- [Writing extensions in the C programming language](#writing-extensions-in-the-c-programming-language)
+- [LIBSIOD use as an extension language for C programs](#libsiod-use-as-an-extension-language-for-c-programs)
+- [Implementation of EVAL and environment representation](#implementation-of-eval-and-environment-representation)
+- [Windows NT and Windows 95 Configuration](#windows-nt-and-windows-95-configuration)
+- [Unix configuration](#unix-configuration)
+- [References](#references)
+- [Contributors](#contributors)
+- [Acknowledgements](#acknowledgements)
+
+## Apology, discussion and motivation
+
 The genesis of this interpreter is a question posed by
-students of a <I>LISP and Artificial Intelligence Programming Techniques</I>
+students of a _LISP and Artificial Intelligence Programming Techniques_
 course that I had developed and was teaching at Boston University in the
 late 1980's:
 
-<BLOCKQUOTE>How can we possibly hope to make use of 
-any of this stuff in 
-work we are doing in other courses or in our jobs?</BLOCKQUOTE>
+> How can we possibly hope to make use of any of this stuff in work we are
+> doing in other courses or in our jobs?
 
-<P>The problem being that both the commercial and non-commercial lisp
+The problem being that both the commercial and non-commercial lisp
 offerings at the time seemed to want to take over your entire
-programming environment if you wanted to use lisp at all. 
-A completely satisfactory solution to this problem will not be fully 
+programming environment if you wanted to use lisp at all.
+A completely satisfactory solution to this problem will not be fully
 available again until a lisp system is written that uses
 the same compiler back-end, debugging and runtime support as
 all the other languages on a popular machine. But I digress.
 
-<P>Knowing that the use of lisp didn't have to be so intrusive, 
+Knowing that the use of lisp didn't have to be so intrusive,
 but having very little
 practical evidence at hand to actually prove the fact, I decided
 one day while I was keeping the laboratory section room
-open for course <B>EK201</B> to sit down and implement a demonstration
-made up of a simple <B>cons</B>,
-<b>arithmetic</b>, <B>read</b>, <b>eval</b>, and <b>print</b> 
-in straightforward <B>C</B>
+open for course **EK201** to sit down and implement a demonstration
+made up of a simple **cons**,
+**arithmetic**, **read**, **eval**, and **print**
+in straightforward **C**
 programming style, where the garbage collector was stop-and-copy and
 could only run in the context of the toplevel loop. Defining and executing
-<b>fib</b> resulted in a code-coverage of over 95% of the lines
+**fib** resulted in a code-coverage of over 95% of the lines
 of the C program. Hence, SIOD, Scheme in One Day. Borrowing the name
 of a previous Scheme interpreter I had done to test the Lispmachine
 microcode compiler, Scheme in One Defun.
 
-<P>The motivation behind SIOD remains a small footprint, in every sense
-of the word, at runtime, at compile time, and in <b>cognitive</b> attention
+The motivation behind SIOD remains a small footprint, in every sense
+of the word, at runtime, at compile time, and in **cognitive** attention
 required to understand how the system works enough to be able to
 extend it as well as the author would have done the work himself.
 
-<P>About eight years have passed since that initial release. It has been
+About eight years have passed since that initial release. It has been
 possible to add a feature or two without contributing to the cause
 of software bloat, with the code segment of the libsiod shared
-library remaining under 75K bytes on a prototypical comparison machine 
-like a VAX. Furthermore, as the richness of the C runtime library 
-available on most systems has improved over time, <B>SIOD</B> remains
+library remaining under 75K bytes on a prototypical comparison machine
+like a VAX. Furthermore, as the richness of the C runtime library
+available on most systems has improved over time, **SIOD** remains
 a useful kind of glue to have in a software engineers toolbox.
 
-<P>Please forgive the lack of full compliance with IEEE or R4RS
+Please forgive the lack of full compliance with IEEE or R4RS
 standards. Perhaps one of these days.
 
-<A name="build"></A><H2>Building from Sources</h2>
+## Building from Sources
 
-See the <B>README</B> file that comes with the distribution.
+See the **README** file that comes with the distribution.
 The following systems are known to be supported using supplied
 build files.
 
-<TABLE BORDER=1>
-<TR><TH>Make</TH><TH>OS</TH></TR>
-<TR><TD>Digital Equipment Corporation</TD>
-    <TD>DIGITAL UNIX (OSF/1)</TD></TR>
-<TR><TD>Linux</TD>
-    <TD>Linux</TD></TR>
-<TR><TD>Hewlett-Packard Company</TD>
-    <TD>HP-UX</TD></TR>
-<TR><TD>Sun Microsystems</TD>
-    <TD>Solaris</TD></TR>
-<TR><TD>Silicon Graphics</TD>
-    <TD>IRIX</TD></TR>
-<TR><TD>Digital Equipment Corporation</TD>
-    <TD>OpenVMS</TD></TR>
-<TR><TD>Microsoft</TD>
-    <TD>Windows 95</TD></TR>
-</TABLE>
+| Make                          | OS                   |
+| ----------------------------- | -------------------- |
+| Digital Equipment Corporation | DIGITAL UNIX (OSF/1) |
+| Linux                         | Linux                |
+| Hewlett-Packard Company       | HP-UX                |
+| Sun Microsystems              | Solaris              |
+| Silicon Graphics              | IRIX                 |
+| Digital Equipment Corporation | OpenVMS              |
+| Microsoft                     | Windows 95           |
 
-<A name="releasenotes"></a><H2>Release Notes</H2>
+## Release Notes
 
-<UL>
-<LI><B>1.0</B> April 1988.
-Initial release. 
-<LI><B>1.1</B> April 1988.
-Macros, predicates, load. Better number recognizer in read,
-provided siod.scm file.
-<LI><B>1.2</B> April 1988.
-Name changes as requested by JAR@AI.AI.MIT.EDU, plus some bug fixes.
-<LI><B>1.3</B> May 1988.
-Changed env to use frames instead of alist. define now works properly.
-<LI><B>1.4</B> November 1989.
-This release is functionally the same as release 1.3 but has been
-remodularized in response to people who have been encorporating SIOD
-as an interpreted extension language in other systems.
-<LI><B>1.5</B> November 1989.
-Added the -g flag to enable mark-and-sweep garbage collection.
-The default is stop-and-copy. (Note: changed default to mark-and-sweep)
-<LI><B>2.0</B> December 1989.
-Set_Repl_Hooks, catch & throw. 
-<LI><B>2.1</B> December 1989.
-Additions to SIOD.SCM: Backquote, cond.
-<LI><B>2.2</B> December 1989.
-User Type extension. Read-Macros. (From C-programmer level).
-<LI><B>2.3</B> December 1989.
-save-forms. load with argument t, comment character, faster intern.
--o flag gives obarray size. default 100.
-<LI><B>2.4</B> April 1990.
-speed up arithmetic and the evaluator. fixes to siod.scm. no_interrupt
-around calls to C I/O. gen_readr.
-<LI><B>2.5</B> September 1990.
-numeric arrays in siod.c
-<LI><B>2.6</B> March 1992.
-remodularize .h files, procedure prototypes. gc, eval, print hooks
-now table-driven.
-<LI><B>2.7</B> March 1992.
-hash tables, fasload.
-<LI><B>2.8</B> April 1992.
-bug fixes.
-<LI><B>2.9</B> August 1992.
-added trace.c, fseek, ftell, some fixes.
-<LI><B>3.0</B> May 1994.
-Windows NT port. some cleanups. SQL support, more string stuff. 
-Heap management flexibility, default to mark-and-sweep, suggestions
-by some code reviewers for comp.sources.unix.
-<LI><B>3.1x</B> June 1995.
-Verbose flag to supress file loading and error messages, along
-with enhanced command-line interface made siod useful for writing scripts.
-Support for more C library and unix programming functionality,
-including regular expressions and sockets. Debugging
-hooks *eval-history-ptr*.
-<LI><B>3.2</B> June 1996.
-shared library modularization, dynamic linking interface for extensions.
-documentation in html.h Lexical closure support at c-programmer level.
-Arithmetic cleanup. parser:XXXXX extension. command "compiler"
-interface.
-<LI><B>3.4</B> Feb 1997. Windows NT/95 cleanup.
-<LI><B>3.5</B> 5-MAY-97 fixes, plus win95 "compiler" to create exe files.
-<LI><B>3.6</B> 5-APR-2007. Upload to CodePlex.Com, port to Visual C++ 2005 Express Edition.
-</UL>
+- **1.0** April 1988. Initial release.
+- **1.1** April 1988. Macros, predicates, load. Better number recognizer in
+  read, provided siod.scm file.
+- **1.2** April 1988. Name changes as requested by JAR@AI.AI.MIT.EDU, plus some
+  bug fixes.
+- **1.3** May 1988. Changed env to use frames instead of alist. define now
+  works properly.
+- **1.4** November 1989. This release is functionally the same as release 1.3
+  but has been remodularized in response to people who have been encorporating
+  SIOD as an interpreted extension language in other systems.
+- **1.5** November 1989. Added the -g flag to enable mark-and-sweep garbage
+  collection. The default is stop-and-copy. (Note: changed default to
+  mark-and-sweep)
+- **2.0** December 1989. Set_Repl_Hooks, catch & throw.
+- **2.1** December 1989. Additions to SIOD.SCM: Backquote, cond.
+- **2.2** December 1989. User Type extension. Read-Macros. (From C-programmer
+  level).
+- **2.3** December 1989. save-forms. load with argument t, comment character,
+  faster intern. -o flag gives obarray size. default 100.
+- **2.4** April 1990. speed up arithmetic and the evaluator. fixes to siod.scm.
+  no_interrupt around calls to C I/O. gen_readr.
+- **2.5** September 1990. numeric arrays in siod.c
+- **2.6** March 1992. remodularize .h files, procedure prototypes. gc, eval,
+  print hooks now table-driven.
+- **2.7** March 1992. hash tables, fasload.
+- **2.8** April 1992. bug fixes.
+- **2.9** August 1992. added trace.c, fseek, ftell, some fixes.
+- **3.0** May 1994. Windows NT port. some cleanups. SQL support, more string
+  stuff. Heap management flexibility, default to mark-and-sweep, suggestions by
+  some code reviewers for comp.sources.unix.
+- **3.1x** June 1995. Verbose flag to supress file loading and error messages,
+  along with enhanced command-line interface made siod useful for writing
+  scripts. Support for more C library and unix programming functionality,
+  including regular expressions and sockets. Debugging hooks _eval-history-ptr_.
+- **3.2** June 1996. shared library modularization, dynamic linking interface
+  for extensions. documentation in html.h Lexical closure support at
+  c-programmer level. Arithmetic cleanup. parser:XXXXX extension. command
+  "compiler" interface.
+- **3.4** Feb 1997. Windows NT/95 cleanup.
+- **3.5** 5-MAY-97 fixes, plus win95 "compiler" to create exe files.
+- **3.6** 5-APR-2007. Upload to CodePlex.Com, port to Visual C++ 2005 Express
+  Edition.
 
-<A name="scheme"></a><H2>What is Scheme?</H2>
+## What is Scheme?
 
 Scheme is a programming language, a dialect of the Lisp (List
 Processing) family of languages, generally utilizing a syntax based on
-parenthetical expressions delimited by whitespace, although 
-<a href="#hello.scm">alternative</a> syntax capabilities are sometimes
+parenthetical expressions delimited by whitespace, although
+[alternative](#example-helloscm) syntax capabilities are sometimes
 available. An implementation
 such as SIOD usually runs by default in an immediate execution mode,
 where programs are parsed as they are entered, then executed with
 the results being printed. Hence this set of examples with input
 syntax suitable for either Microsoft QBASIC or SIOD:
 
-<P>
-<TABLE BORDER=1>
-<TR><TH>QBASIC.EXE input</TH>
-    <TH>SIOD input</TH>
-    <TH>SIOD Result</TH></TR>
+| QBASIC.EXE input           | SIOD input                         | SIOD Result   |
+| -------------------------- | ---------------------------------- | ------------- |
+| `PRINT (1 + 2) \* (3 + 4)` | `(\* (+ 1 2) (+ 3 4))`             | 21            |
+| `PRINT "HELLO-" + "BUDDY"` | `(string-append "HELLO-" "BUDDY")` | "HELLO-BUDDY" |
+| FUNCTION f(x)              | (define (f x)                      | #\<CLOSURE>   |
+| IF x < 2 THEN              | (if (< x 2) x                      |               |
+| f = x                      | (+ (f (- x 1)) (f (- x 2)))))      |               |
+| ELSE                       |                                    |               |
+| f = f(x - 1) + f(x - 2)    |                                    |               |
+| END IF                     |                                    |               |
+| END FUNCTION               |                                    |               |
+| PRINT f(20)                | (f 20)                             | 6765          |
 
-<TR><TD><PRE>PRINT (1 + 2) * (3 + 4)</PRE></TD>
-    <TD><PRE>(* (+ 1 2) (+ 3 4))</PRE></TD>
-    <TD><PRE>21</PRE></TD></TR>
-
-<TR><TD><PRE>PRINT "HELLO-" + "BUDDY"</PRE></TD>
-    <TD><PRE>(string-append "HELLO-" "BUDDY")</PRE></TD>
-    <TD><PRE>"HELLO-BUDDY"</PRE></TD></TR>
-
-<TR><TD><PRE>FUNCTION f(x)
-IF x < 2 THEN
-f = x
-ELSE
-f = f(x - 1) + f(x - 2)
-END IF
-END FUNCTION</PRE></TD>
-    <TD><PRE>(define (f x)
-  (if (< x 2)
-      x
-    (+ (f (- x 1)) (f (- x 2)))))</PRE></TD>
-    <TD><PRE>#&lt;CLOSURE&gt;</PRE></TD></TR>
-
-<TR><TD><PRE>PRINT f(20)</PRE></TD>
-    <TD><PRE>(f 20)</PRE></TD>
-    <TD><PRE>6765</PRE></TD></TR>
-
-</TABLE>
-
-<A name="builtin"></a><H2>Reference Section for built-in procedures</h2>
+## Reference Section for built-in procedures
 
 Note that the arguments to built-in procedures are always optional
-and default to <B>()</B>. Many of these procedures call a C library function
+and default to **()**. Many of these procedures call a C library function
 of the same or similar name, in the obvious way. Therefore you can
 refer to the unix manual page for more detailed information about
-function behavior. Such procedures are indicated with a bold 
-<B><FONT SIZE="+2">U</FONT></B>.
+function behavior. Such procedures are indicated with a bold **U**.
 
-<h3>(%%%memref address)</h3>
+### (%%%memref address)
+
 This is a lowlevel routine which should not be invoked in normal code.
 References a byte of memory at address. Used mostly to cause
 a core dump for debugging purposes by referencing address 0 or -1.
-<h3>(%%closure env code)</h3>
+
+### (%%closure env code)
+
 This is a lowlevel routine which should not be invoked in normal code.
 If code is a cons of the form (arlist . body) then env is a list of frames,
 and the application of the closure will invoke the interpreter.
-Otherwise code should be of type tc_subr_X and the 
-application of the closure will pass the env as the 
+Otherwise code should be of type tc_subr_X and the
+application of the closure will pass the env as the
 first argument to the C procedure implementing the subr.
-<h3>(%%closure-code closure)</h3>
+
+### (%%closure-code closure)
+
 This is a lowlevel routine which should not be invoked in normal code.
 Returns the code passed to %%closure.
-<h3>(%%closure-env closure)</h3>
+
+### (%%closure-env closure)
+
 This is a lowlevel routine which should not be invoked in normal code.
 Returns the env passed to %%closure.
-<h3>(%%stack-limit amount silent)</h3>
+
+### (%%stack-limit amount silent)
+
 If amount is non-null it sets the runtime stack check pointer to
 allow for that number of bytes. If silent is non-null the resulting
 (or current) stack size is returned, otherwise a message is printed.
-<h3>(* x1 x2 ...)</h3>
+
+### (\* x1 x2 ...)
+
 Returns the product of all its arguments, or 1 if no arguments.
-<h3>*after-gc*</h3>
+
+### _after-gc_
+
 A variable, the value is an express evaluated after the gc has done its
 work. For example:
-<BLOCKQUOTE><PRE><TT>(set! *after-gc* '(if (< (gc-info 4) 5000) (allocate-heap)))</TT></PRE></BLOCKQUOTE>
-<h3>*args*</h3>
+
+```scheme
+(set! *after-gc* '(if (< (gc-info 4) 5000) (allocate-heap)))
+```
+
+### _args_
+
 A variable, bound to the list of arguments passed to the main program siod.
-<h3>(*catch tag body ...)</h3>
+
+### (\*catch tag body ...)
+
 A special form. Tag is evaluated and kept in a special location while all
 the forms in the body are evaluated. Normally returns the value of
-the last form except if a *throw is encountered within the dynamic
+the last form except if a \*throw is encountered within the dynamic
 scope of the evaluations. Errors may be caught by using a tag of 'errorobj.
-<h3>*env*</h3>
+
+### _env_
+
 A variable, bound to the list of environment values passed to the
 main program siod.
-<h3>*eval-history-ptr*</h3>
+
+### _eval-history-ptr_
+
 A variable, default (), but if set to a list (possibly circular) then
 each call to eval will cause the car of the list to receive a pointer
 to the form being evaluated, and then the variable will be set to
 the cdr of the list. Useful for writing a retrospective trace debugging
 capability.
-<h3>*pi*</h3>
+
+### _pi_
+
 A variable, value 3.1416.
-<h3>*plists*</h3>
+
+### _plists_
+
 A variable, internal to the implementation of get and putprop.
-<h3>(*throw tag value)</h3>
-Locates an active *catch for which the tag is identical and then
-forces the *catch form to return the value.
-<h3>*traced*</h3>
+
+### (\*throw tag value)
+
+Locates an active \*catch for which the tag is identical and then
+forces the \*catch form to return the value.
+
+### _traced_
+
 A variable, value is a list of procedures that have been traced.
-<h3>(+ x1 x2 ...)</h3>
+
+### (+ x1 x2 ...)
+
 Returns the sum of its arguments.
-<h3>(- x1 x2 ...)</h3>
+
+### (- x1 x2 ...)
+
 With one argument returns the negation, returns the difference of
 the first argument and the sum of the rest.
-<h3>(/ x1 x2 ...)</h3>
+
+### (/ x1 x2 ...)
+
 With one argument returns the inverse, otherwise returns the quotiont
 of the first argument and the product of the rest.
-<h3>(&lt; x y)</h3>
+
+### (< x y)
+
 Returns true if x is numerically less than y.
-<h3>(&lt;= x y)</h3>
+
+### (<= x y)
+
 Returns true if x is numerically less than or equal to y.
-<h3>(= x y)</h3>
+
+### (= x y)
+
 Returns true if x is numerically equal to y.
-<h3>(&gt; x y)</h3>
+
+### (> x y)
+
 Returns true if x is numerically greater than y.
-<h3>(&gt;= x y)</h3>
+
+### (>= x y)
+
 Returns true if x is numerically greater than or equal to y.
-<h3>(F_GETLK fd ltype whence start len)</h3>
+
+### (F_GETLK fd ltype whence start len)
+
 The fd may be an integer or file. The function
-<b>fcntl</b> (<B><FONT SIZE="+2">U</FONT></B>) is called on the file 
-descriptor and an appropriate <b>struct flock</b>
+**fcntl** (**U**) is called on the file
+descriptor and an appropriate **struct flock**
 constructed from the ltype, whence, start and len arguments, and the
 lock operation F_GETLK. The ltype may be F_RDLCK,F_UNLCK, or F_WRLCK.
 Whence may be SEEK_CUR, SEEK_END or SEEK_SET.
-<h3>(F_SETLK fd ltype whence start len)</h3>
-Same as F_GETLCK but with lock operation F_SETLK. <B><FONT SIZE="+2">U</FONT></B>. 
-<h3>F_SETLKW fd ltype whence start len)</h3>
-Same as F_GETLCK but with lock operation F_SETLKW. <B><FONT SIZE="+2">U</FONT></B>. 
-For a good example see the command script <A href="#cmd">cp-build</a>.
-<h3>(abs x)</h3>
+
+### (F_SETLK fd ltype whence start len)
+
+Same as F_GETLCK but with lock operation F_SETLK. **U**.
+
+### F_SETLKW fd ltype whence start len)
+
+Same as F_GETLCK but with lock operation F_SETLKW. **U**.
+For a good example see the command script
+[cp-build](#command-interfaces-and-some-scripts-provided).
+
+### (abs x)
+
 Returns the absolute numerical value of x.
-<h3>(access-problem? filename method)</h3>
-Invokes the access function (<B><FONT SIZE="+2">U</FONT></B>) on
-the filename and flags created from the method string which 
+
+### (access-problem? filename method)
+
+Invokes the access function (**U**) on
+the filename and flags created from the method string which
 should contain one or more of the characters "rwxf" returning non-null
 if there is a problem with accessing the file in that way. For example:
-<BLOCKQUOTE><PRE><TT>(if (access-problem? "x.y" "r") (error "can't read x.y"))</TT></PRE></BLOCKQUOTE>
-<h3>(acos x)</h3>
+
+```scheme
+(if (access-problem? "x.y" "r") (error "can't read x.y"))
+```
+
+### (acos x)
+
 Returns the inverse cosine of x.
-<h3>(alarm seconds flag)</h3>
-Invokes the alarm function (<B><FONT SIZE="+2">U</FONT></B>).
+
+### (alarm seconds flag)
+
+Invokes the alarm function (**U**).
 The handling of which will causes an error to be signaled in so many seconds.
 But if flag is false then the error will not be signaled if the alarm took
 place inside a system call or other critical code section.
-<h3>(allocate-heap)</h3>
+
+### (allocate-heap)
+
 Attempts to allocate (call the C library malloc procedure) to obtain
-an additional heap. The size of the heap and the maximum number of heaps 
+an additional heap. The size of the heap and the maximum number of heaps
 are determined at startup time. Returns non-null if successful.
-<h3>(and form1 form2 form3 ...)</h3>
+
+### (and form1 form2 form3 ...)
+
 A special form which causes the evaluation of its subforms in order,
 from left to right, continuing if and only if the subform returns
-a non-null value. 
-<h3>(append l1 l2 l3 l4 ...)</h3>
+a non-null value.
+
+### (append l1 l2 l3 l4 ...)
+
 Returns a list which the result of appending all of its arguments.
 Example:
-<BLOCKQUOTE><PRE><TT>(append '(a b) '(c d)) => (a b c d)</TT></PRE></BLOCKQUOTE>
-<h3>(apply function arglist)</h3>
+
+```scheme
+(append '(a b) '(c d)) => (a b c d)
+```
+
+### (apply function arglist)
+
 Applies the function to the argument list arglist.
-<h3>(apropos substring)</h3>
+
+### (apropos substring)
+
 Returns a list of all symbols containing the given substring.
-<h3>(aref array index)</h3>
+
+### (aref array index)
+
 Returns the element of the array at the given index.
-<h3>(array->hexstr string)</h3>
+
+### (array->hexstr string)
+
 Takes a string or byte array and returns a string in representing the
 values of the elements in hex.
-<h3>(aset array index value)</h3>
+
+### (aset array index value)
+
 Stores the value at the given index in the array.
-<h3>(ash value bits)</h3>
+
+### (ash value bits)
+
 Arithmetic shift of value a given number of bits to the left (positive)
 or right (negative).
-<h3>(asin x)</h3>
+
+### (asin x)
+
 Returns the inverse sin of x.
-<h3>(ass key alist function)</h3>
+
+### (ass key alist function)
+
 Returns the first element of the alist such that the function
 applied to car of the element and the key returns a non-null value.
 For example:
-<BLOCKQUOTE><PRE><TT>(define (assq x alist) (ass x alist eq?))</TT></PRE></BLOCKQUOTE>
-<h3>(assoc key alist)</h3>
+
+```scheme
+(define (assq x alist) (ass x alist eq?))
+```
+
+### (assoc key alist)
+
 Same as (ass key alist equal?).
-<h3>(assq key alist)</h3>
+
+### (assq key alist)
+
 Same as (ass key alist eq?).
-<h3>(assv key alist)</h3>
+
+### (assv key alist)
+
 Same as (ass key alist eql?).
-<h3>(atan x)</h3>
+
+### (atan x)
+
 Returns the inverse tagent of x.
-<h3>(atan2 x y)</h3>
+
+### (atan2 x y)
+
 Returns the inverse tagent of x/y.
-<h3>(base64decode x)</h3>
+
+### (base64decode x)
+
 Given a string X in base64 representation returns a string
 with bytes computed using the base64 decoding algorithm.
-See <a href="http://info.internet.isi.edu/in-notes/rfc/files/rfc1521.txt">rfc1521.txt</a>.
-<h3>(base64encode x)</h3>
+See [rfc1521.txt](http://info.internet.isi.edu/in-notes/rfc/files/rfc1521.txt).
+
+### (base64encode x)
+
 Returns a string computed using the base64 encoding algorithm.
-<h3>(begin form1 form2 ...)</h3>
+
+### (begin form1 form2 ...)
+
 A special form which evaluates each of its subforms one after
 another, returning the value of the last subform.
-<h3>(benchmark-eval nloops exp env)</h3>
+
+### (benchmark-eval nloops exp env)
+
 A zero-overhead way of evaluating the exp n times.
-<h3>(benchmark-funcall1 nloops f arg1)</h3>
+
+### (benchmark-funcall1 nloops f arg1)
+
 A zero-overhead way of calling the function f n times on arg1.
-<h3>(benchmark-funcall2 nloops f arg1 arg2)</h3>
+
+### (benchmark-funcall2 nloops f arg1 arg2)
+
 A zero-overhead way of calling the function f n times on arg1 and arg2.
-<h3>(bit-and x y)</h3>
-Returns the bitwise logical "and" (C language &amp; operator) 
+
+### (bit-and x y)
+
+Returns the bitwise logical "and" (C language &amp; operator)
 of numerical arguments x and y.
-<h3>(bit-not x)</h3>
-Returns the bitwise logical complement (C language ~ operator) 
+
+### (bit-not x)
+
+Returns the bitwise logical complement (C language ~ operator)
 of numerical argument x.
-<h3>(bit-or x y)</h3>
-Returns the bitwise logical "or" (C language | operator) 
+
+### (bit-or x y)
+
+Returns the bitwise logical "or" (C language | operator)
 of numerical arguments x and y.
-<h3>(bit-xor x y)</h3>
-Returns the bitwise logical "xor" (C language ^ operator) 
+
+### (bit-xor x y)
+
+Returns the bitwise logical "xor" (C language ^ operator)
 of numerical arguments x and y.
-<h3>(butlast x)</h3>
+
+### (butlast x)
+
 Returns a new list which has all the elements of the argument x except
 for the last element.
-<h3>(bytes-append x1 x2 ...)</h3>
+
+### (bytes-append x1 x2 ...)
+
 Returns a new byte array by appending its arguments which may be
 strings or byte arrays.
-<h3>(caaar x)</h3>
+
+### (caaar x)
+
 Same as (car (car (car x))).
-<h3>(caadr x)</h3>
+
+### (caadr x)
+
 Same as (car (car (cdr x))).
-<h3>(caar x)</h3>
+
+### (caar x)
+
 Same as (car (car x)).
-<h3>(cadar x)</h3>
+
+### (cadar x)
+
 Same as (car (cdr (car x))).
-<h3>(caddr x)</h3>
+
+### (caddr x)
+
 Same as (car (cdr (cdr x))).
-<h3>(cadr x)</h3>
+
+### (cadr x)
+
 Same as (car (cdr x)).
-<h3>(car x)</h3>
+
+### (car x)
+
 If x is the result of (cons a b) then (car x) is the same as a.
-<h3>(cdaar x)</h3>
+
+### (cdaar x)
+
 Same as (cdr (car (car x))).
-<h3>(cdadr x)</h3>
+
+### (cdadr x)
+
 Same as (cdr (car (cdr x))).
-<h3>(cdar x)</h3>
+
+### (cdar x)
+
 Same as (cdr (car x)).
-<h3>(cddar x)</h3>
+
+### (cddar x)
+
 Same as (cdr (cdr (car x))).
-<h3>(cdddr x)</h3>
+
+### (cdddr x)
+
 Same as (cdr (cdr (cdr x))).
-<h3>(cddr x)</h3>
+
+### (cddr x)
+
 Same as (cdr (cdr x)).
-<h3>(cdr x)</h3>
+
+### (cdr x)
+
 If x is the result of (cons a b) then (cdr x) is the same as b.
-<h3>(chdir path)</h3>
-Changes default directory to path. <B><FONT SIZE="+2">U</FONT></B>. 
-<h3>(chmod path mode)</h3>
-Changes the file mode of path. <B><FONT SIZE="+2">U</FONT></B>. For example, to add execute access
+
+### (chdir path)
+
+Changes default directory to path. **U**.
+
+### (chmod path mode)
+
+Changes the file mode of path. **U**. For example, to add execute access
 permission to the file f:
 
-<BLOCKQUOTE><PRE><TT>(chmod f
+```scheme
+(chmod f
        (encode-file-mode (append '(XUSR XGRP XOTH)
-                                  (cdr (assq 'mode (stat f))))))</TT></PRE></BLOCKQUOTE>
-<h3>(chown path uid gid)</h3>
-Changes file ownership. <B><FONT SIZE="+2">U</FONT></B>. 
-<h3>(closedir stream)</h3>
-Closes a directory stream. <B><FONT SIZE="+2">U</FONT></B>. 
-<h3>(cond clause1 clause2 ...)</h3>
+                                  (cdr (assq 'mode (stat f))))))
+```
+
+### (chown path uid gid)
+
+Changes file ownership. **U**.
+
+### (closedir stream)
+
+Closes a directory stream. **U**.
+
+### (cond clause1 clause2 ...)
+
 A special form where each clause is processed until the predicate expression
 of the clause evaluates true. Then each subform in the predicate
 is evaluated with the value of the last one becoming the value of
 the cond form:
-<BLOCKQUOTE><PRE><TT>(<B>predicate-expression</b> form1 form2 ...)</TT></PRE></BLOCKQUOTE>
 
-<h3>(cons x y)</h3>
+```scheme
+(**predicate-expression** form1 form2 ...)
+```
+
+### (cons x y)
+
 Allocates a list object with x as the car and y as the cdr.
 For example:
-<BLOCKQUOTE><PRE><TT>(cons 1 (cons 2 (cons 3 ())))</TT></PRE></BLOCKQUOTE>
-evaluates to
-<BLOCKQUOTE><PRE><TT>(1 2 3)</TT></PRE></BLOCKQUOTE>
 
-<h3>(cons-array dimension kind)</h3>
+```scheme
+(cons 1 (cons 2 (cons 3 ())))
+```
+
+evaluates to
+
+```scheme
+(1 2 3)
+```
+
+### (cons-array dimension kind)
+
 Allocates an array (currently limited to one dimension). The kind
 may be string, byte, double, or lisp (default).
-<h3>(copy-list x)</h3>
+
+### (copy-list x)
+
 The toplevel cons objects of x are copied, returning a new list.
-<h3>(cos x)</h3>
+
+### (cos x)
+
 Returns the cosine where x is in units of radians.
-<h3>(cpu-usage-limits soft-limit hard-limit)</h3>
+
+### (cpu-usage-limits soft-limit hard-limit)
+
 Invokes getrlimit if the arguments are null or otherwise setrlimit.
-<B><FONT SIZE="+2">U</FONT></B>. 
-<h3>(crypt key salt)</h3>
-A form of string hash. <B><FONT SIZE="+2">U</FONT></B>. 
-<h3>(current-resource-usage kind)</h3>
-Kind is the symbol SELF or CHILDREN, calls getrusage, <B><FONT SIZE="+2">U</FONT></B>.
-<h3>(datlength data ctype)</h3>
-Returns the dimension of the data as if viewed as an array by 
+**U**.
+
+### (crypt key salt)
+
+A form of string hash. **U**.
+
+### (current-resource-usage kind)
+
+Kind is the symbol SELF or CHILDREN, calls getrusage, **U**.
+
+### (datlength data ctype)
+
+Returns the dimension of the data as if viewed as an array by
 the datref function.
-<h3>(datref data ctype index)</h3>
+
+### (datref data ctype index)
+
 References the data as if it were an array of C data type ctype,
 at the given index. The ctype may be CTYPE_CHAR, CTYPE_DOUBLE, CTYPE_FLOAT,
 CTYPE_LONG, CTYPE_SHORT, CTYPE_UCHAR, CTYPE_ULONG, or CTYPE_USHORT.
 The data may be a string or byte array.
-<h3>(decode-file-mode x)</h3>
+
+### (decode-file-mode x)
+
 Returns a list of symbols given a numerical file mode.
-<h3>(define subform1 subform2)</h3>
+
+### (define subform1 subform2)
+
 A special form used to assign a value to a variable in one of two ways:
-<BLOCKQUOTE><PRE><TT>(define variable value)</TT></PRE></BLOCKQUOTE>
+
+```scheme
+(define variable value)
+```
+
 or to create a procedure
-<BLOCKQUOTE><PRE><TT>(define (procedure-name arg1 arg2 ...)
+
+```scheme
+(define (procedure-name arg1 arg2 ...)
   form1
   form2
-  ...)</TT></PRE></BLOCKQUOTE>
-<h3>(delete-file path)</h3>
+  ...)
+```
+
+### (delete-file path)
+
 Deletes the file specified by path.
-<h3>(delq element list)</h3>
+
+### (delq element list)
+
 Deletes the elements of the list which are eq to its first argument.
 Possibly modifying the list using the set-cdr! operation.
-<h3>(encode-file-mode list)</h3>
+
+### (encode-file-mode list)
+
 Takes a list of file mode symbols and returns the numerical value.
 SUID, SGID, RUSR, WUSR, XUSR, RGRP, WGRP, XGRP, ROTH, WOTH, XOTH.
-<h3>(encode-open-flags list)</h3>
-Takes a list of open (<B><FONT SIZE="+2">U</FONT></B>)
+
+### (encode-open-flags list)
+
+Takes a list of open (**U**)
 flag symbols and returns a numerical value.
 NONBLOCK, APPEND, RDONLY, WRONLY, RDWR, CREAT, TRUNC, EXCL.
-<h3>(endpwent)</h3>
-See <B><FONT SIZE="+2">U</FONT></B>.
-<h3>(env-lookup indentifier environment)</h3>
+
+### (endpwent)
+
+See **U**.
+
+### (env-lookup indentifier environment)
+
 Returns an object such that the car is the location where
 the value of identifier is stored.
-<h3>(eof-val)</h3>
+
+### (eof-val)
+
 Returns the object returned by read upon encountering and end of file
 condition.
-<h3>(eq? x y)</h3>
+
+### (eq? x y)
+
 Returns true if x and y are the same object.
-<h3>(equal? x y)</h3>
+
+### (equal? x y)
+
 Returns true if x and y are equal objects.
-<h3>(eqv? x y)</h3>
+
+### (eqv? x y)
+
 Returns true if x and y are the same object or numerically equal.
-<h3>errobj</h3>
+
+### errobj
+
 This variable is assigned to the offending object when the error
 procedure has been invoked. Useful mainly during interactive debugging.
-<h3>(error message object)</h3>
+
+### (error message object)
+
 Prints the error message then aborts the current execution
-by invoking *throw using the symbol errobj as the tag 
-and the cons of the message and the object as the value. 
+by invoking \*throw using the symbol errobj as the tag
+and the cons of the message and the object as the value.
 Equivalent to:
 
-<BLOCKQUOTE><PRE><TT>(define (error message object)
+```scheme
+(define (error message object)
   (if (> (verbose 0))
       (writes nil "ERROR: " message "\n"))
   (set! errobj object)
-  (*throw 'errobj (cons message object)))</TT></PRE></BLOCKQUOTE>
+  (*throw 'errobj (cons message object)))
+```
 
-<h3>(eval expression environment)</h3>
+### (eval expression environment)
+
 Evaluates the expression in the context of the environment. This
-is <b>not</b> a special form. For example:
-<BLOCKQUOTE><PRE><TT>(eval (read-from-string "(+ 1 2)"))</TT></PRE></BLOCKQUOTE>
+is **not** a special form. For example:
+
+```scheme
+(eval (read-from-string "(+ 1 2)"))
+```
+
 evaluates to 3.
 
-<h3>(exec path args env)</h3>
-Calls execv or execve <B><FONT SIZE="+2">U</FONT></B>.
-<h3>(exit status)</h3>
-Calls exit <B><FONT SIZE="+2">U</FONT></B>.
-<h3>(exp x)</h3>
+### (exec path args env)
+
+Calls execv or execve **U**.
+
+### (exit status)
+
+Calls exit **U**.
+
+### (exp x)
+
 Computes the exponential function of x.
-<h3>(fast-load path noeval-flag)</h3>
+
+### (fast-load path noeval-flag)
+
 Loads a file of binary format expressions, if noeval-flag is true
 returns a list of the forms instead of evaluating them.
-<h3>(fast-print object state)</h3>
+
+### (fast-print object state)
+
 Outputs a fast (binary) format representation of object,
 where the state is a list of (file hash-array index).
-<h3>(fast-read state)</h3>
+
+### (fast-read state)
+
 Inputs a form which had been output in fast (binary) format.
-<h3>(fast-save filename forms nohash-flag comment-string)</h3>
-Creates a file by using fast-print to output each of the forms.  A
+
+### (fast-save filename forms nohash-flag comment-string)
+
+Creates a file by using fast-print to output each of the forms. A
 true value for the nohash-flag will cause symbol names to be output
 each time they are encountered. Otherwise a more optimal index
 representation is used. The comment-string is used as the first line
 of data in the file.
-<h3>(fchmod filedes mode)</h3>
-The filedes may be an number or an open file object. <B><FONT SIZE="+2">U</FONT></B>.
-<h3>(fclose stream)</h3>
-Closes the open file stream. <B><FONT SIZE="+2">U</FONT></B>.
-<h3>(fflush stream)</h3>
-See <B><FONT SIZE="+2">U</FONT></B>.
-<h3>(file-times path)</h3>
+
+### (fchmod filedes mode)
+
+The filedes may be an number or an open file object. **U**.
+
+### (fclose stream)
+
+Closes the open file stream. **U**.
+
+### (fflush stream)
+
+See **U**.
+
+### (file-times path)
+
 Returns a list of the st_ctime and the st_mtime returned
-by the stat function. <B><FONT SIZE="+2">U</FONT></B>.
-<h3>(first x)</h3>
+by the stat function. **U**.
+
+### (first x)
+
 Returns the first element (car) of the list x.
-<h3>(fmod x y)</h3>
-Floating point mod. <B><FONT SIZE="+2">U</FONT></B>.
-<h3>(fnmatch pattern string flags)</h3>
+
+### (fmod x y)
+
+Floating point mod. **U**.
+
+### (fnmatch pattern string flags)
+
 Returns true if the string matches the pattern.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(fopen path mode)</h3>
-Opens the file and returns a file stream. <B><FONT SIZE="+2">U</FONT></B>.
-<h3>(fork)</h3>
+**U**.
+
+### (fopen path mode)
+
+Opens the file and returns a file stream. **U**.
+
+### (fork)
+
 Create a child process. Returning a numerical pid in the parent,
 () in the child, or call error if the child cannot be created.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(fread size-or-buffer stream)</h3>
-Returns a new string of size bytes by calling 
-fread <B><FONT SIZE="+2">U</FONT></B>. Or uses the buffer (a string
+**U**.
+
+### (fread size-or-buffer stream)
+
+Returns a new string of size bytes by calling
+fread **U**. Or uses the buffer (a string
 or a byte array) instead and returns the number of bytes read.
 Returns () on end-of-file.
-<h3>(fseek file offset direction)</h3>
+
+### (fseek file offset direction)
+
 The direction is SEEK_CUR, SEEK_END or SEEK_SET.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(fstat stream)</h3>
-Calls fstat <B><FONT SIZE="+2">U</FONT></B> and returns
+**U**.
+
+### (fstat stream)
+
+Calls fstat **U** and returns
 an alist with elements dev, ino, mode, nlink, uid, gid, rdev, size,
 atime, mtime, ctime, blksize, blocks, flags, and gen.
-<h3>(ftell stream)</h3>
-Calls ftell <B><FONT SIZE="+2">U</FONT></B> to return the current
+
+### (ftell stream)
+
+Calls ftell **U** to return the current
 offset into a file.
-<h3>(fwrite data stream)</h3>
+
+### (fwrite data stream)
+
 Write the data, a string or byte-array to the stream. Or
 data can also be a list of a string or byte-array and a numerical
 length.
-<h3>(gc)</h3>
-Invokes the garbage collector.
-<h3>(gc-info item)</h3>
-<TABLE BORDER=1>
-<TR><TH>Item</TH><TH>Value</TH></TR>
-<TR><TD>0</TD><TD>true if copying gc, false if mark and sweek</TD></TR>
-<TR><TD>1</TD><TD>number of active heaps</TD></TR>
-<TR><TD>2</TD><TD>maximum number of heaps</TD></TR>
-<TR><TD>3</TD><TD>number of objects per heap</TD></TR>
-<TR><TD>4</TD><TD>amount of consing of objects before next gc</TD></TR>
-</TABLE>
 
-<h3>(gc-status [flag])</h3>
+### (gc)
+
+Invokes the garbage collector.
+
+### (gc-info item)
+
+| Item | Value                                       |
+| ---- | ------------------------------------------- |
+| 0    | true if copying gc, false if mark and sweek |
+| 1    | number of active heaps                      |
+| 2    | maximum number of heaps                     |
+| 3    | number of objects per heap                  |
+| 4    | amount of consing of objects before next gc |
+
+### (gc-status [flag])
+
 If flag is not specified prints information about the gc.
 Otherwise flag can be used to turn on or off gc messages
 or turn on or off the gc itself when in stop and copy mode.
-<h3>(get object key)</h3>
+
+### (get object key)
+
 Returns the key property of the object.
-<h3>(getc stream)</h3>
+
+### (getc stream)
+
 Reads a character from the stream, returns () for end of file.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(getcwd)</h3>
-Returns the current working directory. <B><FONT SIZE="+2">U</FONT></B>.
-<h3>(getenv name)</h3>
+**U**.
+
+### (getcwd)
+
+Returns the current working directory. **U**.
+
+### (getenv name)
+
 Returns the value of the environment variable named, or ().
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(getgid)</h3>
-Returns the group id of the process. <B><FONT SIZE="+2">U</FONT></B>.
-<h3>(getgrgid gid)</h3>
+**U**.
+
+### (getgid)
+
+Returns the group id of the process. **U**.
+
+### (getgrgid gid)
+
 Returns a list of members of the specified numerical group.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(getpass prompt)</h3>
+**U**.
+
+### (getpass prompt)
+
 Prompts the user and reads a line with echoing turned off.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(getpgrp)</h3>
+**U**.
+
+### (getpgrp)
+
 Returns the process group ID of the calling process.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(getpid)</h3>
+**U**.
+
+### (getpid)
+
 Returns the process ID of the calling process.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(getppid)</h3>
+**U**.
+
+### (getppid)
+
 Returns the parent process ID of the calling process.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(getpwent)</h3>
+**U**.
+
+### (getpwent)
+
 Returns an alist representing the next item in the /etc/passwd file.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(getpwnam username)</h3>
+**U**.
+
+### (getpwnam username)
+
 Returns the /etc/passwd file entry for the given username.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(getpwuid)</h3>
+**U**.
+
+### (getpwuid)
+
 Returns the /etc/passwd file entry fo the given user id.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(gets stream)</h3>
+**U**.
+
+### (gets stream)
+
 Reads a line from the stream, () on end-of-file.
-<h3>(getuid)</h3>
+
+### (getuid)
+
 Returns the uid of the current process.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(gmtime value)</h3>
+**U**.
+
+### (gmtime value)
+
 Decodes the value into an alist. The value defaults to the current time.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(hexstr->bytes str)</h3>
+**U**.
+
+### (hexstr->bytes str)
+
 Decodes the hex representation into a byte array.
-<h3>(href table key)</h3>
+
+### (href table key)
+
 The hash table is a one dimensional array of association lists.
-<BLOCKQUOTE><PRE><TT>(define (href table key)
+
+```scheme
+(define (href table key)
   (cdr (assoc key
-	      (aref table (sxhash key (length table))))))</TT></PRE></BLOCKQUOTE>
-<h3>(hset table key value)</h3>
+    (aref table (sxhash key (length table))))))
+```
+
+### (hset table key value)
+
 Stores the value into the hash table slot indicated by key.
-<h3>(html-encode str)</h3>
-If str contains any special html characters (&lt;&gt;&amp;)
+
+### (html-encode str)
+
+If str contains any special html characters (<>&amp;)
 a new string is returned with these replaced by their cooresponding
 representations &amp;lt; &amp;gt; &amp;amp;.
-<h3>(if predicate-form true-form false-form)</h3>
+
+### (if predicate-form true-form false-form)
+
 A special form that evaluates the true-form or the false-form
 depending on the result of evaluating the predicate form.
-<h3>(intern str)</h3>
+
+### (intern str)
+
 Looks up a string in the symbol table or enters a new symbol.
 
+### (kill pid sig)
 
-<h3>(kill pid sig)</h3>
-Calls the kill function <B><FONT SIZE="+2">U</FONT></B>.
+Calls the kill function **U**.
 With sig defaulting to SIGKILL.
 
-<h3>(lambda (arg1 arg2 ...) form1 form2 ...)</h3>
+### (lambda (arg1 arg2 ...) form1 form2 ...)
+
 Returns an applicable procedure object (CLOSURE) with the given
 argument list and expression subforms. For example:
 
-<BLOCKQUOTE><PRE><TT>(mapcar (lambda (x) (* x x)) '(1 2 3))</TT></PRE></BLOCKQUOTE>
+```scheme
+(mapcar (lambda (x) (* x x)) '(1 2 3))
+```
 
 evaluates to:
 
-<BLOCKQUOTE><PRE><TT>(1 4 9)</TT></PRE></BLOCKQUOTE>
+```scheme
+(1 4 9)
+```
 
 Also used by the define special form.
 
-<h3>(larg-default list index default-value)</h3>
+### (larg-default list index default-value)
+
 Reference the list according to index, but skipping over
 strings that begin with a colon or a dash. If the list is not long enough
 it returns the default-value instead. Most useful when used
-with the *args* variable inside a main program.
-<h3>(last list)</h3>
+with the _args_ variable inside a main program.
+
+### (last list)
+
 Returns the last cons in a list.
-<h3>(last-c-error)</h3>
+
+### (last-c-error)
+
 Returns the value of the C library strerror(errno)
-<B><FONT SIZE="+2">U</FONT></B> interned as a symbol.
-<h3>(lchown path owner group)</h3>
-Changes the ownership of a symbolic link <B><FONT SIZE="+2">U</FONT></B>.
-<h3>(length object)</h3>
+**U** interned as a symbol.
+
+### (lchown path owner group)
+
+Changes the ownership of a symbolic link **U**.
+
+### (length object)
+
 Returns the length of an object which may be a string (acts like strlen)
 or a list, or an array.
-<h3>(let (binding1 binding2 ...) form1 form2 ...)</h3>
+
+### (let (binding1 binding2 ...) form1 form2 ...)
+
 A special form where each binding is a (variable value) pair.
 It works by computing the values, establishing the bindings, and
 then evaluating the forms, returning the value of the last one.
 For example the following evaluates to 30:
 
-<BLOCKQUOTE><PRE><TT>(let ((x 10)
+```scheme
+(let ((x 10)
       (y 20))
-  (+ x y))</TT></PRE></BLOCKQUOTE>
-<h3>(let* (binding1 binding2 ...) form1 form2 ...)</h3>
+  (+ x y))
+```
+
+### (let\* (binding1 binding2 ...) form1 form2 ...)
+
 A special form where each binding is a (variable value) pair.
 It works by sequentially computing each value and then
 establishing a binding. For example the following evaluates to 30:
 
-<BLOCKQUOTE><PRE><TT>(let* ((x 10)
+```scheme
+(let* ((x 10)
       (y (+ x 10)))
-  (+ x y))</TT></PRE></BLOCKQUOTE>
+  (+ x y))
+```
 
-<h3>(letrec (binding1 binding2 ...) form1 form2 ...)</h3>
+### (letrec (binding1 binding2 ...) form1 form2 ...)
+
 Useful when the value forms of the bindings are lambda expressions
 with which you desire to program mutually recursive calls.
-<h3>(link existing-file entry-to-create)</h3>
-Creates a hard link <B><FONT SIZE="+2">U</FONT></B>.
-<h3>(list item1 item2 ...)</h3>
+
+### (link existing-file entry-to-create)
+
+Creates a hard link **U**.
+
+### (list item1 item2 ...)
+
 Conses up its arguments into a list.
-<h3>(lkey-default list index default-value)</h3>
+
+### (lkey-default list index default-value)
+
 Returns the substring on the right hand size of the equal sign
-of the first element of the list of the form <B>index=value</b>,
+of the first element of the list of the form **index=value**,
 or the default-value if none are found. Useful when processing the
-*args* value inside a main program.
-<h3>(load fname noeval-flag search-flag)</h3>
+_args_ value inside a main program.
+
+### (load fname noeval-flag search-flag)
+
 If search-flag is true it looks for fname in the current directory
 and then in the SIOD_LIB directory. The forms from the file are
 parsed according to the "parser:xxx" directive at the begining of the file
 (default "parser:read").
 If the neval-flag is true then a list of the forms is returned
 otherwise the forms are evaluated.
-<h3>(load-so fname init_fcn)</h3>
+
+### (load-so fname init_fcn)
+
 Loads the dynamic library specified by fname, invoking the init_fcn
 if specified (default init_fname).
-<h3>(localtime value)</h3>
+
+### (localtime value)
+
 Returns an alist representing the value as a localtime.
-<B><FONT SIZE="+2">U</FONT></B>. Value defaults to the current time.
-<h3>(log x)</h3>
+**U**. Value defaults to the current time.
+
+### (log x)
+
 Computes the natural logarithm of x.
-<h3>(lref-default list index default-fcn)</h3>
+
+### (lref-default list index default-fcn)
+
 Returns the index element of the list or the result of calling
 the default-fcn if the list is not long enough.
-<h3>(lstat path)</h3>
+
+### (lstat path)
+
 Returns the stat information of a logical link.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(make-list length element)</h3>
+**U**.
+
+### (make-list length element)
+
 Creates a list of the given length filled with the element specified.
-<h3>(mapcar fcn list1 list2 ...)</h3>
+
+### (mapcar fcn list1 list2 ...)
+
 Returns a list which is the result of applying the fcn to the
 elements of each of the lists specified.
-<h3>(max x1 x2 ...)</h3>
+
+### (max x1 x2 ...)
+
 Returns the maximum of x1, x2, etc.
-<h3>(md5-final state)</h3>
+
+### (md5-final state)
+
 Returns a byte array computed from the state,
 derived from the RSA Data Security, Inc. MD5 Message-Digest Algorithm.
-See <a href="http://info.internet.isi.edu/in-notes/rfc/files/rfc1321.txt">rfc1321.txt</a>. Example:
-<BLOCKQUOTE><PRE><TT>(define (md5 str)
+See [rfc1321.txt](http://info.internet.isi.edu/in-notes/rfc/files/rfc1321.txt).
+Example:
+
+```scheme
+(define (md5 str)
   (let ((s (md5-init)))
     (md5-update s str)
-    (array->hexstr (md5-final s))))</TT></PRE></BLOCKQUOTE>
-<h3>(md5-init)</h3>
+    (array->hexstr (md5-final s))))
+```
+
+### (md5-init)
+
 Returns an md5 algoritm state as a byte array.
-<h3>(md5-update state string length)</h3>
+
+### (md5-update state string length)
+
 Performs the update step of the md5 algorithm using data from the
 string up to length, or length can be an open file object, in which case
 the data from the file is used to perform the update.
-<h3>(member key list)</h3>
+
+### (member key list)
+
 Returns the portion of the list where the car is equal to the key, or ()
 if none found.
-<h3>(memq key list)</h3>
+
+### (memq key list)
+
 Returns the portion of the list where the car is eq to the key, or ()
 if none found.
-<h3>(memv key list)</h3>
+
+### (memv key list)
+
 Returns the portion of the list where the car is eqv? to the key, or ()
 if none found.
-<h3>(min x1 x2 ...)</h3>
+
+### (min x1 x2 ...)
+
 Returns the numerical minimum of its arguments.
-<h3>(mkdatref ctype ind)</h3>
+
+### (mkdatref ctype ind)
+
 Creates a closure functionally equivalent to (lambda (x) (datref x ctype ind)).
-<h3>(mkdir path mode)</h3>
+
+### (mkdir path mode)
+
 Creates a directory with the specified numerical access mode.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(mktime alist)</h3>
+**U**.
+
+### (mktime alist)
+
 Returns the numerical time value cooresponding to the alist
 in the same format as returned by the localtime function.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(nconc l1 l2)</h3>
+**U**.
+
+### (nconc l1 l2)
+
 Makes the cdr of the last cons of l1 point to l2.
-<h3>(nice increment)</h3>
+
+### (nice increment)
+
 Changes the priority of the current process by the increment.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>nil</h3>
+**U**.
+
+### nil
+
 Do not change the value of this variable which is bound to the empty list.
-<h3>(not x)</h3>
+
+### (not x)
+
 Returns the reverse truth sense of x.
-<h3>(nreverse list)</h3>
+
+### (nreverse list)
+
 Destructive reversal of the elements of a list using set-cdr!.
-<h3>(nth index list)</h3>
+
+### (nth index list)
+
 Reference the list using index, with the first element being index 0.
-<h3>(null? x)</h3>
+
+### (null? x)
+
 Returns true of x is the empty list.
-<h3>(number->string x base width precision)</h3>
+
+### (number->string x base width precision)
+
 Formats the number according to the base, which may be 8, 10, 16 or the symbol
 e or f. The width and precision are both optional.
-<h3>(number? x)</h3>
+
+### (number? x)
+
 Returns true of x is a number.
-<h3>(opendir path)</h3>
+
+### (opendir path)
+
 Returns a directory stream. Not that in unix path is the
 name of a directory, but in WIN32 path is a wildcard pattern.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(or form1 form2 ...)</h3>
+**U**.
+
+### (or form1 form2 ...)
+
 A special form which causes the evaluation of its subforms in order,
 from left to right until a form evaluates to a non-null value.
-<h4>(os-classification)</h4>
+
+#### (os-classification)
+
 Returns unix, win32, vms.
-<h3>(pair? x)</h3>
+
+### (pair? x)
+
 Returns true if x is a pair (created by cons).
-<h3>(parse-number str)</h3>
+
+### (parse-number str)
+
 Convers a string to a number.
-<h3>(pclose stream)</h3>
+
+### (pclose stream)
+
 Used to close a stream opened using popen. Makes sure the
 associated process is killed.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(popen command type)</h3>
-Executes the command in a child process and opens a stream 
+**U**.
+
+### (popen command type)
+
+Executes the command in a child process and opens a stream
 connected to the process standard output if type is r, or
 the standard input if type is w.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(pow x y)</h3>
+**U**.
+
+### (pow x y)
+
 Computes the result of x raised to the y power.
-<h3>(prin1 object stream)</h3>
+
+### (prin1 object stream)
+
 Outputs the standard readable representation of the object to the stream,
 which defaults to the standard output.
-<h3>(print object stream)</h3>
+
+### (print object stream)
+
 Same as prin1 followed by output of a newline.
-<h3>(print-to-string object string no-trunc-flag)</h3>
+
+### (print-to-string object string no-trunc-flag)
+
 Puts the readable representation of the object into the string,
 starting at the first character unless the no-trunc-flag is true,
 in which case the representation starts at the current length of
 the string.
-<h3>(prog1 form1 form2 form3 ...)</h3>
+
+### (prog1 form1 form2 form3 ...)
+
 A special form which evaluates all its subforms but returns the value
 of the first one. A useful shorthand to employ instead of using a let.
-<h3>(putc char stream)</h3>
+
+### (putc char stream)
+
 Outputs the character to the stream.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(putenv setting)</h3>
+**U**.
+
+### (putenv setting)
+
 With a setting is of the form "key=value" makes a new environment
 binding available to the getenv function of the current and
 subsequent child processes, or updates an old one.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(putprop object value key)</h3>
+**U**.
+
+### (putprop object value key)
+
 Not implemented.
-<h3>(puts string stream)</h3>
+
+### (puts string stream)
+
 Outputs the string to the stream.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(qsort list predicate-fcn access-fcn)</h3>
+**U**.
+
+### (qsort list predicate-fcn access-fcn)
+
 Implements the recursive quicksort algorithm on elements
 of the list compared by using the predicate-fcn on the results
 of invoking the access-fcn.
-<TABLE>
-<TR><TH>Example</TH><TH>Result</TH></TR>
-<TR><TD>(qsort '(3 1 5 4 2) &lt)</TD><TD>(1 2 3 4 5)</TD></TR>
-<TR><TD>(qsort '((3 a) (2 b)) &lt car)</TD><TD>((2 b) (3 a))</TD></TR>
-</TABLE>
-<h3>(quit)</h3>
+
+| Example                        | Result        |
+| ------------------------------ | ------------- |
+| (qsort '(3 1 5 4 2) &lt)       | (1 2 3 4 5)   |
+| (qsort '((3 a) (2 b)) &lt car) | ((2 b) (3 a)) |
+
+### (quit)
+
 Cause the read-eval-print loop to return, usually resulting in
 an exit from the main program of siod, but may not when other
 C programs are utilizing the libsiod functionality.
-<h3>(quote x)</h3>
+
+### (quote x)
+
 A special form that returns x without evaluating it.
 Commonly written in abbreviated format as 'x.
-<h3>(rand modulus)</h3>
+
+### (rand modulus)
+
 Computes a random number from 0 to modulus-1. Uses C library rand.
-<h3>(random modulus)</h3>
+
+### (random modulus)
+
 Computes a random number from 0 to modulus-1. Uses C library random.
-<h3>(read stream)</h3>
+
+### (read stream)
+
 Inputs characters from the stream returns the parsed standard expression,
 or (eof-val).
-<h3>(read-from-string string)</h3>
+
+### (read-from-string string)
+
 Performs a read operation on the characters in the string.
-<h3>(readdir directory-stream)</h3>
+
+### (readdir directory-stream)
+
 Returns the name of the next entry in the directory stream
 or () of none left.
-<h3>(readline stream)</h3>
+
+### (readline stream)
+
 Reads a line of characters from the stream, returning () on end of file.
 The terminating newline is not included in the string, which is usually
 more convenient. For example, this procedure for loading a tab-delimited
 spreadsheet file:
-<BLOCKQUOTE><PRE><TT>(define (load-spread-sheet filename)
+
+```scheme
+(define (load-spread-sheet filename)
   (if (>= (verbose) 2)
       (writes nil ";; loading spread sheet " filename "\n"))
   (let ((result nil)
-	(line nil)
-	(f (and (not (equal? filename "-")) (fopen filename "r"))))
+  (line nil)
+  (f (and (not (equal? filename "-")) (fopen filename "r"))))
     (while (set! line (readline f))
       (set! result (cons (strbreakup line "\t") result)))
     (and f (fclose f))
-    (nreverse result)))</TT></PRE></BLOCKQUOTE>
+    (nreverse result)))
+```
 
-<h3>(readlink path)</h3>
+### (readlink path)
+
 Returns the contents of the symbolic link at path.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(realtime)</h3>
+**U**.
+
+### (realtime)
+
 Returns a double precision floating point value representation
 of the current realtime number of seconds. Usually precise to about
 a thousandth of a second.
-<h3>(rename from-path to-path)</h3>
+
+### (rename from-path to-path)
+
 Renames a directory or file within a file system.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(require path)</h3>
-Computes a variable name by concatenating "*" + path + "-loaded*"
+**U**.
+
+### (require path)
+
+Computes a variable name by concatenating "_" + path + "-loaded_"
 and then calling (load path nil t) if and only if the variable
 is not bound to true. After the file is loaded the variable is
 set to true. This is the correct way of making sure a file is only
 loaded once.
-<h3>(require-so path)</h3>
-Computes a variable name by concatenating "init_" + path,
+
+### (require-so path)
+
+Computes a variable name by concatenating "init\_" + path,
 and calling (load-so path) if and only if the variable is not
 bound to true. After the shared library has been loaded the variable
 is set to true. The correct way of making sure a shared library is
 only loaded once is:
 
-<BLOCKQUOTE><PRE><TT>(require-so (so-ext 'name))</TT></PRE></BLOCKQUOTE>
+```scheme
+(require-so (so-ext 'name))
+```
 
-<h3>(rest x)</h3>
+### (rest x)
+
 Returns the rest of the list x, in other words the cdr.
-<h3>(reverse x)</h3>
+
+### (reverse x)
+
 Returns a new list which has elements in the reverse order of
 the list x.
-<h3>(rld-pathnames)</h3>
+
+### (rld-pathnames)
+
 Returns a list of the pathnames which represent shared libraries that
 have been loaded by the the current process.
-<h3>(rmdir path)</h3>
+
+### (rmdir path)
+
 Removes the directory entry specified by path.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(runtime)</h3>
-Returns a list of containing the current cpu usage in seconds 
+**U**.
+
+### (runtime)
+
+Returns a list of containing the current cpu usage in seconds
 and the subset amount of cpu time that was spent performing garbage
 collection during the currently extant read-eval-print loop cycle.
-<h3>(save-forms filename forms how)</h3>
+
+### (save-forms filename forms how)
+
 Prints the forms to the file, where how can be "w" (default) or "a"
 to append to the file.
-<h3>(sdatref spec data)</h3>
+
+### (sdatref spec data)
+
 Used as the %%closure-code by mkdatref.
-<h3>(set! variable value)</h3>
+
+### (set! variable value)
+
 A special form that evaluates the value subform to get a value,
 and then assigns the variable to the value.
-<h3>(set-car! cons-cell value)</h3>
+
+### (set-car! cons-cell value)
+
 Changes the car of the cons-cell object to point to the value.
-<h3>(set-cdr! cons-cell value)</h3>
+
+### (set-cdr! cons-cell value)
+
 Changes the cdr of the cons-cell object to point to the value.
-<h3>(set-eval-history length circular-flag)</h3>
+
+### (set-eval-history length circular-flag)
+
 Creates a list of the specified length and establishes bindings
-for *eval-history-ptr* and *eval-history*. The list is circular if
+for _eval-history-ptr_ and _eval-history_. The list is circular if
 the flag is specified true. Try the following:
 
-<BLOCKQUOTE><PRE><TT>(define (fib x) (if (< x 2) x (+ (fib (- x 1)) (fib (- x 2)))))
+```scheme
+(define (fib x) (if (< x 2) x (+ (fib (- x 1)) (fib (- x 2)))))
 (set-eval-history 200)
 (fib 10)
-(mapcar (lambda (x) (if (pair? x) (car x) x)) *eval-history*)</TT></PRE></BLOCKQUOTE>
+(mapcar (lambda (x) (if (pair? x) (car x) x)) *eval-history*)
+```
 
-<h3>(set-symbol-value! symbol value env)</h3>
+### (set-symbol-value! symbol value env)
+
 Finds the location of the value cell for the specified symbol
 in the environment env and sets the value.
-<h3>(setprop obj key value)</h3>
+
+### (setprop obj key value)
+
 Not implemented.
-<h3>(setpwent)</h3>
+
+### (setpwent)
+
 Resets the pointer into the /etc/passwd file.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(setuid x)</h3>
+**U**.
+
+### (setuid x)
+
 Sets the userid of the process.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(sin x)</h3>
+**U**.
+
+### (sin x)
+
 Computes the sine function of the angle x in radians.
-<h3>(siod-lib)</h3>
+
+### (siod-lib)
+
 Return the setting of the siod library directory.
-<h3>(sleep n)</h3>
+
+### (sleep n)
+
 Sleep for n seconds, where n may be fractional on some systems.
-<h3>(so-ext path)</h3>
+
+### (so-ext path)
+
 Append the path with the file extension for shared libraries.
-<h3>(sqrt x)</h3>
+
+### (sqrt x)
+
 Compute the square root of x.
-<h3>(srand seed)</h3>
+
+### (srand seed)
+
 Reset the algorithm seed for the rand function.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(srandom seed)</h3>
+**U**.
+
+### (srandom seed)
+
 Reset the algorithm seed for the random function.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(stat path)</h3>
+**U**.
+
+### (stat path)
+
 Return an alist describing file status information, or () if
 the path cannot be accessed, (last-c-error) may be used to return
 the reason.
-<h3>(strbreakup string sep)</h3>
+
+### (strbreakup string sep)
+
 Return a list of the portions of string indicated by the separator.
 
-<BLOCKQUOTE><PRE><TT>(strbreakup "x=y&amp;z=3" "&amp;") => ("x=y" "z=3")</TT></PRE></BLOCKQUOTE>
+```scheme
+(strbreakup "x=y&amp;z=3" "&amp;") => ("x=y" "z=3")
+```
 
-<h3>(strcat str1 str2)</h3>
+### (strcat str1 str2)
+
 Copies the string str2 into str1 starting at the current active end
 of str1, which is determined by the location of a 0 byte,
 calling error if there is not enough room left in str1.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(strcmp str1 str2)</h3>
+**U**.
+
+### (strcmp str1 str2)
+
 Returns 0 if str1 and str2 are equal, or -1 if str1 is alphabetically
 less than str2 or 1 otherwise.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(strcpy str1 str2)</h3>
+**U**.
+
+### (strcpy str1 str2)
+
 Copies str1 into str1 or calling error if there is not enough room.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(strcspn str indicators)</h3>
+**U**.
+
+### (strcspn str indicators)
+
 Returns the location of the first character in str which is
 found in the indicators set, returns the length of the string if none
 found.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(strftime format-string alist)</h3>
+**U**.
+
+### (strftime format-string alist)
+
 Uses the format-string to compute a string using broken-up time/data
 information from the alist (defaults to the current time), for example:
-<BLOCKQUOTE><PRE><TT>(strftime "%B" '((mon . 3))) => "April"</TT></PRE></BLOCKQUOTE>
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(string->number str radix)</h3>
+
+```scheme
+(strftime "%B" '((mon . 3))) => "April"
+```
+
+**U**.
+
+### (string->number str radix)
+
 Converts the string to a number assuming the specified radix.
-<h3>(string-append str1 str2 str3 ...)</h3>
+
+### (string-append str1 str2 str3 ...)
+
 Returns a new string which contains the concatenation of
 all its string arguments.
-<h3>(string-dimension str)</h3>
+
+### (string-dimension str)
+
 Returns the maximum possible length of a string array.
-<h3>(string-downcase str)</h3>
+
+### (string-downcase str)
+
 Return a new string converting all the characters of str to lowercase.
-<h3>(string-length str)</h3>
+
+### (string-length str)
+
 Returns the active string length of str.
-<h3>(string-lessp str1 str2)</h3>
+
+### (string-lessp str1 str2)
+
 Return true if str1 is alphabetically less than str2.
-<h3>(string-search key str)</h3>
+
+### (string-search key str)
+
 Locate the index of the key in the specified string. Returns () if
 not found.
-<h3>(string-trim str)</h3>
+
+### (string-trim str)
+
 Return a new string made by trimming whitespace from the left
 and right of the specified string.
-<h3>(string-trim-left str)</h3>
+
+### (string-trim-left str)
+
 Like string-trim but only the left hand side.
-<h3>(string-trim-right str)</h3>
+
+### (string-trim-right str)
+
 Like string-trim but only the right hand side.
-<h3>(string-upcase str)</h3>
+
+### (string-upcase str)
+
 Returns a new string with all the lowercase characters converted
 to uppercase.
-<h3>(string? x)</h3>
+
+### (string? x)
+
 Returns true if x is a string.
-<h3>(strptime str format alist)</h3>
+
+### (strptime str format alist)
+
 Parses str according to format and merges the values with the alist.
-<BLOCKQUOTE><PRE><TT>(cdr (assq 'mon (strptime "March" "%B"))) => 2</TT></PRE></BLOCKQUOTE>
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(strspn str indicators)</h3>
+
+```scheme
+(cdr (assq 'mon (strptime "March" "%B"))) => 2
+```
+
+**U**.
+
+### (strspn str indicators)
+
 Returns the location of the first character in str which is not
 found in the indicators set, returns the length of the str if none found.
 For example:
-<BLOCKQUOTE><PRE><TT>(define (string-trim-left x)
-  (substring x (strspn x " \t")))</TT></PRE></BLOCKQUOTE>
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(subset pred-fcn list)</h3>
+
+```scheme
+(define (string-trim-left x)
+  (substring x (strspn x " \t")))
+```
+
+**U**.
+
+### (subset pred-fcn list)
+
 Return the subset of the list such that the elements satisify
 the pred-fcn. For example:
-<BLOCKQUOTE><PRE><TT>(subset number? '(1 b 2 c)) => (1 2)</TT></PRE></BLOCKQUOTE>
-<h3>(substring str start end)</h3>
+
+```scheme
+(subset number? '(1 b 2 c)) => (1 2)
+```
+
+### (substring str start end)
+
 Returns a new string made up of the part of str begining at start
 and terminating at end. In other words, the new string has a length
 of end - start.
-<h3>(substring-equal? str str2 start end)</h3>
-An efficient way to determine if the substring of str2 specified 
+
+### (substring-equal? str str2 start end)
+
+An efficient way to determine if the substring of str2 specified
 by start and end is equal to str1.
-<h3>(swrite stream table form)</h3>
+
+### (swrite stream table form)
+
 This is the same as the write-smart-html procedure
-described in 
-<a href="ftp://ftp.std.com/pub/gjc/www95-paper.html">ftp://ftp.std.com/pub/gjc/www95-paper.html</a>.
-<h3>(sxhash data modulus)</h3>
+described in
+<ftp://ftp.std.com/pub/gjc/www95-paper.html>.
+
+### (sxhash data modulus)
+
 Computes a recursive hash of the data with respect to the specified
 modulus.
-<h3>(symbol-bound? symbol env)</h3>
+
+### (symbol-bound? symbol env)
+
 Returns true of the symbol is bound in the environment.
-<h3>(symbol-value symbol env)</h3>
+
+### (symbol-value symbol env)
+
 Returns the value of the symbol in the environment.
-<h3>(symbol? x)</h3>
+
+### (symbol? x)
+
 Returns true if x is a symbol.
-<h3>(symbolconc arg1 arg2 ...)</h3>
+
+### (symbolconc arg1 arg2 ...)
+
 Slightly more efficient than calling intern on the result of
 using string-append on the arguments. This procedure actually
 predates the availability of the string data type in SIOD.
-<h3>(symlink contents-path link-path)</h3>
+
+### (symlink contents-path link-path)
+
 Creates a directory entry link-path pointing to the contents-path.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>(system arg1 arg2 ...)</h3>
+**U**.
+
+### (system arg1 arg2 ...)
+
 Appends the string arguments to form a command to be executed
 by the operating system.
-<B><FONT SIZE="+2">U</FONT></B>.
-<h3>t</h3>
+**U**.
+
+### t
+
 Please do not change the global value of this variable, bound to a
 true value.
-<h3>(tan x)</h3>
+
+### (tan x)
+
 Computes the tagent of the angle x specified in radians.
-<h3>(the-environment)</h3>
+
+### (the-environment)
+
 A special form which returns the interpreter environment structure
 for the current lexical scope.
-<h3>(trace fcn1 fcn2 ...)</h3>
+
+### (trace fcn1 fcn2 ...)
+
 Traces the specified interpreted procedures by modifying the
 closure objects.
-<h3>(trunc x)</h3>
-Returns the integer portion of x. 
-<h3>(typeof x)</h3>
+
+### (trunc x)
+
+Returns the integer portion of x.
+
+### (typeof x)
+
 Returns a symbol describing the type of the object x, or
 the integer type code.
-<h3>(unbreakupstr list sep)</h3>
+
+### (unbreakupstr list sep)
+
 The reverse of strbreakup. The following example saves a list of
 lists as a tab delimited spreadsheet:
-<BLOCKQUOTE><PRE><TT>(define (save-spread-sheet filename data)
+
+```scheme
+(define (save-spread-sheet filename data)
   (if (>= (verbose) 2)
       (writes nil ";; saving spread sheet " filename "\n"))
   (let ((result data)
-	(f (and (not (equal? filename "-")) (fopen filename "w"))))
+  (f (and (not (equal? filename "-")) (fopen filename "w"))))
     (while result
       (writes f (unbreakupstr (car result) "\t") "\n")
       (set! result (cdr result)))
-    (and f (fclose f))))</TT></PRE></BLOCKQUOTE>
-<h3>(ungetc char stream)</h3>
+    (and f (fclose f))))
+```
+
+### (ungetc char stream)
+
 Puts the char back into the stream for the next call to getc.
-<h3>(unix-ctime x)</h3>
+
+### (unix-ctime x)
+
 Converts the integer time x into a string.
-<B><FONT SIZE="+2">U</FONT></B>
-<h3>(unix-time)</h3>
+**U**
+
+### (unix-time)
+
 Returns the current number of seconds since 1-JAN-1970 GMT.
-<B><FONT SIZE="+2">U</FONT></B>
-<h3>(unix-time->strtime x)</h3>
+**U**
+
+### (unix-time->strtime x)
+
 Returns a string of the form "YYYYMMDDHHmmSSdd" which is useful
 in some contexts. This predates the availability of the strftime procedure.
-<h3>(unlink path)</h3>
+
+### (unlink path)
+
 Deletes the specified entry from the directory stucture.
-<B><FONT SIZE="+2">U</FONT></B>
-<h3>(untrace fcn1 fcn2 ...)</h3>
+**U**
+
+### (untrace fcn1 fcn2 ...)
+
 Untraces the specified procedures.
-<h3>(url-decode str)</h3>
+
+### (url-decode str)
+
 Performs the url decode operation on the str.
-See <a href="chtml.html">chtml.html</a> for example usage.
-<h3>(url-encode str)</h3>
+<!-- chtml.html is nowhere to be found -->
+See <chtml.html> for example usage.
+
+### (url-encode str)
+
 Locates characters in the str which should not appear in a url,
 and returns a new string where they have been converted to
 the %NN hex representation. Spaces are converted to "+" signs.
-<h3>(utime path modification-time access-time)</h3>
-Sets the file modification and access times.
-<B><FONT SIZE="+2">U</FONT></B>
-<h3>(verbose arg)</h3>
-Sets the verbosity level of SIOD to the specified level or returns
-the current level if not specified. 
-<TABLE BORDER=1>
-<TR><TH>Verbose Level</TH><TH>Effect on System</TH></TR>
-<TR><TD>0</TD><TD>No messages.</TD></TR>
-<TR><TD>1</TD><TD>Error messages only.</TD></TR>
-<TR><TD>2</TD><TD>Startup messages, prompts, and evaluation timing.</TD></TR>
-<TR><TD>3</TD><TD>File loading and saving messages.</TD></TR>
-<TR><TD>4 (default)</TD><TD>Garbage collection messages.</TD></TR>
-<TR><TD>5</TD><TD>display of data loaded from files and fetched from
-databases.</TD></TR>
-</TABLE>
 
-<h3>(wait pid options)</h3>
-Waits on a child process by calling the waitpid function, 
+### (utime path modification-time access-time)
+
+Sets the file modification and access times.
+**U**
+
+### (verbose arg)
+
+Sets the verbosity level of SIOD to the specified level or returns
+the current level if not specified.
+
+| Verbose Level | Effect on System                                              |
+| ------------- | ------------------------------------------------------------- |
+| 0             | No messages.                                                  |
+| 1             | Error messages only.                                          |
+| 2             | Startup messages, prompts, and evaluation timing.             |
+| 3             | File loading and saving messages.                             |
+| 4 (default)   | Garbage collection messages.                                  |
+| 5             | display of data loaded from files and fetched from databases. |
+
+### (wait pid options)
+
+Waits on a child process by calling the waitpid function,
 where options may be a list containing (WCONTINUED WNOWAIT WNOHANG WUNTRACED).
 Returns a list of the process pid and final exit status. The
 fork-test.scm and http-stress.scm modules provide example usage.
-<B><FONT SIZE="+2">U</FONT></B>
-<h3>(while pred-form form1 form2 ...)</h3>
+**U**
+
+### (while pred-form form1 form2 ...)
+
 If pred-form evaluates true it will evaluate all the other forms
 and then loop.
-<h3>(writes stream data1 data2 data3 ...)</h3>
+
+### (writes stream data1 data2 data3 ...)
+
 Outputs the data arguments to the stream without quoting strings
 or special characters.
 
-<A name="ext"></a><H2>Reference Section for extension-provided procedures</h2>
+## Reference Section for extension-provided procedures
 
-<h3>Extension: acct</h3>
+### Extension: acct
+
 Interface to unix accounting records.
 
-<H4>(decode_acct string)</H4>
+#### (decode_acct string)
+
 Built-in subroutine of 1 argument.
 Takes a string or byte array of length SIZEOF_ACCT and
 returns an alist. You would get this data by using fread
-on an appropriate accounting file.  Currently an OSF/1 specific
+on an appropriate accounting file. Currently an OSF/1 specific
 implementation.
 
-<h4>(decode_tacct string)</h4>
+#### (decode_tacct string)
+
 built-in subroutine of 1 argument. Takes a string of SIZEOF_TACCT.
 Currently an OSF/1 specific implementation.
 
-<h4>UTMP_FILE</h4>
-variable, value data type tc_string
-<h4>WTMP_FILE</h4>
+#### UTMP_FILE
+
 variable, value data type tc_string
 
-<h4>(endutent)</h4>
-built-in subroutine of 0 arguments. <B><FONT SIZE="+2">U</FONT></B>
-<h4>(getutent)</h4>
-built-in subroutine of 0 arguments.  <B><FONT SIZE="+2">U</FONT></B>
-<h4>(setutent)</h4>
-built-in subroutine of 0 arguments.  <B><FONT SIZE="+2">U</FONT></B>
-<h4>(utmpname path)</h4>
-built-in subroutine of 1 argument.  <B><FONT SIZE="+2">U</FONT></B>
+#### WTMP_FILE
 
-<a name="extension_gd"></a><h3>Extension: gd</h3>
+variable, value data type tc_string
+
+#### (endutent)
+
+built-in subroutine of 0 arguments. **U**
+
+#### (getutent)
+
+built-in subroutine of 0 arguments. **U**
+
+#### (setutent)
+
+built-in subroutine of 0 arguments. **U**
+
+#### (utmpname path)
+
+built-in subroutine of 1 argument. **U**
+
+### Extension: gd
+
 Interface to libgd.a, for producing GIF data.
-See <a href="http://www.boutell.com/gd/">http://www.boutell.com/gd/</a>. The scheme functions all follow the C functions in name
-and call interface. <B><FONT SIZE="+2">U</FONT></B>.
+See <http://www.boutell.com/gd/>. The scheme functions all follow the C
+functions in name and call interface. **U**.
 The piechart.scm module is an example usage.
 
-<h4>gdBrushed</h4>
-variable, value data type tc_flonum
-<h4>gdFont.h</h4>
-built-in subroutine of 1 argument. Returns height of a font.
-<h4>gdFont.w</h4>
-built-in subroutine of 1 argument. Returns width of a font.
-<h4>gdFontGiant</h4>
-variable, contains a font.
-<h4>gdFontLarge</h4>
-variable, contains a font.
-<h4>gdFontMediumBold</h4>
-variable, contains a font.
-<h4>gdFontSmall</h4>
-variable, contains a font.
-<h4>gdFontTiny</h4>
-variable, contains a font.
-<h4>gdImageArc</h4>
-built-in subroutine 0 or more arguments.
-<h4>gdImageChar</h4>
-built-in subroutine 0 or more arguments.
-<h4>gdImageCharUp</h4>
-built-in subroutine 0 or more arguments.
-<h4>gdImageColorAllocate</h4>
-built-in subroutine 0 or more arguments.
-<h4>gdImageColorClosest</h4>
-built-in subroutine 0 or more arguments.
-<h4>gdImageColorExact</h4>
-built-in subroutine 0 or more arguments.
-<h4>gdImageColorTransparent</h4>
-built-in subroutine of 2 arguments.
-<h4>gdImageCreate</h4>
-built-in subroutine of 2 arguments.
-<h4>gdImageCreateFromGif</h4>
-built-in subroutine of 1 argument.
-<h4>gdImageCreateFromXbm</h4>
-built-in subroutine of 1 argument.
-<h4>gdImageFill</h4>
-built-in subroutine 0 or more arguments.
-<h4>gdImageFillToBorder</h4>
-built-in subroutine 0 or more arguments.
-<h4>gdImageFilledPolygon</h4>
-built-in subroutine of 3 arguments.
-<h4>gdImageFilledRectangle</h4>
-built-in subroutine 0 or more arguments.
-<h4>gdImageGif</h4>
-built-in subroutine of 2 arguments.
-<h4>gdImageGifmem</h4>
-built-in subroutine of 2 arguments.
-<h4>gdImageInterlace</h4>
-built-in subroutine of 2 arguments.
-<h4>gdImageLine</h4>
-built-in subroutine 0 or more arguments.
-<h4>gdImagePolygon</h4>
-built-in subroutine of 3 arguments.
-<h4>gdImageRectangle</h4>
-built-in subroutine 0 or more arguments.
-<h4>gdImageSetPixel</h4>
-built-in subroutine 0 or more arguments.
-<h4>gdImageString</h4>
-built-in subroutine 0 or more arguments.
-<h4>gdImageStringUp</h4>
-built-in subroutine 0 or more arguments.
-<h4>gdPoint</h4>
-built-in subroutine 0 or more arguments.
-<h4>gdPoint.x</h4>
-built-in subroutine of 3 arguments.
-<h4>gdPoint.y</h4>
-built-in subroutine of 3 arguments.
-<h4>gdStyled</h4>
-variable, value data type tc_flonum
-<h4>gdStyledBrushed</h4>
-variable, value data type tc_flonum
-<h4>gdTiled</h4>
-variable, value data type tc_flonum
-<h4>gdTransparent</h4>
+#### gdBrushed
+
 variable, value data type tc_flonum
 
-<h3>Extension: ndbm</h3>
+#### gdFont.h
+
+built-in subroutine of 1 argument. Returns height of a font.
+
+#### gdFont.w
+
+built-in subroutine of 1 argument. Returns width of a font.
+
+#### gdFontGiant
+
+variable, contains a font.
+
+#### gdFontLarge
+
+variable, contains a font.
+
+#### gdFontMediumBold
+
+variable, contains a font.
+
+#### gdFontSmall
+
+variable, contains a font.
+
+#### gdFontTiny
+
+variable, contains a font.
+
+#### gdImageArc
+
+built-in subroutine 0 or more arguments.
+
+#### gdImageChar
+
+built-in subroutine 0 or more arguments.
+
+#### gdImageCharUp
+
+built-in subroutine 0 or more arguments.
+
+#### gdImageColorAllocate
+
+built-in subroutine 0 or more arguments.
+
+#### gdImageColorClosest
+
+built-in subroutine 0 or more arguments.
+
+#### gdImageColorExact
+
+built-in subroutine 0 or more arguments.
+
+#### gdImageColorTransparent
+
+built-in subroutine of 2 arguments.
+
+#### gdImageCreate
+
+built-in subroutine of 2 arguments.
+
+#### gdImageCreateFromGif
+
+built-in subroutine of 1 argument.
+
+#### gdImageCreateFromXbm
+
+built-in subroutine of 1 argument.
+
+#### gdImageFill
+
+built-in subroutine 0 or more arguments.
+
+#### gdImageFillToBorder
+
+built-in subroutine 0 or more arguments.
+
+#### gdImageFilledPolygon
+
+built-in subroutine of 3 arguments.
+
+#### gdImageFilledRectangle
+
+built-in subroutine 0 or more arguments.
+
+#### gdImageGif
+
+built-in subroutine of 2 arguments.
+
+#### gdImageGifmem
+
+built-in subroutine of 2 arguments.
+
+#### gdImageInterlace
+
+built-in subroutine of 2 arguments.
+
+#### gdImageLine
+
+built-in subroutine 0 or more arguments.
+
+#### gdImagePolygon
+
+built-in subroutine of 3 arguments.
+
+#### gdImageRectangle
+
+built-in subroutine 0 or more arguments.
+
+#### gdImageSetPixel
+
+built-in subroutine 0 or more arguments.
+
+#### gdImageString
+
+built-in subroutine 0 or more arguments.
+
+#### gdImageStringUp
+
+built-in subroutine 0 or more arguments.
+
+#### gdPoint
+
+built-in subroutine 0 or more arguments.
+
+#### gdPoint.x
+
+built-in subroutine of 3 arguments.
+
+#### gdPoint.y
+
+built-in subroutine of 3 arguments.
+
+#### gdStyled
+
+variable, value data type tc_flonum
+
+#### gdStyledBrushed
+
+variable, value data type tc_flonum
+
+#### gdTiled
+
+variable, value data type tc_flonum
+
+#### gdTransparent
+
+variable, value data type tc_flonum
+
+### Extension: ndbm
+
 These routines take string or byte
 array arguments, and return byte arrays. The
 lisp functions substring and datref can be useful to extract
-information from a byte array. <B><FONT SIZE="+2">U</FONT></B>.
+information from a byte array. **U**.
 
-<h4>DBLKSIZ</h4>
+#### DBLKSIZ
+
 variable, value data type tc_flonum
-<h4>DBM_INSERT</h4>
+
+#### DBM_INSERT
+
 variable, value data type tc_flonum
-<h4>DBM_REPLACE</h4>
+
+#### DBM_REPLACE
+
 variable, value data type tc_flonum
-<h4>PBLKSIZ</h4>
+
+#### PBLKSIZ
+
 variable, value data type tc_flonum
-<h4>(dbm_close handle)</h4>
+
+#### (dbm_close handle)
+
 Closes the files associated with the database handle.
-<h4>(dbm_delete handle key)</h4>
+
+#### (dbm_delete handle key)
+
 Deletes the key from the index of the database.
-<h4>(dbm_dirfno handle)</h4>
+
+#### (dbm_dirfno handle)
+
 Returns a file descriptor for useful for passing
 to the F_SETLKW function.
-<h4>(dbm_error handle)</h4>
+
+#### (dbm_error handle)
+
 built-in subroutine of 1 argument.
-<h4>(dbm_fetch handle key)</h4>
+
+#### (dbm_fetch handle key)
+
 built-in subroutine of 2 arguments.
-<h4>(dbm_firstkey handle)</h4>
+
+#### (dbm_firstkey handle)
+
 Returns the first key in the index.
-<h4>(dbm_nextkey handle)</h4>
+
+#### (dbm_nextkey handle)
+
 Returns the next key in the index.
-<h4>(dbm_open path open-flags mode)</h4>
+
+#### (dbm_open path open-flags mode)
+
 Returns a handle to the database, opening and creating the .dir
 and .pag files if needed. Use encode-open-flags to compute the
 open-flags argument and encode-file-mode to compute the mode
 argument. The file access mode argument is used only if the file
 needs to be created for the first time.
-<h4>(dbm_pagfno handle)</h4>
+
+#### (dbm_pagfno handle)
+
 Returns a file descriptor for useful for passing
 to the F_SETLKW function.
-<h4>(dbm_rdonly handle)</h4>
+
+#### (dbm_rdonly handle)
+
 Returns true if the database is read only.
-<h4>(dbm_store handle key data flag)</h4>
+
+#### (dbm_store handle key data flag)
+
 Stores the data index by key into the database.
 The flag argument may be DBM_INSERT or DBM_REPLACE.
 
-<h3>Extension: parser_pratt</h3>
+### Extension: parser_pratt
+
 Alternative syntax interface. Just the tokenizer is included
 here. The parser is provided by parser_pratt.scm and pratt.scm.
 
-<H4>(pratt_read_token buffer token-table stream)</H4>
+#### (pratt_read_token buffer token-table stream)
+
 built-in subroutine of 3 arguments.
 
-<a name="hello.scm"></a><H4>Example, hello.scm</H4>
-<PRE><TT>#!/usr/local/bin/siod -v01,-m2 -*-mode:text;parser:pratt-*-
-main() := 
-{writes(nil,"Hello Scheme World.\n");
- fflush(nil);
- writes(nil,"fib(20) = ",fib(20),"\n");
+#### Example, hello.scm
+
+```scheme
+#!/usr/local/bin/siod -v01,-m2 -*-mode:text;parser:pratt-*-
+main() :=
+{
+  writes(nil,"Hello Scheme World.\n");
+  fflush(nil);
+  writes(nil,"fib(20) = ",fib(20),"\n");
 }
 $
 
 fib(x) := if x < 2 then x else fib(x-1) + fib(x-2)
-$</TT></PRE>
+$
+```
 
-<h3>Extension: regex</h3>
-Regular expression interface. <B><FONT SIZE="+2">U</FONT></B>.
-See smtp.scm for example usage. See 
-<a href="siod_regex.html">siod_regex.html</a> for regex library
+### Extension: regex
+
+Regular expression interface. **U**.
+See smtp.scm for example usage. See [regex.md](./regex.md) for regex library
 source if your C runtime does not have it available.
 
-<h4>(regcomp pattern flags)</h4>
+#### (regcomp pattern flags)
+
 Returns a handle to a regular expression compiled from the
 pattern and flags: REG_EXTENDED, REG_ICASE, REG_NEWLINE, REG_NOSUB.
-<h4>(regerror code handle)</h4>
+
+#### (regerror code handle)
+
 Returns a string describing the error code argumented by
 error information from the compiled regular expression handle.
-<h4>(regexec handle string flags)</h4>
+
+#### (regexec handle string flags)
+
 If the string matches then a list of (start . end) pairs are returned
 indicating the substrings involved in the match against the pattern
 of the compiled regular expression. Otherwise an error code is
-returned: REG_BADBR, REG_BADPAT, REG_BADRPT, REG_EBRACE, 
+returned: REG_BADBR, REG_BADPAT, REG_BADRPT, REG_EBRACE,
 REG_EBRACK, REG_ECHAR,
 REG_ECOLLATE, REG_ECTYPE, REG_EESCAPE, REG_EPAREN, REG_ERANGE,
-REG_ESPACE, REG_ESUBREG, 
+REG_ESPACE, REG_ESUBREG,
 REG_NOMATCH, REG_NOTBOL, REG_NOTEOL.
 
-<h3>Extension: sql_oracle</h3>
+### Extension: sql_oracle
+
 Uses the OCI, Oracle Call Interface.
 See the sql_oracle.scm module for examples.
 
-<h3>Extension: sql_rdb</h3>
-Uses the RDB SQL SERVICES, sqlsrv_xxxx routines. 
+### Extension: sql_rdb
+
+Uses the RDB SQL SERVICES, sqlsrv_xxxx routines.
 See the sql_rdb.scm module for examples.
 
-<h3>Extension: sql_sybase</h3>
-Uses the Sybase Client ct_xxxx routines.
+### Extension: sql_sybase
+
+Uses the Sybase Client ct*xxxx routines.
 See the sql_sybase.scm module for examples.
 All these procedures may print error and warning messages
 depending on the current verbose level, and also
-assign the variable *sybase-message* with similar information.
+assign the variable \_sybase-message* with similar information.
 
-<h4>(sybase-close [handle])</h4>
+#### (sybase-close [handle])
+
 Closes the connection to the database handle which defaults
-to the value of the variable *sybase*.
+to the value of the variable _sybase_.
 
-<h4>(sybase-execute [handle] string cmd-type key1 arg1 key2 arg2 ...)</h4>
+#### (sybase-execute [handle] string cmd-type key1 arg1 key2 arg2 ...)
+
 Passes the string to the SQL server to be processed.
 The cmd-type is one of the sybase command types, such as
-CS_RPC_CMD or CS_LANG_CMD. The optional keys are procedure argument
+CS*RPC_CMD or CS_LANG_CMD. The optional keys are procedure argument
 names. Pass "" as the key for un-named positional arguments.
 The result of sybase-execute is an list where the first
 element represents the status and the rest is an association
-list with CS_ROW_RESULT, CS_STATUS_RESULT, CS_PARAM_RESULT, 
+list with CS_ROW_RESULT, CS_STATUS_RESULT, CS_PARAM_RESULT,
 and CS_MSG_RESULT elements. Rows are returned as lists of arrays.
-The handle defaults to the value of the variable *sybase*.
-<h4>(sybase-open key1 arg1 key2 arg2 ...)</h4>
+The handle defaults to the value of the variable \_sybase*.
+
+#### (sybase-open key1 arg1 key2 arg2 ...)
+
 Opens a connection to the database specified by the current
 settings of the environment variables SYBASE and DSQUERY.
 The possible argument keys are username, password, and appname.
 A handle to the database connection structures is returned,
-and also set as the value of the variable *sybase* if it is currently ().
+and also set as the value of the variable _sybase_ if it is currently ().
 
-<h4>(sybase-status [handle])</h4>
+#### (sybase-status [handle])
+
 Returns an list with information about the connection status,
-servername, and hostname. Handle defaults to the setting of *sybase*.
+servername, and hostname. Handle defaults to the setting of _sybase_.
 
-<h3>Extension: ss</h3>
+### Extension: ss
+
 Provides a simplified, stream-oriented interface to socket
-functionality. <B><FONT SIZE="+2">U</FONT></B>.
+functionality. **U**.
 Example usages in smtp.scm and http-server.scm.
 This doesn't provide all the functionality and options that
 a straight socket interface would provide, but it has proven to
 be highly convenient for most client and server applications.
 
-<h4>(get-protocol-name number)</h4>
+#### (get-protocol-name number)
+
 Calls getprotobynumber, returns a list of names.
-<h4>(get-service-name port-number)</h4>
+
+#### (get-service-name port-number)
+
 Calls getservbyport. Returns a list of the protocol and the service
 names.
-<h4>(gethostbyaddr x)</h4>
+
+#### (gethostbyaddr x)
+
 Calls gethostbyaddr, operating on the numerical address x.
-<h4>(gethostbyname name)</h4>
+
+#### (gethostbyname name)
+
 Calls gethostbyname returning a list where the first element
 is the canonical host name and the rest is an association list
 containing aliases, addr_list and addrtype. For example to
 obtain a list of numerical address for the host:
 
-<BLOCKQUOTE><PRE><TT>(mapcar inet_addr
-	(cdr (assq 'addr_list
-		   (gethostbyname (gethostname)))))</TT></PRE></BLOCKQUOTE>
+```scheme
+(mapcar inet_addr
+  (cdr (assq 'addr_list
+    (gethostbyname (gethostname)))))
+```
 
-<h4>(gethostname)</h4>
+#### (gethostname)
+
 Returns the configured name of the host.
-<h4>(inet_addr str)</h4>
+
+#### (inet_addr str)
+
 Converts a "x.x.x.x" dotted notation string or a byte
 array into a number.
-<h4>(s-accept stream)</h4>
+
+#### (s-accept stream)
+
 Returns a new stream based on accepting a connection
 from the socket assocated with the specified stream which must
 be in a listen state.
-<h4>(s-close stream)</h4>
+
+#### (s-close stream)
+
 Closes the socket assocated with the stream.
-<h4>(s-drain stream)</h4>
+
+#### (s-drain stream)
+
 Reads all input from the socket associated with the stream.
-<h4>(s-force-output stream)</h4>
+
+#### (s-force-output stream)
+
 Makes sure all buffered output is sent to the socket associated
 with the stream.
-<h4>(s-getc stream)</h4>
+
+#### (s-getc stream)
+
 Reads one character from the stream. () on eof.
-<h4>(s-gets stream)</h4>
+
+#### (s-gets stream)
+
 Reads a line from the stream.
-<h4>(s-open address port listen-flag)</h4>
+
+#### (s-open address port listen-flag)
+
 When listen-flag is () this procedure establishes a connection
 to the remote address and port specified. If listen-flag is true
 it creates a socket bound to the local address and port and initiates.
 The address may be a host name, a number, or a dot-string notation.
 The port may be the name of a protocol or a number.
-<h4>(s-putc char stream)</h4>
+
+#### (s-putc char stream)
+
 Outputs the char to the socket stream.
-<h4>(s-puts string stream)</h4>
+
+#### (s-puts string stream)
+
 Outputs the string to the socket stream.
-<h4>(s-read size-or-buffer stream)</h4>
+
+#### (s-read size-or-buffer stream)
+
 Reads the specified number of characters from the stream,
 returning a string or () on end of file, or attempts to fill the buffer with
 characters from the stream, returning the actual number read.
-<h4>(s-read-sexp stream)</h4>
+
+#### (s-read-sexp stream)
+
 Reads a standard symbolic lisp expression from the stream.
 If the SIOD I/O was better modularized this procedure would not
 be needed.
 
-<H4>(gethostid)</H4>
+#### (gethostid)
+
 Unix only. Returns a 32 bit number.
 
-<H4>(wsa-data)</H4>
+#### (wsa-data)
+
 WIN32 only. Returns information about the tcp-ip stack.
 
-<h3>Extension: tar</h3>
+### Extension: tar
+
 This is helpful for the efficient implementation of utilities
 that need to deal with tar files, avoiding repeated use of
 the substring and datref functions.
 
-<h4>*tar-header-size*</h4>
+#### _tar-header-size_
+
 Bound to the size of a tar header: 512.
-<h4>(checksum-tar-header string)</h4>
+
+#### (checksum-tar-header string)
+
 Computes the standard tar header checksum algorithm.
-<h4>(decode-tar-header string)</h4>
+
+#### (decode-tar-header string)
+
 Returns an association list containing entries for all the
 standard components of a tar header structure. This can be
 done using substring and string->number but this procedure is
 faster and more convenient.
 
-<A name="cmd"></a><H2>Command interfaces and some scripts provided</h2>
+## Command interfaces and some scripts provided
+
 These commands all have unix manual pages, which in the interest of brevity
-are not duplicated here.  
-<TABLE BORDER=1>
-<TR><TH>Command</TH><TH>Purpose</TH></TR>
-<TR><TD>siod</TD><TD>the interpreter</TD></TR>
-<TR><TD>csiod</TD><TD>command linker for siod scripts</TD></TR>
-<TR><TD>cp-build</TD><TD>a file copy command with versioning and audit trail</TD></TR>
-<TR><TD>ftp-cp</TD><TD>passive-mode ftp copy</TD></TR>
-<TR><TD>ftp-put</TD><TD>passive-mode ftp put with rename</TD></TR>
-<TR><TD>http-get</TD><TD>command-line http client</TD></TR>
-<TR><TD>http-stress</TD><TD>stress and http server</TD></TR>
-<TR><TD>proxy-server</TD><TD>serializing, logging, http proxy server</TD></TR>
-<TR><TD>snapshot-dir</TD><TD>create a snapshot of a directory hierarchy.</TD></TR>
-<TR><TD>snapshot-compare</TD><TD>compare hierarchy snapshots, with options.</TD></TR>
-</TABLE>
+are not duplicated here.
 
-<A name="scm"></a><H2>Some scheme coded library modules</h2>
+| Command          | Purpose                                             |
+| ---------------- | --------------------------------------------------- |
+| siod             | the interpreter                                     |
+| csiod            | command linker for siod scripts                     |
+| cp-build         | a file copy command with versioning and audit trail |
+| ftp-cp           | passive-mode ftp copy                               |
+| ftp-put          | passive-mode ftp put with rename                    |
+| http-get         | command-line http client                            |
+| http-stress      | stress and http server                              |
+| proxy-server     | serializing, logging, http proxy server             |
+| snapshot-dir     | create a snapshot of a directory hierarchy.         |
+| snapshot-compare | compare hierarchy snapshots, with options.          |
 
-<TABLE BORDER=1>
-<TR><TH>Name</TH><TH>Purpose</TH></TR>
-<TR><TD>cgi-echo.scm</TD>
-    <TD>example cgi script, echo the environment</TD></TR>
-<TR><TD>find-files.scm</TD>
-    <TD>works like the unix find command, but provides lisp data.</TD></TR>
-<TR><TD>fork-test.scm</TD>
-    <TD>example use of fork</TD></TR>
-<TR><TD>hello.scm</TD>
-    <TD>an example command using infix syntax</TD></TR>
-<TR><TD>http-server.scm</TD>
-    <TD>useful as a socket example</TD></TR>
-<TR><TD>http-stress.scm</TD>
-    <TD>http client with stress features</TD></TR>
-<TR><TD>http.scm</TD>
-    <TD>more http client examples</TD></TR>
-<TR><TD>ftp.scm</TD>
-    <TD>support for file transfer protocol</TD></TR>
-<TR><TD>maze-support.scm</TD>
-    <TD>cgi script example, provides a run-maze subroutine</TD></TR>
-<TR><TD>parser_pratt.scm</TD>
-    <TD>interface to infix language parser</TD></TR>
-<TR><TD>pop3.scm</TD>
-    <TD>A pop3 client</TD></TR>
-<TR><TD>pratt.scm</TD>
-    <TD>infix language parser</TD></TR>
-<TR><TD>selfdoc.scm</TD>
-    <TD>create a table of built-in procedures</TD></TR>
-<TR><TD>siod.scm</TD>
-    <TD>mostly obsolete collection of utility subroutines</TD></TR>
-<TR><TD>smtp.scm</TD>
-    <TD>smtp client subroutines</TD></TR>
-<TR><TD>sql_oracle.scm</TD>
-    <TD>utilities for oracle database client</TD></TR>
-<TR><TD>sql_rdb.scm</TD>
-    <TD>utilities for rdb database client</TD></TR>
-<TR><TD>sql_sybase.scm</TD>
-    <TD>utilities for sybase database client</TD></TR>
-<TR><TD>piechart.scm</TD>
-    <TD>a CGI script that returns a piechart as a GIF</TD></TR>
-</TABLE>
+## Some scheme coded library modules
 
-<A name="garbage"></a><H2>Garbage Collection</h2>
+| Name             | Purpose                                                   |
+| ---------------- | --------------------------------------------------------- |
+| cgi-echo.scm     | example cgi script, echo the environment                  |
+| find-files.scm   | works like the unix find command, but provides lisp data. |
+| fork-test.scm    | example use of fork                                       |
+| hello.scm        | an example command using infix syntax                     |
+| http-server.scm  | useful as a socket example                                |
+| http-stress.scm  | http client with stress features                          |
+| http.scm         | more http client examples                                 |
+| ftp.scm          | support for file transfer protocol                        |
+| maze-support.scm | cgi script example, provides a run-maze subroutine        |
+| parser_pratt.scm | interface to infix language parser                        |
+| pop3.scm         | A pop3 client                                             |
+| pratt.scm        | infix language parser                                     |
+| selfdoc.scm      | create a table of built-in procedures                     |
+| siod.scm         | mostly obsolete collection of utility subroutines         |
+| smtp.scm         | smtp client subroutines                                   |
+| sql_oracle.scm   | utilities for oracle database client                      |
+| sql_rdb.scm      | utilities for rdb database client                         |
+| sql_sybase.scm   | utilities for sybase database client                      |
+| piechart.scm     | a CGI script that returns a piechart as a GIF             |
+
+## Garbage Collection
 
 When SIOD was first released in April of 1988, it had a stop-and-copy
 garbage collector which could only run at the toplevel of the
@@ -1620,7 +2353,7 @@ code spread throughout Franz Lisp and stick with the heuristic. But since
 he had already found all the bugs in the book-keeping in the runtime
 and compiler output there was little benefit and great risk to doing it.
 
-<P>Then, by the time SIOD had been out for a year there had been
+Then, by the time SIOD had been out for a year there had been
 enough complaints about the lack of fully available GC that I was
 motivated to utilize a stack heuristic, since I had no intention of
 maintaining any explicit book-keeping code in the source. The published
@@ -1629,74 +2362,68 @@ Boehm of Xerox Parc then reduced this design decision to a no-brainer,
 and his implementation suggested the use of setjmp as a sufficiently
 portable way for C code to get at the machine register set without
 introducing assembling language. To SIOD then I added only about 300
-bytes of VAX instructions to the size of the runtime system. 
+bytes of VAX instructions to the size of the runtime system.
 
-<P>
 There are two storage management techniques which may be chosen at runtime
-by specifying the -g argument flag. 
+by specifying the -g argument flag.
 
-<UL>
-<LI>-g1 is stop-and-copy. This is the simplest and most
-portable implementation. GC is only done at toplevel.
-<LI>-g0 (the default) is mark-and-sweep. GC is done at any time, 
-required or requested. However, the implementation is not as portable.
-</UL>
+- -g1 is stop-and-copy. This is the simplest and most portable implementation.
+  GC is only done at toplevel.
+- -g0 (the default) is mark-and-sweep. GC is done at any time, required or
+  requested. However, the implementation is not as portable.
 
-<P>If you get strange errors on a machine architecture not listed
+If you get strange errors on a machine architecture not listed
 then you may be forced to use -g1 until you investigate and contact
 the author for advise.
 
-<h3>Stop and Copy</h3>
+### Stop and Copy
 
 As one can see from the source, garbage collection is really quite an easy
 thing. The procedure gc_relocate is about 25 lines of code, and
 scan_newspace is about 15.
 
-<P>
 The real tricks in handling garbage collection are (in a copying gc):
-<OL>
-<LI>keeping track of locations containing objects
-<LI>parsing the heap (in the space scanning)
-</OL>
 
-<P>The procedure gc_protect is called once (e.g. at startup) on each
-<B>global</B> location which will contain a lisp object.
+1. keeping track of locations containing objects
+2. parsing the heap (in the space scanning)
 
-<P>That leaves the stack. The beleive is that if we had chosen not to 
+The procedure gc_protect is called once (e.g. at startup) on each
+**global** location which will contain a lisp object.
+
+That leaves the stack. The beleive is that if we had chosen not to
 use the argument
 and return-value passing mechanism provided by the C-language
 implementation, (also known as the "machine stack" and "machine
 procedure calling mechanism) this lisp would be larger, slower, and
 rather more difficult to read and understand. Furthermore it would be
-considerably more painful to *add* functionality in the way of SUBR's
+considerably more painful to _add_ functionality in the way of SUBR's
 to the implementation.
 
-<P>Aside from writing a very machine and compiler specific assembling language
+Aside from writing a very machine and compiler specific assembling language
 routine for each C-language implementation, embodying assumptions about
 the placement choices for arguments and local values, etc, we
-are left with the following limitation: 
+are left with the following limitation:
 
-<BLOCKQUOTE>YOU CAN GC ONLY AT TOP-LEVEL</BLOCKQUOTE>
-
-<P>However, this fits in perfectly with the programming style imposed in
+**YOU CAN GC ONLY AT TOP-LEVEL**  
+However, this fits in perfectly with the programming style imposed in
 many user interface implementations including the MIT X-Window Toolkit.
 In the X Toolkit, a callback or work procedure is not supposed to spend
 much time implementing the action. Therefore it cannot have allocated
 much storage, and the callback trampoline mechanism can post a work
 procedure to call the garbage collector when needed.
 
-<P>Our simple object format makes parsing the heap rather trivial.
+Our simple object format makes parsing the heap rather trivial.
 In more complex situations one ends up requiring object headers or markers
 of some kind to keep track of the actual storage lengths of objects
 and what components of objects are lisp pointers.
 
-<P>Because of the usefulness of strings, they were added by default into
+Because of the usefulness of strings, they were added by default into
 SIOD 2.6. The implementation requires a hook that calls the C library
 memory free procedure when an object is in oldspace and never
 got relocated to newspace. Obviously this slows down the stop-and-sweep
 GC, and removes one of the usual advantages it has over mark-and-sweep.
 
-<H3>Mark and Sweep</H3>
+### Mark and Sweep
 
 In a mark-and-sweep GC the objects are not relocated. Instead
 one only has to LOOK at objects which are referenced by the argument
@@ -1706,19 +2433,18 @@ lisp object (see the procedure mark_locations_array) then it may be marked,
 and the objects it points to may be marked, as being in-use storage which
 is not linked into the freelist in the gc_sweep phase.
 
-<P>Another advantage of the mark_and_sweep storage management technique is
+Another advantage of the mark_and_sweep storage management technique is
 that only one heap is required.
 
-<P>The main disadvantages are:
-<OL>
-<LI>start-up cost to initially link freelist.
-    (can be avoided by more general but slower NEWCELL code).
-<LI>does not COMPACT or LOCALIZE the use of storage. This is poor engineering
-    practice in a virtual memory environment.
-<LI>the entire heap must be looked at, not just the parts with useful storage.
-</OL>
+The main disadvantages are:
 
-<P>In general, mark-and-sweep is slower in that it has to look at more
+1. start-up cost to initially link freelist. (can be avoided by more general
+   but slower NEWCELL code).
+2. does not COMPACT or LOCALIZE the use of storage. This is poor engineering
+   practice in a virtual memory environment.
+3. the entire heap must be looked at, not just the parts with useful storage.
+
+In general, mark-and-sweep is slower in that it has to look at more
 memory locations for a given heap size, however the heap size can
 be smaller for a given problem being solved. More complex analysis
 is required when READ-ONLY, STATIC, storage spaces are used
@@ -1726,28 +2452,28 @@ is required when READ-ONLY, STATIC, storage spaces are used
 Additionally the most sophisticated stop-and-copy storage management
 techniques take into account considerations of object usage temporality.
 
-<P>The technique assumes that all machine registers the GC needs to
+The technique assumes that all machine registers the GC needs to
 look at will be saved by a setjmp call into the save_regs_gc_mark data,
 and that every thing else is on the C runtime stack. Hence we
 have some assumptions that impact portability.
 
-<A name="porting"></a><H2>Porting</h2>
+## Porting
 
 The most heavily ifdef'd module is slibu.c because it utilizes "unix"
 runtime functionality. You may want to start out by porting
 the "sample" main program along with the modules needed to be static
 linked with it.
 
-<P>If your system or C runtime needs to poll for the interrupt signal
+If your system or C runtime needs to poll for the interrupt signal
 mechanism to work, then define INTERRUPT_CHECK to be something
 useful.
 
-<P>The STACK_LIMIT and STACK_CHECK macros may need to be conditionized.
+The STACK_LIMIT and STACK_CHECK macros may need to be conditionized.
 They currently assume stack growth downward in virtual address.
 The subr (%%stack-limit setting non-verbose) may be used to change the
 limits at runtime.
 
-<P>The stack and register marking code used in the mark-and-sweep GC
+The stack and register marking code used in the mark-and-sweep GC
 is unlikely to work on machines that do not keep the procedure call
 stack in main memory at all times. It is assumed that setjmp saves
 all registers into the jmp_buff data structure. If your target machine
@@ -1758,14 +2484,14 @@ frames, such as would be utilized by a debugger. The mark_locations
 procedure can then be invoked multiple times with the proper start
 and end addresses.
 
-<P>If the stack is not always aligned (in LISP-PTR sense) then the 
+If the stack is not always aligned (in LISP-PTR sense) then the
 gc_mark_and_sweep procedure will not work properly unless steps
 are taken to work around the problem.
 
-<P>Example, assuming a byte addressed 32-bit pointer machine:
+Example, assuming a byte addressed 32-bit pointer machine:
 
-<BLOCKQUOTE><PRE><TT>
-stack_start_ptr: [LISP-PTR(4)] 
+```assembly
+stack_start_ptr: [LISP-PTR(4)]
                  [LISP-PTR(4)]
                  [RANDOM(4)]
                  [RANDOM(2)]
@@ -1775,46 +2501,46 @@ stack_start_ptr: [LISP-PTR(4)]
                  [LISP-PTR(4)]
                  [LISP-PTR(4)]
 stack_end:       [LISP-PTR(4)]
-</TT></PRE></BLOCKQUOTE>
+```
 
-<P>As mark_locations goes from start to end it will get off proper alignment
+As mark_locations goes from start to end it will get off proper alignment
 somewhere in the middle, and therefore the stack marking operation will
 not properly identify some valid lisp pointers.
 
-<P>Fortunately there is an easy fix to this. A more aggressive use of
+Fortunately there is an easy fix to this. A more aggressive use of
 our mark_locations procedure will suffice.
 
-<P>For example, say that there might be 2-byte quantities inserted into
+For example, say that there might be 2-byte quantities inserted into
 the stack. Then use two calls to mark_locations, as as in THINK_C
 on the Macintosh:
 
-<BLOCKQUOTE><PRE><TT>
+```c
 mark_locations(((char *)stack_start_ptr) + 0,((char *)&amp;stack_end) + 0);
 mark_locations(((char *)stack_start_ptr) + 2,((char *)&amp;stack_end) + 2);
-</TT></PRE></BLOCKQUOTE>
+```
 
-<P>If we think there might be 1-byte quantities, then 4 calls are required:
+If we think there might be 1-byte quantities, then 4 calls are required:
 
-<BLOCKQUOTE><PRE><TT>
+```c
 mark_locations(((char *)stack_start_ptr) + 0,((char *)&amp;stack_end) + 0);
 mark_locations(((char *)stack_start_ptr) + 1,((char *)&amp;stack_end) + 1);
 mark_locations(((char *)stack_start_ptr) + 2,((char *)&amp;stack_end) + 2);
 mark_locations(((char *)stack_start_ptr) + 3,((char *)&amp;stack_end) + 3);
-</TT></PRE></BLOCKQUOTE>
+```
 
-<A name="tiny"></a><H3>Porting to tiny machines</h3>
+### Porting to tiny machines
+
 SIOD has been run on 16 bit machines, such as MS-DOS tiny memory
 model and in palm tops.
 
-<P>Some things to consider:
-<UL>
-<LI>changing the double data type in struct obj into a float.
-<LI>changing mark and type to bytes, or bitfields in a byte.
-<LI>reducing default sizes of heap, interned numbers, obarray_dim.
-<LI>excluding modules such as slibu.c and md5.c
-<LI>making sure constant strings are allocated by the linker
-into read-only data sections.
-</UL>
+Some things to consider:
+
+- changing the double data type in struct obj into a float.
+- changing mark and type to bytes, or bitfields in a byte.
+- reducing default sizes of heap, interned numbers, obarray_dim.
+- excluding modules such as slibu.c and md5.c
+- making sure constant strings are allocated by the linker into read-only data
+  sections.
 
 On larger machines the structure member alignment requirements
 cause an array of struct obj to waste space. For example, on an ALPHA
@@ -1826,40 +2552,37 @@ type and gc_mark some place else. Usually this means making assumptions
 about memory addressing because it is important to be able to get the TYPE
 as quickly as possible.
 
-<P>There are certainly other was to organize data, avoiding the
-use of the C programming <i>struct</i> support, and utilizing 
-carefully contrived macro definitions instead. 
+There are certainly other was to organize data, avoiding the
+use of the C programming _struct_ support, and utilizing
+carefully contrived macro definitions instead.
 
+## Writing extensions in the C programming language
 
-<A name="extwrite"></a><H2>Writing extensions in the C programming language</h2>
-
-The file <b>siod.h</b> provides public declarations of C functions
+The file **siod.h** provides public declarations of C functions
 that can be called by extensions. Although some things are missing,
-having been put into the <b>siodp.h</b> file accidently, and some
+having been put into the **siodp.h** file accidently, and some
 may have been left out altogether. Any function available to be called
 from Scheme interpreted programs can also be called from C programs,
 using the same arguments and with the same return value. Hence
-the claim for a small <i>cognitive-footprint</i> imposed on extension
+the claim for a small _cognitive-footprint_ imposed on extension
 authors.
 
-<P>There are three common reasons for wanting to write an extension to the
+There are three common reasons for wanting to write an extension to the
 system using the C programming language:
 
-<OL>
-<LI>For runtime efficiency.
-<LI>To take advantage of operating system, or other runtime library
-provided functionality.
-<LI>To play games with evaluator semantics.
-</OL>
+1. For runtime efficiency.
+2. To take advantage of operating system, or other runtime library provided
+   functionality.
+3. To play games with evaluator semantics.
 
-<P>Some examples of the first class are the functions memq, and nth,
+Some examples of the first class are the functions memq, and nth,
 study them. These extensions are straightforward, and easy to debug from the C
-language debugger, with the functions <b>err0</b>, <b>pr</b>, and
-<b>prp</b> being provided to call back into the lisp runtime system
-from the C debugger. 
+language debugger, with the functions **err0**, **pr**, and
+**prp** being provided to call back into the lisp runtime system
+from the C debugger.
 
-<P>Some examples from the second class are the <b>ndbm</b>
-and <b>regex</b> modules, and the support for commercial database
+Some examples from the second class are the **ndbm**
+and **regex** modules, and the support for commercial database
 client interfaces. In many cases it is convenient to define
 new scheme data types to encapsulate the complex state of
 an API. Study how to utilize allocate_user_tc,
@@ -1869,60 +2592,62 @@ Also don't forget that most C programming API functions do not
 handle being longjump'd through very well, so beware of how
 you handle callbacks and SIGINT.
 
-<P>Functions such as get_c_string, get_c_string_dim, get_c_long,
+Functions such as get_c_string, get_c_string_dim, get_c_long,
 get_c_double, and get_c_file are usually all you need to get at the
 data you require to get the job done. But beware of spoofing the
 garbage collector. For example, never do something equivalent to this:
 
-<BLOCKQUOTE><PRE><TT>{LISP <b>x</b>;
- char *<b>z</b>;
- <B>x</B> = strcons(100,NULL);
- z = get_c_string(z);
- /* no further references to <B>x</B>, but <b>z</b> is used */
- }</TT></PRE></BLOCKQUOTE>
+```c
+{
+  LISP x;
+  char *z;
+  x = strcons(100,NULL);
+  z = get_c_string(z);
+  /* no further references to x, but z is used */
+ }
+```
 
-<P>Because there are no further references to <B>x</B>, the C compiler
-might very well reuse the location on the stack in which <B>x</B> resided.
+Because there are no further references to **x**, the C compiler
+might very well reuse the location on the stack in which **x** resided.
 If there is any other consing then the garbage collector will go off
 at some point in the future inside this function, and it will free
-the memory pointed to by <b>z</b>. A potential example of this
-sort of thing is the built-in procedure <B>lexec</b>. In theory
+the memory pointed to by **z**. A potential example of this
+sort of thing is the built-in procedure **lexec**. In theory
 a C compiler might store envp and gcsafe in the same memory
 location. But of course for other reasons it is impossible for that
 to cause problems unless get_c_string was extended to
 invoke the evaluator in some cases.
 
-
-<P>If you want to play with evaluator semantics you need to study
-the <b>leval</b> function and perhaps the <b>lapply</b> function too.
-The <b>tc_fsubr</b> object is the conventional way to extend an
-evaluator, but the <b>tc_msubr</b> is more powerfull and allows
+If you want to play with evaluator semantics you need to study
+the **leval** function and perhaps the **lapply** function too.
+The **tc_fsubr** object is the conventional way to extend an
+evaluator, but the **tc_msubr** is more powerfull and allows
 for a modular tail recursion. The set_eval_hooks function allows for
 arbitrary evalution semantics when the first element of a form
 evaluates to a new datatype.
 
-<H3>User Type Extension</H3>
-If you use them then you must provide some information 
+### User Type Extension
+
+If you use them then you must provide some information
 to the garbage collector.
 To do this you can supply 4 functions,
-<OL>
-<LI>a user_relocate, takes an object and returns a new copy.
-<LI>a user_scan, takes an object and calls relocate on its subparts.
-<LI>a user_mark, takes an object and calls gc_mark on its subparts or
-it may return one of these to avoid stack growth.
-<LI>a user_free, takes an object to hack before it gets onto the freelist.
-</OL>
 
-<BLOCKQUOTE><PRE><TT>
+1. a user_relocate, takes an object and returns a new copy.
+2. a user_scan, takes an object and calls relocate on its subparts.
+3. a user_mark, takes an object and calls gc_mark on its subparts or
+   it may return one of these to avoid stack growth.
+4. a user_free, takes an object to hack before it gets onto the freelist.
+
+```c
 set_gc_hooks(type,
              user_relocate_fcn,
              user_scan_fcn,
              user_mark_fcn,
              user_free_fcn,
              &amp;kind_of_gc);
-</TT></PRE></BLOCKQUOTE>
+```
 
-<P>The variable kind_of_gc should be a long. 
+The variable kind_of_gc should be a long.
 It will receive 0 for mark-and-sweep, 1 for
 stop-and-copy. Therefore set_gc_hooks should be called AFTER process_cla.
 You must specify a relocate function with stop-and-copy. The scan
@@ -1930,71 +2655,74 @@ function may be NULL if your user types will not have lisp objects in them.
 Under mark-and-sweep the mark function is required but the free function
 may be NULL.
 
-<P>You might also want to extend the printer. This is optional.
+You might also want to extend the printer. This is optional.
 
-<BLOCKQUOTE><PRE><TT>
+```c
 set_print_hooks(type,fcn);
-</TT></PRE></BLOCKQUOTE>
+```
 
 The fcn receives the object which should be printed to its second
-argument, a struct gen_printio *, using procedures such as gput_st.
+argument, a struct gen_printio \*, using procedures such as gput_st.
 
-<A name="extuse"></a><H2>LIBSIOD use as an extension language for C programs</h2>
+## LIBSIOD use as an extension language for C programs
 
-See the modules <b>sample.c</b> and <b>siod.c</b> for example main
+See the modules **sample.c** and **siod.c** for example main
 program usage. Once the storage system is initialized the
 most simple and useful interface into the interpreter is probably
-the <B>repl_c_string</b> function. Sample called with argument "xx"
+the **repl_c_string** function. Sample called with argument "xx"
 illustrates the most general case of string->string transformation
 using repl_c_string. Here is an even smaller example, with only two
 procedure calls into the siod shared library, marked in bold font.
 The return value of repl_c_string is zero unless an error took
 place in either the read, eval, or print portions of execution.
-This example wraps a call to *catch 'errobj around the expression, which
+This example wraps a call to \*catch 'errobj around the expression, which
 will cause evaluation errors to return a pair of error message string
-and the offending object. 
+and the offending object.
 
-
-<BLOCKQUOTE><PRE><TT>#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;string.h&gt;
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "siod.h"
 
-int main(int argc,char **argv)
-{int j,retval = 0;
- long iobufflen = 1000;
- char *iobuff,*sargv[4];
- sargv[0] = argv[0];
- sargv[1] = "-v0";
- sargv[2] = "-g0";
- sargv[3] = "-h10000:10";
- <B>siod_init</B>(4,sargv);
- iobuff = (char *) malloc(iobufflen);
- retval = 0;
- for(j=1;j&lt;argc;++j)
-   {sprintf(iobuff,"(*catch 'errobj (begin %s))",argv[j]);
-    printf("Evaluating %s, ",argv[j]);
-    retval = <B>repl_c_string</B>(iobuff,0,0,iobufflen);
-    printf("retval = %d\n%s\n",retval,iobuff);}
- return(retval);}
-</TT></PRE></BLOCKQUOTE>
+int main(int argc, char **argv)
+{
+    int j, retval = 0;
+    long iobufflen = 1000;
+    char *iobuff, *sargv[4];
+    sargv[0] = argv[0];
+    sargv[1] = "-v0";
+    sargv[2] = "-g0";
+    sargv[3] = "-h10000:10";
 
-<A name="EVAL"></a><H2>Implementation of EVAL and environment representation</H2>
+    siod_init(4,sargv);
+
+    iobuff = (char *) malloc(iobufflen);
+    retval = 0;
+    for (j = 1; j < argc; ++j) {
+        sprintf(iobuff, "(*catch 'errobj (begin %s))", argv[j]);
+        printf("Evaluating %s, ",argv[j]);
+        retval = **repl_c_string\*\*(iobuff,0,0,iobufflen);
+        printf("retval = %d\n%s\n",retval,iobuff);
+    }
+
+    return(retval);
+}
+```
+
+## Implementation of EVAL and environment representation
 
 Some procedures take an optional (last) argument which is a pointer to
-an environment. Here is a table giving the scheme and C names of 
+an environment. Here is a table giving the scheme and C names of
 the most important ones:
 
-
-<TABLE BORDER=1>
-<TR><TH>C Name</TH><TH>arguments</TH><TH>Scheme Name</TH></TR>
-
-<TR><TD>leval</TD><TD>form,env</TD><TD>eval</TD></TR>
-<TR><TD>symbol_value</TD><TD>sym,env</TD><TD>symbol-value</TD></TR>
-<TR><TD>symbol_boundp</TD><TD>sym,env</TD><TD>symbol-bound?</TD></TR>
-<TR><TD>setvar</TD><TD>sym,value,env</TD><TD>set-symbol-value!</TD></TR>
-<TR><TD>envlookup</TD><TD>sym,env</TD><TD>env-lookup</TD></TR>
-</TABLE>
+| C Name        | arguments       | Scheme Name       |
+| ------------- | --------------- | ----------------- |
+| leval         | form, env       | eval              |
+| symbol_value  | sym, env        | symbol-value      |
+| symbol_boundp | sym, env        | symbol-bound?     |
+| setvar        | sym, value, env | set-symbol-value! |
+| envlookup     | sym, env        | env-lookup        |
 
 These procedures are not to be confused with special forms of the
 proper Scheme language, which can be effectively compiled and
@@ -2002,144 +2730,128 @@ translated into arbitrary other languages, including but not limited
 to machine language. Instead these procedures should be thought of as
 hooks into the underlying interpreter implementation.
 
-<P>The most common value to pass for env, especially when used from C
+The most common value to pass for env, especially when used from C
 programs is the value NIL, the empty list. This NIL represents the
 global, or toplevel environment.
 
-
-<P>If you go beyond considering the NIL environment then you can
+If you go beyond considering the NIL environment then you can
 get into areas of the system which are subject to change.
 Although not often. With release 1.0 of SIOD in April of 1988
 the environment was a pure association list. But with release 1.3
 in May of 1988 it was changed to the list of frames as described
 in "The Art of the Interpreter." Over the last 9 years that hasn't
-changed.  For example:
+changed. For example:
 
-<BLOCKQUOTE><PRE><TT>&gt; <B>(%%closure-env (let ((x 3)) (lambda ())))</B>
+```scheme
+> **(%%closure-env (let ((x 3)) (lambda ())))**
 (((x) 3))
-&gt; <B>(let ((x 3)) (the-environment))</B>
+> **(let ((x 3)) (the-environment))**
 (((x) 3))
-</TT></PRE></BLOCKQUOTE>
+```
 
-<P>In an environment frame the car is a list of symbols
+In an environment frame the car is a list of symbols
 and the cdr is a list of values. The env-lookup procedure returns
 a list such that car can be used to obtain the value, and
 set-car! can be used to assign the value.
 
-<BLOCKQUOTE><PRE><TT>&gt; <B>(env-lookup 'x '( (  (a b x c d)  1 2 3 4 5 ) ))</B>
+```scheme
+> **(env-lookup 'x '( (  (a b x c d)  1 2 3 4 5 ) ))**
 (3 4 5)
-</TT></PRE></BLOCKQUOTE>
+```
 
-<P>The env-lookup does not work on the global environment. This could
+The env-lookup does not work on the global environment. This could
 be considered an architecture bug. The global environment is represented
 by actual slots in the symbol structure, rather then as entries in
 some general frame representation. If SIOD had a "locative" data
 type then env-lookup might well return that. But either way there is
 a dicotomy between local and global environment representation which is
-usually considered to be a bad thing, even though it is a classic 
+usually considered to be a bad thing, even though it is a classic
 implementation technique.
 
-<P>Possibly just-as-good in practice would be to allow an environment
-frame to be an efficient <B>test=EQ?</B> hash-table.
+Possibly just-as-good in practice would be to allow an environment
+frame to be an efficient **test=EQ?** hash-table.
 
-<P>A future direction to take in SIOD is most likely to involve
+A future direction to take in SIOD is most likely to involve
 embracing operating-system-specific environment representations,
 when appropriate, especially those having to do with underlying
 library and dynamic linking implementation.
 
+## Windows NT and Windows 95 Configuration
 
-<A name="WIN32"></a><H2>Windows NT and Windows 95 Configuration</h2>
 Files written in scheme may use the SIOD.EXE command/console module
 application by creating appropriate registry entries.
-For example, say that the file extension is <B>.SMD</B>:
+For example, say that the file extension is **.SMD**:
 
-<P>
 To enable usage from within Microsoft Internet Information Server,
 the registry key is HKEY_LOCAL_MACHINE, SYSTEM, CurrentControlSet,
 Services, W3SVC, Parameters, Script Map. Create a new string
 value:
 
-<TABLE BORDER=1>
-<TR><TD>name:</TD><TD>.smd</TD></TR>
-<TR><TD>data:</TD><TD>c:\siod\siod.exe -v0,-m3 %s</TD></TR>
-</TABLE>
+- name: .smd
+- data: c:\siod\siod.exe -v0,-m3 %s
 
-<P>To enable usage from the Command Prompt (Windows NT only)
-or the Windows GUI, it is easiest to use the <B>File Types</B> tab
-you get by viewing options of <B>My Computer</B>. You will
-want to create a new type with associated file extension <B>SMD</B>:
+To enable usage from the Command Prompt (Windows NT only)
+or the Windows GUI, it is easiest to use the **File Types** tab
+you get by viewing options of **My Computer**. You will
+want to create a new type with associated file extension **SMD**:
 
-<TABLE BORDER=1>
-<TR><TD>action:</TD><TD>open</TD></TR>
-<TR><TD>application:</TD><TD>c:\siod\siod.exe -v01,-m2</TD></TR>
-</TABLE>
+- action: open
+- application: c:\siod\siod.exe -v01,-m2
 
-<P>Note the different level of main program and verbosity between
+Note the different level of main program and verbosity between
 web server and command usage. This is recommended.
 
-<P>The siod.mak file is used with Microsoft Visual C++ 4.0
+The siod.mak file is used with Microsoft Visual C++ 4.0
 development environment.
 
 Executable files may also be created. See the winsiod.html
 support document.
 
-<a name="UNIX"></A><H2>Unix configuration</h2>
-<UL><LI>In all versions beware that LD_LIBRARY_PATH must
-        be set to include the current directory "." first
-        if the development libsiod is to be found first. Otherwise
-        rebuilding it will have no effect at runtime.
-    <LI>In OSF1 everything works without a glitch when
-        the default installation targets are chosen.
-    <LI>In Solaris I found that I had to make a soft link
-        from /usr/lib/libsiod.so to /usr/local/lib/libsiod.so.
-        The diagnostic ldd -s /usr/local/bin/siod, shows that
-        the default lib is only /usr/lib. Make a note to look into
-        setting RPATH in the LD. Setting flag -R /usr/local/lib/siod,
-        would also help remove a kludge from load_so in the slibu.c file.
-    <LI>In Linux you must run the ldconfig command after
-        installing siod. Try <B>ldconfig -v</b>.
-</UL>
+## Unix configuration
 
+- In all versions beware that LD_LIBRARY_PATH must
+  be set to include the current directory "." first
+  if the development libsiod is to be found first. Otherwise
+  rebuilding it will have no effect at runtime.
+- In OSF1 everything works without a glitch when
+  the default installation targets are chosen.
+- In Solaris I found that I had to make a soft link
+  from /usr/lib/libsiod.so to /usr/local/lib/libsiod.so.
+  The diagnostic ldd -s /usr/local/bin/siod, shows that
+  the default lib is only /usr/lib. Make a note to look into
+  setting RPATH in the LD. Setting flag -R /usr/local/lib/siod,
+  would also help remove a kludge from load_so in the slibu.c file.
+- In Linux you must run the ldconfig command after
+  installing siod. Try **ldconfig -v**.
 
-<A name="ref"></a><H2>References</h2>
+## References
 
-<MENU>
-<LI><I>Structure and Interpretation of Computer Programs</I>, by 
-<a href="http://www-swiss.ai.mit.edu/~hal/hal.html">Abelson</a>
-and 
-<a href="http://www-swiss.ai.mit.edu/~gjs/gjs.html">Sussman</a>, 
-<a href="http://www-mitpress.mit.edu/">MIT Press</a>.
+- _Structure and Interpretation of Computer Programs_, by
+  [Abelson](http://www-swiss.ai.mit.edu/~hal/hal.html) and
+  [Sussman](http://www-swiss.ai.mit.edu/~gjs/gjs.html),
+  [MIT Press](http://www-mitpress.mit.edu/).
+- [scheme repository at indiana.edu](http://www.cs.indiana.edu/scheme-repository/).
+- [scheme repository at cmu.edu](http://www.cs.cmu.edu/afs/cs.cmu.edu/project/ai-repository/ai/lang/scheme/0.html).
 
-<LI><a href="http://www.cs.indiana.edu/scheme-repository/">scheme repository
-at indiana.edu</a>.
-<LI><a href="http://www.cs.cmu.edu/afs/cs.cmu.edu/project/ai-repository/ai/lang/scheme/0.html">scheme repository at cmu.edu</a>.
+## Contributors
 
-</MENU>
-
-
-<A name="CONTRIB"></a><H2>Contributors</H2>
 The following people have contributed bug fixes or other additions
 to siod.
-<UL>
-<LI>Paul Stodghill
-<LI>Bob Bane
-<LI>Barak Pearlmutter
-<LI>Craig Denson 
-<LI>Philip G Wilson
-<LI>Leo Harten
-<LI>Philippe Laliberte
-<LI>andreasg
-</UL>
 
-<A name="ACK"></a><H2>Acknowledgements</H2>
-<P>This software contains code derived from the RSA Data Security Inc. MD5
-Message-Digest Algorithm. 
+- Paul Stodghill
+- Bob Bane
+- Barak Pearlmutter
+- Craig Denson
+- Philip G Wilson
+- Leo Harten
+- Philippe Laliberte
+- andreasg
 
-<P>This winsiod precompiled version of SIOD
+## Acknowledgements
+
+This software contains code derived from the RSA Data Security Inc. MD5
+Message-Digest Algorithm.
+
+This winsiod precompiled version of SIOD
 package contains software written and copyrighted by Henry Spencer.
-See <a href="http://alum.mit.edu/www/gjc/hs_regex.html">hs_regex.html</a>.
-
-<P>
-
-</body>
-</html>
+See [hs_regex.html](http://alum.mit.edu/www/gjc/hs_regex.html).

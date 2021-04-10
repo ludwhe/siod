@@ -1,34 +1,34 @@
-<!doctype html public "-//IETF//DTD HTML//EN//2.0">
-<!-- $Id: siod_regex.html,v 1.1 1997/12/01 15:33:57 gjc Exp $ -->
-<HEAD>
-<TITLE>Notes on the SIOD port of Henry Spencer's REGEX</TITLE>
-</HEAD>
-<BODY>
-<H1>Notes on the SIOD port of Henry Spencer's REGEX</H1>
+# Notes on the SIOD port of Henry Spencer's REGEX
 
-<P>See <a href="http://alum.mit.edu/www/gjc/winregex.html">winregex.html</a>
+See [winregex.html](http://alum.mit.edu/www/gjc/winregex.html)
 for a description of regular expressions and
 why this port was originally
 done, which was to support the use of regular expressions
 from C programs such as SIOD in the WIN32 environment.
 
-<P>However, because system-supplied regular expression support is
+However, because system-supplied regular expression support is
 still generally missing from some Unix environments, and also from
 VMS, it has proven to be more convenient to bundle the hs_regex
 package with siod itself.  Yes, you'll find nearly the same code in
 the Apache web server, and perhaps a dozen other places.
 
-<P>The following source files are utilized and are covered by
+The following source files are utilized and are covered by
 the copyright noted at the end of this document:
-<BLOCKQUOTE><PRE><TT>
-cclass.h      regcomp.c     regex2.h      regfree.c
-cname.h       regerror.c    utils.h       engine.c      
-regex.h       regexec.c
-</TT></PRE></BLOCKQUOTE>
 
-<P>Preformatted manual-style pages:
-<PRE><TT>
+- cclass.h
+- cname.h
+- regex.h
+- regcomp.c
+- regerror.c
+- regexec.c
+- regex2.h
+- utils.h
+- regfree.c
+- engine.c
 
+Preformatted manual-style pages:
+
+```text
 NAME
      regcomp, regexec,  regerror,  regfree  -  regular-expression
      library
@@ -338,12 +338,8 @@ BUGS
      right interpretation.
 
      The syntax for word boundaries is incredibly ugly.
+```
 
-
-</TT></PRE>
-
-<P>
-<BLOCKQUOTE><PRE><TT>
 Copyright 1992, 1993, 1994 Henry Spencer.  All rights reserved.
 This software is not subject to any license of the American Telephone
 and Telegraph Company or of the Regents of the University of California.
@@ -365,42 +361,38 @@ to the following restrictions:
 
 4. This notice may not be removed or altered.
 
-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-/*-
- * Copyright (c) 1994
- *	The Regents of the University of California.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
- * 4. Neither the name of the University nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- *	@(#)COPYRIGHT	8.1 (Berkeley) 3/16/94
- */
+--------------------------------------------------------------------------------
 
-</TT></PRE></BLOCKQUOTE>
+Copyright (c) 1994
+  The Regents of the University of California.  All rights reserved.
 
-</BODY>
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+3. All advertising materials mentioning features or use of this software
+   must display the following acknowledgement:
+     This product includes software developed by the University of
+     California, Berkeley and its contributors.
+4. Neither the name of the University nor the names of its contributors
+   may be used to endorse or promote products derived from this software
+   without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGE.
+
+@(#)COPYRIGHT 8.1 (Berkeley) 3/16/94
