@@ -12,7 +12,6 @@
 
  */
 
-
 #include <stdio.h>
 #include <console.h>
 
@@ -37,9 +36,9 @@ static int interrupt_key_down(void)
 {
 	EvQElPtr l;
 
-	for (l = (EvQElPtr) EventQueue.qHead; l; l = (EvQElPtr) l->qLink)
+	for (l = (EvQElPtr)EventQueue.qHead; l; l = (EvQElPtr)l->qLink)
 		if ((l->evtQWhat == keyDown) &&
-		    ((char) l->evtQMessage == '.') &&
+		    ((char)l->evtQMessage == '.') &&
 		    (l->evtQModifiers & cmdKey))
 			return (1);
 

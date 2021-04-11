@@ -35,7 +35,6 @@ struct tacct {
 	unsigned short ta_dc;
 };
 
-
 LISP decode_utmp(struct utmp *p)
 {
 	return (symalist("user", strcons(SAFE_STRLEN(p->ut_user), p->ut_user),
@@ -45,16 +44,18 @@ LISP decode_utmp(struct utmp *p)
 #ifdef EMPTY
 	                 (p->ut_type == EMPTY) ? cintern("EMPTY") :
 #endif
-	                 (p->ut_type == RUN_LVL) ? cintern("RUN_LVL") :
-	                 (p->ut_type == BOOT_TIME) ? cintern("BOOT_TIME") :
-	                 (p->ut_type == OLD_TIME) ? cintern("OLD_TIME") :
-	                 (p->ut_type == NEW_TIME) ? cintern("NEW_TIME") :
-	                 (p->ut_type == INIT_PROCESS) ? cintern("INIT_PROCESS") :
-	                 (p->ut_type == LOGIN_PROCESS) ? cintern("LOGIN_PROCESS") :
-	                 (p->ut_type == USER_PROCESS) ? cintern("USER_PROCESS") :
-	                 (p->ut_type == DEAD_PROCESS) ? cintern("DEAD_PROCESS") :
+	                 (p->ut_type == RUN_LVL)		 ? cintern("RUN_LVL")
+	                 : (p->ut_type == BOOT_TIME)	 ? cintern("BOOT_TIME")
+	                 : (p->ut_type == OLD_TIME)		 ? cintern("OLD_TIME")
+	                 : (p->ut_type == NEW_TIME)		 ? cintern("NEW_TIME")
+	                 : (p->ut_type == INIT_PROCESS)	 ? cintern("INIT_PROCESS")
+	                 : (p->ut_type == LOGIN_PROCESS) ? cintern("LOGIN_PROCESS")
+	                 : (p->ut_type == USER_PROCESS)	 ? cintern("USER_PROCESS")
+	                 : (p->ut_type == DEAD_PROCESS)	 ? cintern("DEAD_PROCESS")
+	                 :
 #ifdef ACCOUNTING
-	                 (p->ut_type == ACCOUNTING) ? cintern("ACCOUNTING") :
+	                 (p->ut_type == ACCOUNTING) ? cintern("ACCOUNTING")
+	                 :
 #endif
 	                 flocons(p->ut_type),
 	                 "pid", flocons(p->ut_pid),
@@ -140,9 +141,7 @@ LISP decode_acct(struct acct *p)
 	            "gid", flocons(p->ac_gid),
 	            "mem", flocons(p->ac_mem),
 	            "rw", flocons(expacct(p->ac_rw)),
-	            "tty", listn(2,
-	                         flocons(major(p->ac_tty)),
-	                         flocons(minor(p->ac_tty))),
+	            "tty", listn(2, flocons(major(p->ac_tty)), flocons(minor(p->ac_tty))),
 	            "flag", flags,
 	            "stat", flocons(p->ac_stat),
 	            NULL));
@@ -157,28 +156,18 @@ LISP ldecode_acct(LISP l)
 	if (n != sizeof(struct acct))
 		err("not correct size for struct acct", l);
 
-	return (decode_acct((struct acct *) buffer));
+	return (decode_acct((struct acct *)buffer));
 }
 
 LISP decode_tacct(struct tacct *p)
 {
 	return (symalist("uid", flocons(p->ta_uid),
 	                 "name", strcons(SAFE_STRLEN(p->ta_name), p->ta_name),
-	                 "cpu", listn(2,
-	                              flocons(p->ta_cpu[0]),
-	                              flocons(p->ta_cpu[1])),
-	                 "kcore", listn(2,
-	                                flocons(p->ta_kcore[0]),
-	                                flocons(p->ta_kcore[1])),
-	                 "io", listn(2,
-	                             flocons(p->ta_io[0]),
-	                             flocons(p->ta_io[1])),
-	                 "rw", listn(2,
-	                             flocons(p->ta_rw[0]),
-	                             flocons(p->ta_rw[1])),
-	                 "con", listn(2,
-	                              flocons(p->ta_con[0]),
-	                              flocons(p->ta_con[1])),
+	                 "cpu", listn(2, flocons(p->ta_cpu[0]), flocons(p->ta_cpu[1])),
+	                 "kcore", listn(2, flocons(p->ta_kcore[0]), flocons(p->ta_kcore[1])),
+	                 "io", listn(2, flocons(p->ta_io[0]), flocons(p->ta_io[1])),
+	                 "rw", listn(2, flocons(p->ta_rw[0]), flocons(p->ta_rw[1])),
+	                 "con", listn(2, flocons(p->ta_con[0]), flocons(p->ta_con[1])),
 	                 "du", flocons(p->ta_du),
 	                 "qsys", flocons(p->ta_qsys),
 	                 "fee", flocons(p->ta_fee),
@@ -197,7 +186,7 @@ LISP ldecode_tacct(LISP l)
 	if (n != sizeof(struct tacct))
 		err("not correct size for struct tacct", l);
 
-	return (decode_tacct((struct tacct *) buffer));
+	return (decode_tacct((struct tacct *)buffer));
 }
 
 #endif
@@ -218,6 +207,3 @@ void init_acct(void)
 #endif
 	init_acct_version();
 }
-
-
-

@@ -83,7 +83,6 @@ gjc@world.std.com
 #define sprintf_s snprintf
 #endif
 
-
 static void init_slib_version(void)
 {
 	setvar(cintern("*slib-version*"),
@@ -102,7 +101,7 @@ LISP heap, heap_end, heap_org;
 long heap_size = 5000;
 long old_heap_used;
 long gc_status_flag = 1;
-char *init_file = (char *) NULL;
+char *init_file = (char *)NULL;
 char *tkbuffer = NULL;
 long gc_kind_copying = 0;
 long gc_cells_allocated = 0;
@@ -127,10 +126,12 @@ LISP sym_eval_history_ptr = NIL;
 LISP unbound_marker = NIL;
 LISP *obarray;
 long obarray_dim = 100;
-struct catch_frame *catch_framep = (struct catch_frame *) NULL;
+struct catch_frame *catch_framep = (struct catch_frame *)NULL;
 void (*repl_puts)(char *) = NULL;
-LISP(*repl_read)(void) = NULL;
-LISP(*repl_eval)(LISP) = NULL;
+LISP(*repl_read)
+(void) = NULL;
+LISP(*repl_eval)
+(LISP) = NULL;
 void (*repl_print)(LISP) = NULL;
 void (*stdout_puts)(char *) = NULL;
 LISP *inums;
@@ -143,8 +144,10 @@ double gc_rt;
 long gc_cells_collected;
 char *user_ch_readm = "";
 char *user_te_readm = "";
-LISP(*user_readm)(int, struct gen_readio *) = NULL;
-LISP(*user_readt)(char *, long, int *) = NULL;
+LISP(*user_readm)
+(int, struct gen_readio *) = NULL;
+LISP(*user_readt)
+(char *, long, int *) = NULL;
 void (*fatal_exit_hook)(void) = NULL;
 #ifdef THINK_C
 int ipoll_counter = 0;
@@ -291,7 +294,6 @@ void __stdcall print_hs_1(void)
 	}
 }
 
-
 void __stdcall print_hs_2(void)
 {
 	char msgbuff[256];
@@ -306,7 +308,6 @@ void __stdcall print_hs_2(void)
 		put_st(msgbuff);
 	}
 }
-
 
 long no_interrupt(long n)
 {
@@ -397,7 +398,7 @@ long repl_driver(long want_sigint, long want_init, struct repl_hooks *h)
 	           _MCW_EM);
 #endif
 	osigfpe = signal(SIGFPE, handle_sigfpe);
-	catch_framep = (struct catch_frame *) NULL;
+	catch_framep = (struct catch_frame *)NULL;
 	errjmp_ok = 1;
 	interrupt_differed = 0;
 	nointerrupt = 0;
@@ -424,7 +425,8 @@ long repl_driver(long want_sigint, long want_init, struct repl_hooks *h)
 }
 
 static void ignore_puts(char *st)
-{}
+{
+}
 
 static void noprompt_puts(char *st)
 {
@@ -436,7 +438,6 @@ static char *repl_c_string_arg = NULL;
 static char *repl_c_string_out = NULL;
 static long repl_c_string_flag = 0;
 static long repl_c_string_print_len = 0;
-
 
 static LISP repl_c_string_read(void)
 {
@@ -473,7 +474,7 @@ struct rcsp_puts {
 static int rcsp_puts(char *from, void *cb)
 {
 	long fromlen, intolen, cplen;
-	struct rcsp_puts *p = (struct rcsp_puts *) cb;
+	struct rcsp_puts *p = (struct rcsp_puts *)cb;
 	fromlen = strlen(from);
 	intolen = p->end - p->ptr;
 	cplen = (fromlen > intolen) ? intolen : fromlen;
@@ -562,14 +563,14 @@ double myruntime(void)
 #endif
 double myruntime(void)
 {
-	return (((double) clock()) / ((double) CLOCKS_PER_SEC));
+	return (((double)clock()) / ((double)CLOCKS_PER_SEC));
 }
 #else
 double myruntime(void)
 {
 	time_t x;
 	time(&x);
-	return ((double) x);
+	return ((double)x);
 }
 #endif
 #endif
@@ -584,7 +585,7 @@ double myrealtime(void)
 	struct timespec x;
 
 	if (!getclock(TIMEOFDAY, &x))
-		return (x.tv_sec + (((double) x.tv_nsec) * 1.0e-9));
+		return (x.tv_sec + (((double)x.tv_nsec) * 1.0e-9));
 	else
 		return (0.0);
 }
@@ -601,7 +602,7 @@ double myrealtime(void)
 
 	if (sys$gettim(&x) == SS$_NORMAL) {
 		if (c == 0.0)
-			c = pow((double) 2, (double) 31) * 100.0e-9;
+			c = pow((double)2, (double)31) * 100.0e-9;
 
 		return (x[0] * 100.0e-9 + x[1] * c);
 	} else
@@ -623,7 +624,7 @@ double myrealtime(void)
 	if (gettimeofday(&x, NULL))
 		return (0.0);
 
-	return (((double) x.tv_sec) + ((double) x.tv_usec) * 1.0E-6);
+	return (((double)x.tv_sec) + ((double)x.tv_usec) * 1.0E-6);
 }
 #endif
 
@@ -633,16 +634,16 @@ double myrealtime(void)
 {
 	struct _timeb x;
 	_ftime(&x);
-	return (x.time + ((double) x.millitm) * 0.001);
+	return (x.time + ((double)x.millitm) * 0.001);
 }
 #endif
 
-#if !defined(__osf__) & !defined(VMS) & !defined(SUN5) & !defined(WIN32) &!defined(linux)
+#if !defined(__osf__) & !defined(VMS) & !defined(SUN5) & !defined(WIN32) & !defined(linux)
 double myrealtime(void)
 {
 	time_t x;
 	time(&x);
-	return ((double) x);
+	return ((double)x);
 }
 #endif
 
@@ -819,9 +820,8 @@ LISP err(const char *message, LISP x)
 				if (!msg)
 					msg = "quit";
 
-				(*l).retval = (NNULLP(retval) ? retval :
-				               (was_inside) ? NIL :
-				               cons(strcons(strlen(msg), msg), nx));
+				(*l).retval = (NNULLP(retval) ? retval : (was_inside) ? NIL
+				               : cons(strcons(strlen(msg), msg), nx));
 				nointerrupt = 0;
 				inside_err = 0;
 				longjmp((*l).cframe, 2);
@@ -954,7 +954,8 @@ LISP consp(LISP x)
 
 LISP car(LISP x)
 {
-	switch TYPE(x) {
+	switch
+	TYPE(x) {
 	case tc_nil:
 		return (NIL);
 
@@ -968,7 +969,8 @@ LISP car(LISP x)
 
 LISP cdr(LISP x)
 {
-	switch TYPE(x) {
+	switch
+	TYPE(x) {
 	case tc_nil:
 		return (NIL);
 
@@ -1267,12 +1269,10 @@ LISP symbol_value(LISP x, LISP env)
 	return (tmp);
 }
 
-
-
 char *must_malloc(unsigned long size)
 {
 	char *tmp;
-	tmp = (char *) malloc((size) ? size : 1);
+	tmp = (char *)malloc((size) ? size : 1);
 
 	if (tmp == (char *)NULL)
 		err("failed to allocate storage from system", NIL);
@@ -1306,7 +1306,7 @@ LISP gen_intern(char *name, long copyp)
 		}
 
 	if (copyp == 1) {
-		cname = (char *) must_malloc(strlen(name) + 1);
+		cname = (char *)must_malloc(strlen(name) + 1);
 		strcpy(cname, name);
 	} else
 		cname = name;
@@ -1362,7 +1362,7 @@ void gc_protect(LISP *location)
 void gc_protect_n(LISP *location, long n)
 {
 	struct gc_protected *reg;
-	reg = (struct gc_protected *) must_malloc(sizeof(struct gc_protected));
+	reg = (struct gc_protected *)must_malloc(sizeof(struct gc_protected));
 	(*reg).location = location;
 	(*reg).length = n;
 	(*reg).next = protected_registers;
@@ -1408,30 +1408,30 @@ void init_storage_1(void)
 {
 	LISP ptr;
 	long j;
-	tkbuffer = (char *) must_malloc(TKBUFFERN + 1);
+	tkbuffer = (char *)must_malloc(TKBUFFERN + 1);
 
 	if (((gc_kind_copying == 1) && (nheaps != 2)) || (nheaps < 1))
 		err("invalid number of heaps", NIL);
 
-	heaps = (LISP *) must_malloc(sizeof(LISP) * nheaps);
+	heaps = (LISP *)must_malloc(sizeof(LISP) * nheaps);
 
 	for (j = 0; j < nheaps; ++j)
 		heaps[j] = NULL;
 
-	heaps[0] = (LISP) must_malloc(sizeof(struct obj) * heap_size);
+	heaps[0] = (LISP)must_malloc(sizeof(struct obj) * heap_size);
 	heap = heaps[0];
 	heap_org = heap;
 	heap_end = heap + heap_size;
 
 	if (gc_kind_copying == 1)
-		heaps[1] = (LISP) must_malloc(sizeof(struct obj) * heap_size);
+		heaps[1] = (LISP)must_malloc(sizeof(struct obj) * heap_size);
 	else
 		freelist = NIL;
 
 	gc_protect(&oblistvar);
 
 	if (obarray_dim > 1) {
-		obarray = (LISP *) must_malloc(sizeof(LISP) * obarray_dim);
+		obarray = (LISP *)must_malloc(sizeof(LISP) * obarray_dim);
 
 		for (j = 0; j < obarray_dim; ++j)
 			obarray[j] = NIL;
@@ -1462,7 +1462,7 @@ void init_storage_1(void)
 	setvar(sym_eval_history_ptr, NIL, NIL);
 
 	if (inums_dim > 0) {
-		inums = (LISP *) must_malloc(sizeof(LISP) * inums_dim);
+		inums = (LISP *)must_malloc(sizeof(LISP) * inums_dim);
 
 		for (j = 0; j < inums_dim; ++j) {
 			NEWCELL(ptr, tc_flonum);
@@ -1548,14 +1548,13 @@ LISP assq(LISP x, LISP alist)
 	return (err("improper list to assq", alist));
 }
 
-
 struct user_type_hooks *get_user_type_hooks(long type)
 {
 	long n;
 
 	if (user_types == NULL) {
 		n = sizeof(struct user_type_hooks) * tc_table_dim;
-		user_types = (struct user_type_hooks *) must_malloc(n);
+		user_types = (struct user_type_hooks *)must_malloc(n);
 		memset(user_types, 0, n);
 	}
 
@@ -1605,7 +1604,8 @@ LISP gc_relocate(LISP x)
 	if ((*x).gc_mark == 1)
 		return (CAR(x));
 
-	switch TYPE(x) {
+	switch
+	TYPE(x) {
 	case tc_flonum:
 	case tc_cons:
 	case tc_symbol:
@@ -1667,7 +1667,8 @@ void scan_newspace(LISP newspace)
 	struct user_type_hooks *p;
 
 	for (ptr = newspace; ptr < heap; ++ptr) {
-		switch TYPE(ptr) {
+		switch
+		TYPE(ptr) {
 		case tc_cons:
 		case tc_closure:
 			CAR(ptr) = gc_relocate(CAR(ptr));
@@ -1707,7 +1708,8 @@ void free_oldspace(LISP space, LISP end)
 
 	for (ptr = space; ptr < end; ++ptr)
 		if (ptr->gc_mark == 0)
-			switch TYPE(ptr) {
+			switch
+			TYPE(ptr) {
 			case tc_cons:
 			case tc_closure:
 			case tc_symbol:
@@ -1765,7 +1767,7 @@ LISP allocate_aheap(void)
 				put_st(msgbuff);
 			}
 
-			heaps[j] = (LISP) must_malloc(sizeof(struct obj) * heap_size);
+			heaps[j] = (LISP)must_malloc(sizeof(struct obj) * heap_size);
 			ptr = heaps[j];
 			end = heaps[j] + heap_size;
 
@@ -1835,14 +1837,14 @@ void gc_mark_and_sweep(void)
 	}
 
 	setjmp(save_regs_gc_mark);
-	mark_locations((LISP *) save_regs_gc_mark,
-	               (LISP *)(((char *) save_regs_gc_mark) + sizeof(save_regs_gc_mark)));
+	mark_locations((LISP *)save_regs_gc_mark,
+	               (LISP *)(((char *)save_regs_gc_mark) + sizeof(save_regs_gc_mark)));
 	mark_protected_registers();
-	mark_locations((LISP *) stack_start_ptr,
-	               (LISP *) &stack_end);
+	mark_locations((LISP *)stack_start_ptr,
+	               (LISP *)&stack_end);
 #ifdef THINK_C
-	mark_locations((LISP *)((char *) stack_start_ptr + 2),
-	               (LISP *)((char *) &stack_end + 2));
+	mark_locations((LISP *)((char *)stack_start_ptr + 2),
+	               (LISP *)((char *)&stack_end + 2));
 #endif
 	gc_sweep();
 	gc_ms_stats_end();
@@ -1871,7 +1873,6 @@ void gc_ms_stats_end(void)
 		put_st(msgbuff);
 	}
 }
-
 
 void gc_mark(LISP ptr)
 {
@@ -2068,7 +2069,8 @@ long nactive_heaps(void)
 {
 	long m;
 
-	for (m = 0; (m < nheaps) && heaps[m]; ++m);
+	for (m = 0; (m < nheaps) && heaps[m]; ++m)
+		;
 
 	return (m);
 }
@@ -2242,7 +2244,8 @@ loop:
 		VCELL(sym_eval_history_ptr) = CDR(tmp);
 	}
 
-	switch TYPE(x) {
+	switch
+	TYPE(x) {
 	case tc_symbol:
 		tmp = envlookup(x, env);
 
@@ -2259,7 +2262,8 @@ loop:
 	case tc_cons:
 		tmp = CAR(x);
 
-		switch TYPE(tmp) {
+		switch
+		TYPE(tmp) {
 		case tc_symbol:
 			tmp = envlookup(tmp, env);
 
@@ -2280,7 +2284,8 @@ loop:
 			break;
 		}
 
-		switch TYPE(tmp) {
+		switch
+		TYPE(tmp) {
 		case tc_subr_0:
 			return (SUBR0(tmp)());
 
@@ -2346,7 +2351,8 @@ loop:
 			goto loop;
 
 		case tc_closure:
-			switch TYPE((*tmp).storage_as.closure.code) {
+			switch
+			TYPE((*tmp).storage_as.closure.code) {
 			case tc_cons:
 				env = extend_env(leval_args(CDR(x), env),
 				                 CAR((*tmp).storage_as.closure.code),
@@ -2355,49 +2361,43 @@ loop:
 				goto loop;
 
 			case tc_subr_1:
-				return (SUBR1(tmp->storage_as.closure.code)
-				        (tmp->storage_as.closure.env));
+				return (SUBR1(tmp->storage_as.closure.code)(tmp->storage_as.closure.env));
 
 			case tc_subr_2:
 				x = CDR(x);
 				arg1 = leval(car(x), env);
-				return (SUBR2(tmp->storage_as.closure.code)
-				        (tmp->storage_as.closure.env, arg1));
+				return (SUBR2(tmp->storage_as.closure.code)(tmp->storage_as.closure.env, arg1));
 
 			case tc_subr_3:
 				x = CDR(x);
 				arg1 = leval(car(x), env);
 				x = NULLP(x) ? NIL : CDR(x);
-				return (SUBR3(tmp->storage_as.closure.code)
-				        (tmp->storage_as.closure.env,
-				         arg1,
-				         leval(car(x), env)));
+				return (SUBR3(tmp->storage_as.closure.code)(tmp->storage_as.closure.env,
+				        arg1,
+				        leval(car(x), env)));
 
 			case tc_subr_4:
 				x = CDR(x);
 				arg1 = leval(car(x), env);
 				x = NULLP(x) ? NIL : CDR(x);
-				return (SUBR4(tmp->storage_as.closure.code)
-				        (tmp->storage_as.closure.env,
-				         arg1,
-				         leval(car(x), env),
-				         leval(car(cdr(x)), env)));
+				return (SUBR4(tmp->storage_as.closure.code)(tmp->storage_as.closure.env,
+				        arg1,
+				        leval(car(x), env),
+				        leval(car(cdr(x)), env)));
 
 			case tc_subr_5:
 				x = CDR(x);
 				arg1 = leval(car(x), env);
 				x = NULLP(x) ? NIL : CDR(x);
-				return (SUBR5(tmp->storage_as.closure.code)
-				        (tmp->storage_as.closure.env,
-				         arg1,
-				         leval(car(x), env),
-				         leval(car(cdr(x)), env),
-				         leval(car(cdr(cdr(x))), env)));
+				return (SUBR5(tmp->storage_as.closure.code)(tmp->storage_as.closure.env,
+				        arg1,
+				        leval(car(x), env),
+				        leval(car(cdr(x)), env),
+				        leval(car(cdr(cdr(x))), env)));
 
 			case tc_lsubr:
-				return (SUBR1(tmp->storage_as.closure.code)
-				        (cons(tmp->storage_as.closure.env,
-				              leval_args(CDR(x), env))));
+				return (SUBR1(tmp->storage_as.closure.code)(cons(tmp->storage_as.closure.env,
+				        leval_args(CDR(x), env))));
 
 			default:
 				err_closure_code(tmp);
@@ -2435,7 +2435,8 @@ LISP lapply(LISP fcn, LISP args)
 	STACK_CHECK(&fcn);
 	INTERRUPT_CHECK();
 
-	switch TYPE(fcn) {
+	switch
+	TYPE(fcn) {
 	case tc_subr_0:
 		return (SUBR0(fcn)());
 
@@ -2474,7 +2475,8 @@ LISP lapply(LISP fcn, LISP args)
 		return (err("cannot be applied", fcn));
 
 	case tc_closure:
-		switch TYPE(fcn->storage_as.closure.code) {
+		switch
+		TYPE(fcn->storage_as.closure.code) {
 		case tc_cons:
 			return (leval(cdr(fcn->storage_as.closure.code),
 			              extend_env(args,
@@ -2482,33 +2484,27 @@ LISP lapply(LISP fcn, LISP args)
 			                         fcn->storage_as.closure.env)));
 
 		case tc_subr_1:
-			return (SUBR1(fcn->storage_as.closure.code)
-			        (fcn->storage_as.closure.env));
+			return (SUBR1(fcn->storage_as.closure.code)(fcn->storage_as.closure.env));
 
 		case tc_subr_2:
-			return (SUBR2(fcn->storage_as.closure.code)
-			        (fcn->storage_as.closure.env,
-			         car(args)));
+			return (SUBR2(fcn->storage_as.closure.code)(fcn->storage_as.closure.env,
+			        car(args)));
 
 		case tc_subr_3:
-			return (SUBR3(fcn->storage_as.closure.code)
-			        (fcn->storage_as.closure.env,
-			         car(args), car(cdr(args))));
+			return (SUBR3(fcn->storage_as.closure.code)(fcn->storage_as.closure.env,
+			        car(args), car(cdr(args))));
 
 		case tc_subr_4:
-			return (SUBR4(fcn->storage_as.closure.code)
-			        (fcn->storage_as.closure.env,
-			         car(args), car(cdr(args)), car(cdr(cdr(args)))));
+			return (SUBR4(fcn->storage_as.closure.code)(fcn->storage_as.closure.env,
+			        car(args), car(cdr(args)), car(cdr(cdr(args)))));
 
 		case tc_subr_5:
-			return (SUBR5(fcn->storage_as.closure.code)
-			        (fcn->storage_as.closure.env,
-			         car(args), car(cdr(args)), car(cdr(cdr(args))),
-			         car(cdr(cdr(cdr(args))))));
+			return (SUBR5(fcn->storage_as.closure.code)(fcn->storage_as.closure.env,
+			        car(args), car(cdr(args)), car(cdr(cdr(args))),
+			        car(cdr(cdr(cdr(args))))));
 
 		case tc_lsubr:
-			return (SUBR1(fcn->storage_as.closure.code)
-			        (cons(fcn->storage_as.closure.env, args)));
+			return (SUBR1(fcn->storage_as.closure.code)(cons(fcn->storage_as.closure.env, args)));
 
 		default:
 			return (err_closure_code(fcn));
@@ -2589,7 +2585,8 @@ LISP leval_if(LISP *pform, LISP *penv)
 
 	if NNULLP(leval(car(args), env))
 		*pform = car(cdr(args));
-	else *pform = car(cdr(cdr(args)));
+	else
+		*pform = car(cdr(cdr(args)));
 
 	return (sym_t);
 }
@@ -2810,7 +2807,8 @@ LISP leval_while(LISP args, LISP env)
 {
 	LISP l;
 
-	while NNULLP(leval(car(args), env))
+	while
+	NNULLP(leval(car(args), env))
 		for (l = cdr(args); NNULLP(l); l = cdr(l))
 			leval(car(l), env);
 
@@ -2832,7 +2830,7 @@ LISP symbolconc(LISP args)
 
 		size = size + strlen(PNAME(s));
 
-		if (size >  TKBUFFERN)
+		if (size > TKBUFFERN)
 			err("symbolconc buffer overflow", NIL);
 
 		strcat(tkbuffer, PNAME(s));
@@ -2894,7 +2892,8 @@ LISP lprin1g(LISP exp, struct gen_printio *f)
 	STACK_CHECK(&exp);
 	INTERRUPT_CHECK();
 
-	switch TYPE(exp) {
+	switch
+	TYPE(exp) {
 	case tc_nil:
 		gput_st(f, "()");
 		break;
@@ -2917,9 +2916,9 @@ LISP lprin1g(LISP exp, struct gen_printio *f)
 		break;
 
 	case tc_flonum:
-		n = (long) FLONM(exp);
+		n = (long)FLONM(exp);
 
-		if (((double) n) == FLONM(exp))
+		if (((double)n) == FLONM(exp))
 			sprintf(tkbuffer, "%ld", n);
 		else
 			sprintf(tkbuffer, "%g", FLONM(exp));
@@ -3054,9 +3053,9 @@ int flush_ws(struct gen_readio *f, char *eoferr)
 LISP lreadf(FILE *f)
 {
 	struct gen_readio s;
-	s.getc_fcn = (int (*)(void *)) f_getc;
-	s.ungetc_fcn = (void (*)(int, void *)) f_ungetc;
-	s.cb_argument = (char *) f;
+	s.getc_fcn = (int (*)(void *))f_getc;
+	s.ungetc_fcn = (void (*)(int, void *))f_ungetc;
+	s.cb_argument = (char *)f;
 	return (readtl(&s));
 }
 
@@ -3284,7 +3283,7 @@ LISP fopen_cg(FILE * (*fcn)(const char *, const char *), char *name, char *how)
 		err(errmsg, llast_c_errmsg(-1));
 	}
 
-	sym->storage_as.c_file.name = (char *) must_malloc(strlen(name) + 1);
+	sym->storage_as.c_file.name = (char *)must_malloc(strlen(name) + 1);
 	strcpy(sym->storage_as.c_file.name, name);
 	no_interrupt(flag);
 	return (sym);
@@ -3350,8 +3349,7 @@ LISP vload(char *ofname, long cflag, long rflag)
 		if ((f = fopen(fname, "r")))
 			fclose(f);
 		else if ((fname[0] != '/') &&
-		         ((strlen(siod_lib) + strlen(fname) + 1)
-		          < sizeof(buffer))) {
+		         ((strlen(siod_lib) + strlen(fname) + 1) < sizeof(buffer))) {
 			strcpy(buffer, siod_lib);
 #ifdef unix
 			strcat(buffer, "/");
@@ -3402,7 +3400,8 @@ LISP vload(char *ofname, long cflag, long rflag)
 	if ((start = strstr(buffer, key))) {
 		for (end = &start[strlen(key)];
 		     *end && isalnum(*end);
-		     ++end);
+		     ++end)
+			;
 
 		j = end - start;
 		memmove(buffer, start, j);
@@ -3528,7 +3527,8 @@ LISP arglchk(LISP x)
 	if SYMBOLP(x)
 		return (x);
 
-	for (l = x; CONSP(l); l = CDR(l));
+	for (l = x; CONSP(l); l = CDR(l))
+		;
 
 	if NNULLP(l)
 		err("improper formal argument list", x);
@@ -3541,7 +3541,7 @@ void file_gc_free(LISP ptr)
 {
 	if (ptr->storage_as.c_file.f) {
 		fclose(ptr->storage_as.c_file.f);
-		ptr->storage_as.c_file.f = (FILE *) NULL;
+		ptr->storage_as.c_file.f = (FILE *)NULL;
 	}
 
 	if (ptr->storage_as.c_file.name) {
@@ -3631,7 +3631,8 @@ LISP lftell(LISP file)
 LISP lfseek(LISP file, LISP offset, LISP direction)
 {
 	return ((fseek(get_c_file(file, NULL), get_c_long(offset), get_c_long(direction)))
-	        ? NIL : sym_t);
+	        ? NIL
+	        : sym_t);
 }
 
 LISP parse_number(LISP x)
@@ -3950,7 +3951,6 @@ void init_subrs_1(void)
 	init_slib_version();
 }
 
-
 /* err0,pr,prp are convenient to call from the C-language debugger */
 
 void err0(void)
@@ -3973,5 +3973,3 @@ void prp(LISP *p)
 
 	pr(*p);
 }
-
-

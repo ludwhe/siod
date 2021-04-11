@@ -11,7 +11,6 @@ However, some of these should be moved to siod.h
 
 */
 
-
 extern char *tkbuffer;
 extern LISP heap, heap_end, heap_org;
 extern LISP sym_t;
@@ -24,16 +23,22 @@ extern long errjmp_ok;
 extern LISP unbound_marker;
 
 struct user_type_hooks {
-	LISP(*gc_relocate)(LISP);
+	LISP(*gc_relocate)
+	(LISP);
 	void (*gc_scan)(LISP);
-	LISP(*gc_mark)(LISP);
+	LISP(*gc_mark)
+	(LISP);
 	void (*gc_free)(LISP);
 	void (*prin1)(LISP, struct gen_printio *);
-	LISP(*leval)(LISP, LISP *, LISP *);
+	LISP(*leval)
+	(LISP, LISP *, LISP *);
 	long (*c_sxhash)(LISP, long);
-	LISP(*fast_print)(LISP, LISP);
-	LISP(*fast_read)(int, LISP);
-	LISP(*equal)(LISP, LISP);
+	LISP(*fast_print)
+	(LISP, LISP);
+	LISP(*fast_read)
+	(int, LISP);
+	LISP(*equal)
+	(LISP, LISP);
 };
 
 struct catch_frame {
@@ -51,28 +56,38 @@ struct gc_protected {
 	struct gc_protected *next;
 };
 
-#define NEWCELL(_into,_type)          \
-{if (gc_kind_copying == 1)            \
-   {if ((_into = heap) >= heap_end)   \
-      gc_fatal_error();               \
-    heap = _into+1;}                  \
- else                                 \
-   {if NULLP(freelist)                \
-      gc_for_newcell();               \
-    _into = freelist;                 \
-    freelist = CDR(freelist);         \
-    ++gc_cells_allocated;}            \
- (*_into).gc_mark = 0;                \
- (*_into).type = (short) _type;}
+#define NEWCELL(_into, _type)               \
+	{                                       \
+		if (gc_kind_copying == 1)           \
+		{                                   \
+			if ((_into = heap) >= heap_end) \
+				gc_fatal_error();           \
+			heap = _into + 1;               \
+		}                                   \
+		else                                \
+		{                                   \
+			if NULLP (freelist)             \
+				gc_for_newcell();           \
+			_into = freelist;               \
+			freelist = CDR(freelist);       \
+			++gc_cells_allocated;           \
+		}                                   \
+		(*_into).gc_mark = 0;               \
+		(*_into).type = (short)_type;       \
+	}
 
 #if defined(THINK_C)
 extern int ipoll_counter;
 void full_interrupt_poll(int *counter);
-#define INTERRUPT_CHECK() if (--ipoll_counter < 0) full_interrupt_poll(&ipoll_counter)
+#define INTERRUPT_CHECK()    \
+	if (--ipoll_counter < 0) \
+	full_interrupt_poll(&ipoll_counter)
 #else
 #if defined(WIN32)
 void handle_interrupt_differed(void);
-#define INTERRUPT_CHECK() if (interrupt_differed) handle_interrupt_differed()
+#define INTERRUPT_CHECK()   \
+	if (interrupt_differed) \
+	handle_interrupt_differed()
 #else
 #define INTERRUPT_CHECK()
 #endif
@@ -80,15 +95,16 @@ void handle_interrupt_differed(void);
 
 extern char *stack_limit_ptr;
 
-#define STACK_LIMIT(_ptr,_amt) (((char *)_ptr) - (_amt))
+#define STACK_LIMIT(_ptr, _amt) (((char *)_ptr) - (_amt))
 
-#define STACK_CHECK(_ptr) \
-  if (((char *) (_ptr)) < stack_limit_ptr) err_stack((char *) _ptr);
+#define STACK_CHECK(_ptr)                   \
+	if (((char *)(_ptr)) < stack_limit_ptr) \
+		err_stack((char *)_ptr);
 
 void err_stack(char *);
 
 #if defined(VMS) && defined(VAX)
-#define SIG_restargs ,...
+#define SIG_restargs , ...
 #else
 #define SIG_restargs
 #endif
@@ -175,7 +191,6 @@ LISP lfseek(LISP file, LISP offset, LISP direction);
 LISP lfread(LISP size, LISP file);
 LISP lfwrite(LISP string, LISP file);
 
-
 LISP leval_while(LISP args, LISP env);
 
 void init_subrs_a(void);
@@ -189,7 +204,6 @@ long get_long(FILE *);
 long fast_print_table(LISP obj, LISP table);
 
 LISP stack_limit(LISP, LISP);
-
 
 void err0(void);
 void pr(LISP);
@@ -208,4 +222,3 @@ LISP gc_info(LISP);
 LISP err_closure_code(LISP tmp);
 
 #define VLOAD_OFFSET_HACK_CHAR '|'
-

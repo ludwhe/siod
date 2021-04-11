@@ -57,7 +57,7 @@ int gethostname(char *, int);
 #include <setjmp.h>
 
 #ifdef sun
-#define       INADDR_NONE             0xffffffff
+#define INADDR_NONE 0xffffffff
 #endif
 
 #include "siod.h"
@@ -69,7 +69,6 @@ static void init_ss_version(void)
 	       cintern("$Id: ss.c,v 1.7 1998/03/05 13:26:47 gjc Exp $"),
 	       NIL);
 }
-
 
 static long tc_sock_stream = 0;
 
@@ -98,7 +97,7 @@ LISP lgetservice(LISP lport, LISP lproto)
 	struct servent *p;
 	iflag = no_interrupt(1);
 
-	if ((p = getservbyport(htons((unsigned short) get_c_long(lport)),
+	if ((p = getservbyport(htons((unsigned short)get_c_long(lport)),
 	                       NULLP(lproto) ? NULL : get_c_string(lproto)))) {
 		result = cons(rintern(p->s_proto), NIL);
 		result = cons(rintern(p->s_name), result);
@@ -129,7 +128,7 @@ followed by an accept. */
 	iflag = no_interrupt(1);
 
 	if FLONUMP(lport)
-		port = (short) get_c_long(lport);
+		port = (short)get_c_long(lport);
 	else if ((servinfo = getservbyname(get_c_string(lport), "tcp")))
 		port = ntohs(servinfo->s_port);
 	else
@@ -197,7 +196,7 @@ followed by an accept. */
 
 	s = cons(NIL, NIL);
 
-	if (!(ss = (struct sock_stream *) malloc(sizeof(struct sock_stream)))) {
+	if (!(ss = (struct sock_stream *)malloc(sizeof(struct sock_stream)))) {
 		close(sd);
 		err("connect, cannot allocate", NIL);
 	}
@@ -206,7 +205,7 @@ followed by an accept. */
 	ss->icnt = 0;
 	ss->bufsiz = 1024;
 
-	if (!(ss->ibase = (unsigned char *) malloc(ss->bufsiz))) {
+	if (!(ss->ibase = (unsigned char *)malloc(ss->bufsiz))) {
 		close(sd);
 		free(ss);
 		err("connect, cannot allocate", NIL);
@@ -214,7 +213,7 @@ followed by an accept. */
 
 	ss->iptr = ss->ibase;
 
-	if (!(ss->obase = (unsigned char *) malloc(ss->bufsiz))) {
+	if (!(ss->obase = (unsigned char *)malloc(ss->bufsiz))) {
 		close(sd);
 		free(ss->ibase);
 		free(ss);
@@ -223,7 +222,7 @@ followed by an accept. */
 
 	ss->ocnt = ss->bufsiz;
 	ss->optr = ss->obase;
-	s->type = (short) tc_sock_stream;
+	s->type = (short)tc_sock_stream;
 	s->storage_as.string.data = (char *)ss;
 	s->storage_as.string.dim = 1;
 	no_interrupt(iflag);
@@ -284,7 +283,8 @@ LISP inet_addr_l(LISP str)
 	unsigned int x;
 	double g;
 
-	switch TYPE(str) {
+	switch
+	TYPE(str) {
 	case tc_byte_array:
 		if (str->storage_as.string.dim != 4)
 			err("address must be 4 bytes", str);
@@ -310,7 +310,8 @@ LISP inet_ntoa_l(LISP str)
 	char buff[50];
 	unsigned int x;
 
-	switch TYPE(str) {
+	switch
+	TYPE(str) {
 	case tc_byte_array:
 		if (str->storage_as.string.dim != 4)
 			err("address must be 4 bytes", str);
@@ -342,7 +343,7 @@ static int select_read_tmo(int sd, double tmo)
 	int retval;
 	struct timeval timeout;
 	fd_set readfds;
-	timeout.tv_sec = (time_t) tmo;
+	timeout.tv_sec = (time_t)tmo;
 	timeout.tv_usec = (long)((tmo - (double)timeout.tv_sec) * 1.0e6);
 	FD_ZERO(&readfds);
 	FD_SET(sd, &readfds);
@@ -380,7 +381,7 @@ LISP s_accept(LISP as, LISP tmo)
 
 	s = cons(NIL, NIL);
 
-	if (!(ss = (struct sock_stream *) malloc(sizeof(struct sock_stream)))) {
+	if (!(ss = (struct sock_stream *)malloc(sizeof(struct sock_stream)))) {
 		close(sd);
 		err("accept, cannot allocate", NIL);
 	}
@@ -389,7 +390,7 @@ LISP s_accept(LISP as, LISP tmo)
 	ss->icnt = 0;
 	ss->bufsiz = 1024;
 
-	if (!(ss->ibase = (unsigned char *) malloc(ss->bufsiz))) {
+	if (!(ss->ibase = (unsigned char *)malloc(ss->bufsiz))) {
 		close(sd);
 		free(ss);
 		err("connect, cannot allocate", NIL);
@@ -397,7 +398,7 @@ LISP s_accept(LISP as, LISP tmo)
 
 	ss->iptr = ss->ibase;
 
-	if (!(ss->obase = (unsigned char *) malloc(ss->bufsiz))) {
+	if (!(ss->obase = (unsigned char *)malloc(ss->bufsiz))) {
 		close(sd);
 		free(ss->ibase);
 		free(ss);
@@ -406,7 +407,7 @@ LISP s_accept(LISP as, LISP tmo)
 
 	ss->ocnt = ss->bufsiz;
 	ss->optr = ss->obase;
-	s->type = (short) tc_sock_stream;
+	s->type = (short)tc_sock_stream;
 	s->storage_as.string.data = (char *)ss;
 	s->storage_as.string.dim = 1;
 	no_interrupt(iflag);
@@ -421,7 +422,7 @@ struct sock_stream *get_ss(LISP s, long openchk)
 	if (openchk && !s->storage_as.string.dim)
 		err("socket is closed", s);
 
-	return ((struct sock_stream *) s->storage_as.string.data);
+	return ((struct sock_stream *)s->storage_as.string.data);
 }
 
 LISP s_close(LISP s)
@@ -443,7 +444,6 @@ LISP s_close(LISP s)
 	no_interrupt(iflag);
 	return (NIL);
 }
-
 
 LISP s_shutdown(LISP s, LISP flag)
 {
@@ -602,7 +602,8 @@ LISP s_drain(LISP s)
 	int c, iflag;
 	iflag = no_interrupt(1);
 
-	while ((c = SS_GETC(ss)) != EOF);
+	while ((c = SS_GETC(ss)) != EOF)
+		;
 
 	no_interrupt(iflag);
 	return (NIL);
@@ -676,7 +677,7 @@ LISP s_read(LISP size, LISP file)
 
 	default:
 		n = get_c_long(size);
-		buffer = (char *) must_malloc(n + 1);
+		buffer = (char *)must_malloc(n + 1);
 		buffer[n] = 0;
 		m = 1;
 	}
@@ -716,7 +717,6 @@ LISP s_read(LISP size, LISP file)
 	no_interrupt(flag);
 	return (flocons((double)ret));
 }
-
 
 LISP s_force_output(LISP s)
 {
@@ -760,8 +760,7 @@ void ss_prin1(LISP s, struct gen_printio *f)
 
 			if (((j == 0)
 			     ? getsockname(ss->sd, (struct sockaddr *)&a, &len)
-			     : getpeername(ss->sd, (struct sockaddr *)&a, &len))
-			    == 0) {
+			     : getpeername(ss->sd, (struct sockaddr *)&a, &len)) == 0) {
 				sprintf(buff, " %d.%d.%d.%d:%d", p[0], p[1], p[2], p[3],
 				        ntohs(a.sin_port));
 				gput_st(f, buff);
@@ -810,7 +809,6 @@ LISP l_getpeername(LISP s)
    above code. Things work in DEBUG mode but fail in release mode.
    Unrolling it is a quick fix. */
 
-
 LISP l_getsockname(LISP s)
 {
 	struct sock_stream *ss = get_ss(s, 1);
@@ -847,10 +845,7 @@ LISP l_getpeername(LISP s)
 	return (strcons(-1, buff));
 }
 
-
-
 #endif
-
 
 int ss_getc_fcn(struct sock_stream *ss)
 {
@@ -881,8 +876,8 @@ void ss_ungetc_fcn(int c, struct sock_stream *ss)
 LISP s_read_sexp(LISP s)
 {
 	struct gen_readio r;
-	r.getc_fcn = (int (*)(void *)) ss_getc_fcn;
-	r.ungetc_fcn = (void (*)(int, void *)) ss_ungetc_fcn;
+	r.getc_fcn = (int (*)(void *))ss_getc_fcn;
+	r.ungetc_fcn = (void (*)(int, void *))ss_ungetc_fcn;
 	r.cb_argument = get_ss(s, 1);
 	return (readtl(&r));
 }
@@ -910,8 +905,7 @@ LISP lgethostid(void)
 static struct WSAData wsa_data;
 LISP lwsa_data(void)
 {
-	return (symalist("version", cons(flocons(wsa_data.wHighVersion),
-	                                 flocons(wsa_data.wVersion)),
+	return (symalist("version", cons(flocons(wsa_data.wHighVersion), flocons(wsa_data.wVersion)),
 	                 "description", strcons(-1, wsa_data.szDescription),
 	                 "system-status", strcons(-1, wsa_data.szSystemStatus),
 	                 "max-sockets", flocons(wsa_data.iMaxSockets),

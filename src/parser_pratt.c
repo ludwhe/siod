@@ -39,7 +39,8 @@ LISP pratt_read_token(LISP buffer, LISP chars, LISP stream)
 		if NULLP(c = lgetc(stream))
 			return (get_eof_val());
 		else if EQ(sym_nl_whitespace, tail = aref1(chars, c))
-			while (NNULLP(c = lgetc(stream)) && (get_c_long(c) != '\n'));
+			while (NNULLP(c = lgetc(stream)) && (get_c_long(c) != '\n'))
+				;
 		else if NEQ(sym_whitespace, tail)
 			break;
 
@@ -56,13 +57,13 @@ LISP pratt_read_token(LISP buffer, LISP chars, LISP stream)
 				}
 
 				if (j < tkdim)
-					tk[j++] = (char) get_c_long(c);
+					tk[j++] = (char)get_c_long(c);
 				else
 					err_token_overflow();
 			} else if EQ(sym_string_delim, aref1(chars, c))
 				return (strcons(j, tk));
 			else if (j < tkdim)
-				tk[j++] = (char) get_c_long(c);
+				tk[j++] = (char)get_c_long(c);
 			else
 				err_token_overflow();
 
@@ -70,7 +71,7 @@ LISP pratt_read_token(LISP buffer, LISP chars, LISP stream)
 		c = lgetc(stream);
 
 	if (j < tkdim)
-		tk[j++] = (char) get_c_long(c);
+		tk[j++] = (char)get_c_long(c);
 	else
 		err_token_overflow();
 
@@ -82,7 +83,7 @@ LISP pratt_read_token(LISP buffer, LISP chars, LISP stream)
 				return (lreadtk(tk, j));
 			else if NNULLP(tail = assq(c, tail))
 				if (j < tkdim)
-					tk[j++] = (char) get_c_long(c);
+					tk[j++] = (char)get_c_long(c);
 				else
 					err_token_overflow();
 			else {
@@ -99,7 +100,7 @@ LISP pratt_read_token(LISP buffer, LISP chars, LISP stream)
 			c = lgetc(stream);
 
 			if (j < tkdim)
-				tk[j++] = (char) get_c_long(c);
+				tk[j++] = (char)get_c_long(c);
 			else
 				err_token_overflow();
 		} else if NEQ(sym_regular, tail) {
@@ -108,7 +109,7 @@ LISP pratt_read_token(LISP buffer, LISP chars, LISP stream)
 
 			return (lreadtk(tk, j));
 		} else if (j < tkdim)
-			tk[j++] = (char) get_c_long(c);
+			tk[j++] = (char)get_c_long(c);
 		else
 			err_token_overflow();
 

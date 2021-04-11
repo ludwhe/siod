@@ -43,7 +43,7 @@ static long tc_extra = 0;
 
 /* internal function convers a LISP-statemant in a internal representation */
 
-static  m_result *get_c_statement(LISP st)
+static m_result *get_c_statement(LISP st)
 {
 	m_result *c;
 
@@ -81,7 +81,7 @@ LISP msql_open(LISP host, LISP db)
 	int value;
 	char *c_host, *c_db;
 	c_host = get_c_string(host);
-	c_db =  get_c_string(db);
+	c_db = get_c_string(db);
 	flag = no_interrupt(1);
 	/* only on an local machine maybe host = NULL */
 	newhandle = msqlConnect(c_host);

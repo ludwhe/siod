@@ -4,7 +4,6 @@
    author:  george j. carrette
  */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,7 +34,7 @@ LISP lgdImageCreate(LISP sx, LISP sy)
 	result = cons(NIL, NIL);
 	result->type = tc_gdimage;
 	iflag = no_interrupt(1);
-	result->storage_as.string.data = (char *) gdImageCreate(get_c_long(sx),
+	result->storage_as.string.data = (char *)gdImageCreate(get_c_long(sx),
 	                                 get_c_long(sy));
 	no_interrupt(iflag);
 	return (result);
@@ -49,7 +48,7 @@ LISP lgdImageCreateFromGif(LISP f)
 	result->type = tc_gdimage;
 	iflag = no_interrupt(1);
 	result->storage_as.string.data =
-	    (char *) gdImageCreateFromGif(get_c_file(f, NULL));
+	    (char *)gdImageCreateFromGif(get_c_file(f, NULL));
 	no_interrupt(iflag);
 	return (result);
 }
@@ -62,11 +61,10 @@ LISP lgdImageCreateFromXbm(LISP f)
 	result->type = tc_gdimage;
 	iflag = no_interrupt(1);
 	result->storage_as.string.data =
-	    (char *) gdImageCreateFromXbm(get_c_file(f, NULL));
+	    (char *)gdImageCreateFromXbm(get_c_file(f, NULL));
 	no_interrupt(iflag);
 	return (result);
 }
-
 
 gdImagePtr get_gdImagePtr(LISP ptr)
 {
@@ -75,7 +73,7 @@ gdImagePtr get_gdImagePtr(LISP ptr)
 	if (NTYPEP(ptr, tc_gdimage))
 		err("not a gdImage", ptr);
 
-	if (!(im = (gdImagePtr) ptr->storage_as.string.data))
+	if (!(im = (gdImagePtr)ptr->storage_as.string.data))
 		err("gd Image deallocated", ptr);
 
 	return (im);
@@ -88,7 +86,7 @@ LISP lcgdFontCreate(gdFontPtr font)
 	result = cons(NIL, NIL);
 	result->type = tc_gdfont;
 	iflag = no_interrupt(1);
-	result->storage_as.string.data = (char *) font;
+	result->storage_as.string.data = (char *)font;
 	result->storage_as.string.dim = 0;
 	no_interrupt(iflag);
 	return (result);
@@ -101,7 +99,7 @@ gdFontPtr get_gdFontPtr(LISP ptr)
 	if (NTYPEP(ptr, tc_gdfont))
 		err("not a gdFont", ptr);
 
-	if (!(fn = (gdFontPtr) ptr->storage_as.string.data))
+	if (!(fn = (gdFontPtr)ptr->storage_as.string.data))
 		err("gd Font deallocated", ptr);
 
 	return (fn);
@@ -120,8 +118,8 @@ LISP lgdPoint(LISP args)
 	result = cons(NIL, NIL);
 	result->type = tc_gdpoint;
 	iflag = no_interrupt(1);
-	pt = (gdPointPtr) must_malloc(sizeof(gdPoint) * m);
-	result->storage_as.string.data = (char *) pt;
+	pt = (gdPointPtr)must_malloc(sizeof(gdPoint) * m);
+	result->storage_as.string.data = (char *)pt;
 	result->storage_as.string.dim = m;
 	no_interrupt(iflag);
 
@@ -140,7 +138,7 @@ gdPointPtr get_gdPointPtr(LISP ptr, long *n)
 	if (NTYPEP(ptr, tc_gdpoint))
 		err("not a gdPoint", ptr);
 
-	if (!(pt = (gdPointPtr) ptr->storage_as.string.data))
+	if (!(pt = (gdPointPtr)ptr->storage_as.string.data))
 		err("gd point deallocated", ptr);
 
 	*n = ptr->storage_as.string.dim;
@@ -164,7 +162,6 @@ LISP lgdPointx(LISP ptr, LISP j, LISP value)
 
 	return (value);
 }
-
 
 LISP lgdPointy(LISP ptr, LISP j, LISP value)
 {
@@ -382,7 +379,6 @@ LISP lgdImageArc(LISP l)
 	return (NIL);
 }
 
-
 LISP lgdImageFillToBorder(LISP l)
 {
 	gdImagePtr im;
@@ -495,7 +491,7 @@ void gdimage_prin1(LISP ptr, struct gen_printio *f)
 	char buff[256];
 	gdImagePtr im;
 
-	if ((im = (gdImagePtr) ptr->storage_as.string.data))
+	if ((im = (gdImagePtr)ptr->storage_as.string.data))
 		sprintf(buff, "#<GDIMAGE %p %d by %d>",
 		        im, im->sx, im->sy);
 	else
@@ -508,7 +504,7 @@ void gdimage_gc_free(LISP ptr)
 {
 	gdImagePtr im;
 
-	if ((im = (gdImagePtr) ptr->storage_as.string.data)) {
+	if ((im = (gdImagePtr)ptr->storage_as.string.data)) {
 		gdImageDestroy(im);
 		ptr->storage_as.string.data = NULL;
 	}
@@ -519,7 +515,7 @@ void gdfont_prin1(LISP ptr, struct gen_printio *f)
 	char buff[256];
 	gdFontPtr fnt;
 
-	if ((fnt = (gdFontPtr) ptr->storage_as.string.data))
+	if ((fnt = (gdFontPtr)ptr->storage_as.string.data))
 		sprintf(buff, "#<GDFONT %p %d by %d>",
 		        fnt, fnt->w, fnt->h);
 	else
@@ -532,7 +528,7 @@ void gdfont_gc_free(LISP ptr)
 {
 	gdFontPtr fnt;
 
-	if ((fnt = (gdFontPtr) ptr->storage_as.string.data) &&
+	if ((fnt = (gdFontPtr)ptr->storage_as.string.data) &&
 	    ptr->storage_as.string.dim)
 		/* there is no api in gd 1.2 for loading a file from a file.
 		   the included fonts are all static data declarations. */
@@ -543,7 +539,7 @@ void gdpoint_prin1(LISP ptr, struct gen_printio *f)
 {
 	char buff[256];
 	gdPointPtr pt;
-	pt = (gdPointPtr) ptr->storage_as.string.data;
+	pt = (gdPointPtr)ptr->storage_as.string.data;
 	sprintf(buff, "#<GDPOINT %p %ld>",
 	        pt, ptr->storage_as.string.dim);
 	gput_st(f, buff);
@@ -553,7 +549,7 @@ void gdpoint_gc_free(LISP ptr)
 {
 	gdPointPtr pt;
 
-	if ((pt = (gdPointPtr) ptr->storage_as.string.data)) {
+	if ((pt = (gdPointPtr)ptr->storage_as.string.data)) {
 		free(pt);
 		ptr->storage_as.string.data = NULL;
 		ptr->storage_as.string.dim = 0;

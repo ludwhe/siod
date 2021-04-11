@@ -23,7 +23,8 @@ static char *siod_argv[] = {
 
 int main(int argc, char **argv
 #if defined(unix) || defined(vms) || defined(WIN32)
-         , char **env
+         ,
+         char **env
 #endif
         )
 {
@@ -44,12 +45,3 @@ int main(int argc, char **argv
 #endif
 	                 ));
 }
-
-
-
-
-
-
-
-
-

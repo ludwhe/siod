@@ -57,7 +57,6 @@ static void init_sql_oracle_version(void)
 	       NIL);
 }
 
-
 static long tc_extra = 0;
 #define extra_tc_association 1
 #define extra_tc_statement 2
@@ -100,21 +99,21 @@ struct hda_def {
 	char fill[256];
 };
 
-#define ORACLE_ETYPE_CHAR       1
-#define ORACLE_ITYPE_NUMBER     2
-#define ORACLE_ETYPE_INTEGER    3
-#define ORACLE_ETYPE_FLOAT      4
-#define ORACLE_ETYPE_STRING     5
-#define ORACLE_ETYPE_DECIMAL    7
-#define ORACLE_ETYPE_LONG       8
-#define ORACLE_ETYPE_VARCHAR    9
-#define ORACLE_ETYPE_ROWID     11
-#define ORACLE_ETYPE_DATE      12
-#define ORACLE_ETYPE_VARRAW    15
-#define ORACLE_ETYPE_RAW       23
-#define ORACLE_ETYPE_LONGRAW   24
-#define ORACLE_ETYPE_UINT      68
-#define ORACLE_ETYPE_DISPLAY   91
+#define ORACLE_ETYPE_CHAR 1
+#define ORACLE_ITYPE_NUMBER 2
+#define ORACLE_ETYPE_INTEGER 3
+#define ORACLE_ETYPE_FLOAT 4
+#define ORACLE_ETYPE_STRING 5
+#define ORACLE_ETYPE_DECIMAL 7
+#define ORACLE_ETYPE_LONG 8
+#define ORACLE_ETYPE_VARCHAR 9
+#define ORACLE_ETYPE_ROWID 11
+#define ORACLE_ETYPE_DATE 12
+#define ORACLE_ETYPE_VARRAW 15
+#define ORACLE_ETYPE_RAW 23
+#define ORACLE_ETYPE_LONGRAW 24
+#define ORACLE_ETYPE_UINT 68
+#define ORACLE_ETYPE_DISPLAY 91
 
 #define ORACLE_MAX_STRING 255
 #define ORA_MAX_SELECTS 200 /* this may be something I made up */
@@ -129,8 +128,8 @@ struct oracle_date {
 	unsigned char second;
 };
 
-#define ORA_NO_DATA_FOUND      1403
-#define ORA_VAR_NOT_IN_SELECT  1007
+#define ORA_NO_DATA_FOUND 1403
+#define ORA_VAR_NOT_IN_SELECT 1007
 
 /* This code should be restructured to allocate lda and hda
    in an association data structure returned by l_orlon */
@@ -177,7 +176,7 @@ static char *errmsg(long code)
 	char *ptr;
 
 	if (errmsg_str0 == NULL) {
-		errmsg_str0 = (char *) malloc(ORACLE_MAX_STRING + 1);
+		errmsg_str0 = (char *)malloc(ORACLE_MAX_STRING + 1);
 		memset(errmsg_str0, 0, ORACLE_MAX_STRING + 1);
 	}
 
@@ -204,7 +203,7 @@ LISP ferr(LISP obj, char *format, ...)
 	va_list restargs;
 
 	if (errmsg_str1 == NULL) {
-		errmsg_str1 = (char *) malloc((ORACLE_MAX_STRING * 3) + 1);
+		errmsg_str1 = (char *)malloc((ORACLE_MAX_STRING * 3) + 1);
 		memset(errmsg_str1, 0, (ORACLE_MAX_STRING * 3) + 1);
 	}
 
@@ -232,7 +231,7 @@ struct cda_def *allocate_cursor(void)
 {
 	struct cda_def *cur;
 	unsigned short rc;
-	cur = (struct cda_def *) malloc(sizeof(struct cda_def));
+	cur = (struct cda_def *)malloc(sizeof(struct cda_def));
 
 	if (oopen(cur, &lda, NULL, -1, -1, NULL, -1)) {
 		rc = cur->rc;
@@ -356,7 +355,7 @@ nselects is correct or -1                                     */
 
 	if (c->nparams) {
 		if (!c->params) {
-			c->params = (struct param *) malloc(sizeof(struct param) * c->nparams);
+			c->params = (struct param *)malloc(sizeof(struct param) * c->nparams);
 
 			for (j = 1; j <= c->nparams; ++j) {
 				c->params[j - 1].etype = 0;
@@ -370,19 +369,20 @@ nselects is correct or -1                                     */
 			switch (c->params[j - 1].etype) {
 			case ORACLE_ETYPE_DATE:
 				c->params[j - 1].buflen = sizeof(struct oracle_date);
-				c->params[j - 1].buf = (char *) malloc(c->params[j - 1].buflen);
+				c->params[j - 1].buf = (char *)malloc(c->params[j - 1].buflen);
 				break;
 
 			default:
 				c->params[j - 1].etype = ORACLE_ETYPE_STRING;
 				c->params[j - 1].buflen = ORACLE_MAX_STRING;
-				c->params[j - 1].buf = (char *) malloc(c->params[j - 1].buflen + 1);
+				c->params[j - 1].buf = (char *)malloc(c->params[j - 1].buflen + 1);
 			}
 
 			if (obndrn(c->cursor, j,
 			           c->params[j - 1].buf,
 			           (c->params[j - 1].etype == ORACLE_ETYPE_STRING)
-			           ? -1 : c->params[j - 1].buflen,
+			           ? -1
+			           : c->params[j - 1].buflen,
 			           c->params[j - 1].etype,
 			           -1, NULL, NULL, -1, -1)) {
 				err = cda_errmsg(c->cursor);
@@ -399,7 +399,7 @@ nselects is correct or -1                                     */
 			c->nselects = ORA_MAX_SELECTS;
 		}
 
-		c->selects = (struct select *) malloc(sizeof(struct select) * c->nselects);
+		c->selects = (struct select *)malloc(sizeof(struct select) * c->nselects);
 		memset(c->selects, 0, sizeof(struct select) * c->nselects);
 
 		for (j = 1; j <= c->nselects; ++j) {
@@ -421,7 +421,7 @@ nselects is correct or -1                                     */
 				c->nselects = j - 1;
 			} else {
 				colnam[colnamlen] = 0;
-				c->selects[j - 1].colnam = (char *) malloc(colnamlen + 1);
+				c->selects[j - 1].colnam = (char *)malloc(colnamlen + 1);
 				strcpy(c->selects[j - 1].colnam, colnam);
 
 				switch (c->selects[j - 1].dbtype) {
@@ -430,7 +430,7 @@ nselects is correct or -1                                     */
 				case ORACLE_ITYPE_NUMBER:
 					c->selects[j - 1].etype = ORACLE_ETYPE_FLOAT;
 					c->selects[j - 1].buflen = sizeof(double);
-					c->selects[j - 1].buf = (double *) malloc(c->selects[j - 1].buflen);
+					c->selects[j - 1].buf = (double *)malloc(c->selects[j - 1].buflen);
 					*((double *)c->selects[j - 1].buf) = 0.0;
 					break;
 
@@ -438,13 +438,13 @@ nselects is correct or -1                                     */
 					/* If we let Oracle convert to string we loose the time info */
 					c->selects[j - 1].etype = ORACLE_ETYPE_DATE;
 					c->selects[j - 1].buflen = sizeof(struct oracle_date);
-					c->selects[j - 1].buf = (char *) malloc(c->selects[j - 1].buflen);
+					c->selects[j - 1].buf = (char *)malloc(c->selects[j - 1].buflen);
 					break;
 
 				default:
 					c->selects[j - 1].etype = ORACLE_ETYPE_STRING;
-					c->selects[j - 1].buflen =  ORACLE_MAX_STRING;
-					c->selects[j - 1].buf = (char *) malloc(c->selects[j - 1].buflen + 1);
+					c->selects[j - 1].buflen = ORACLE_MAX_STRING;
+					c->selects[j - 1].buf = (char *)malloc(c->selects[j - 1].buflen + 1);
 					c->selects[j - 1].buf[0] = 0;
 				}
 
@@ -478,7 +478,7 @@ LISP oracle_sql_prepare(LISP str)
 	struct cstatement *c;
 	iflag = no_interrupt(1);
 	result = extcons(sizeof(struct cstatement), extra_tc_statement);
-	c = (struct cstatement *) result->storage_as.string.data;
+	c = (struct cstatement *)result->storage_as.string.data;
 	c->nparams = 0;
 	c->nselects = -1;
 	prepare_statement(get_c_string(str), c);
@@ -610,7 +610,7 @@ LISP oracle_fetch(LISP s)
 static void extra_gc_free(LISP ptr)
 {
 	struct cstatement *c;
-	c = (struct cstatement *) ptr->storage_as.string.data;
+	c = (struct cstatement *)ptr->storage_as.string.data;
 	release_statement(c);
 	free(c);
 }
@@ -622,7 +622,7 @@ static void extra_prin1(LISP ptr, struct gen_printio *f)
 
 	switch (ptr->storage_as.string.dim) {
 	case extra_tc_statement:
-		c = (struct cstatement *) ptr->storage_as.string.data;
+		c = (struct cstatement *)ptr->storage_as.string.data;
 
 		if (c->cursor)
 			sprintf(buff, "#{SQL STATEMENT %p cursor %d}",
@@ -659,4 +659,3 @@ void init_sql_oracle(void)
 
 	init_sql_oracle_version();
 }
-

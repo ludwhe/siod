@@ -9,9 +9,9 @@
 */
 
 #if defined(__cplusplus)
-extern "C" {
+extern "C"
+{
 #endif
-
 
 struct obj {
 	short gc_mark;
@@ -92,17 +92,16 @@ struct obj {
 		} lisp_array;
 		struct {
 			long dim;
-			void       **data;
+			void **data;
 		} cptr_array;
 		struct {
-			void *pv ;
-		} c_ptr ;
+			void *pv;
+		} c_ptr;
 		struct {
 			FILE *f;
 			char *name;
 		} c_file;
-	}
-	storage_as;
+	} storage_as;
 };
 
 #define CAR(x) ((*x).storage_as.cons.car)
@@ -118,50 +117,50 @@ struct obj {
 #define SUBRM(x) (*((*x).storage_as.subrm.f))
 #define SUBRF(x) (*((*x).storage_as.subr.f))
 #define FLONM(x) ((*x).storage_as.flonum.data)
-#define CPTR(x)   ((*x).storage_as.c_ptr.pv)
+#define CPTR(x) ((*x).storage_as.c_ptr.pv)
 
-#define NIL ((struct obj *) 0)
-#define EQ(x,y) ((x) == (y))
-#define NEQ(x,y) ((x) != (y))
-#define NULLP(x) EQ(x,NIL)
-#define NNULLP(x) NEQ(x,NIL)
+#define NIL ((struct obj *)0)
+#define EQ(x, y) ((x) == (y))
+#define NEQ(x, y) ((x) != (y))
+#define NULLP(x) EQ(x, NIL)
+#define NNULLP(x) NEQ(x, NIL)
 
 #define TYPE(x) (((x) == NIL) ? 0 : ((*(x)).type))
 
-#define TYPEP(x,y) (TYPE(x) == (y))
-#define NTYPEP(x,y) (TYPE(x) != (y))
+#define TYPEP(x, y) (TYPE(x) == (y))
+#define NTYPEP(x, y) (TYPE(x) != (y))
 
-#define tc_nil    0
-#define tc_cons   1
+#define tc_nil 0
+#define tc_cons 1
 #define tc_flonum 2
 #define tc_symbol 3
 #define tc_subr_0 4
 #define tc_subr_1 5
 #define tc_subr_2 6
 #define tc_subr_3 7
-#define tc_lsubr  8
-#define tc_fsubr  9
-#define tc_msubr  10
+#define tc_lsubr 8
+#define tc_fsubr 9
+#define tc_msubr 10
 #define tc_closure 11
 #define tc_free_cell 12
-#define tc_string       13
+#define tc_string 13
 #define tc_double_array 14
-#define tc_long_array   15
-#define tc_lisp_array   16
-#define tc_c_file       17
-#define tc_byte_array   18
+#define tc_long_array 15
+#define tc_lisp_array 16
+#define tc_c_file 17
+#define tc_byte_array 18
 #define tc_subr_4 19
 #define tc_subr_5 20
 #define tc_subr_2n 21
-#define tc_cptr         22
-#define tc_cptr_array   23
+#define tc_cptr 22
+#define tc_cptr_array 23
 #define FO_comment 35
 #define tc_user_min 50
 #define tc_user_max 100
 
 #define FO_fetch 127
 #define FO_store 126
-#define FO_list  125
+#define FO_list 125
 #define FO_listd 124
 
 #define tc_table_dim 100
@@ -169,22 +168,21 @@ struct obj {
 typedef struct obj *LISP;
 typedef LISP(*SUBR_FUNC)(void);
 
-#define CONSP(x)   TYPEP(x,tc_cons)
-#define CPTRP(x)    TYPEP(x, tc_cptr  )
-#define FLONUMP(x) TYPEP(x,tc_flonum)
-#define SYMBOLP(x) TYPEP(x,tc_symbol)
+#define CONSP(x) TYPEP(x, tc_cons)
+#define CPTRP(x) TYPEP(x, tc_cptr)
+#define FLONUMP(x) TYPEP(x, tc_flonum)
+#define SYMBOLP(x) TYPEP(x, tc_symbol)
 
-#define NCONSP(x)   NTYPEP(x,tc_cons)
-#define NCPTRP(x)   NTYPEP(x, tc_cptr  )
-#define NFLONUMP(x) NTYPEP(x,tc_flonum)
-#define NSYMBOLP(x) NTYPEP(x,tc_symbol)
+#define NCONSP(x) NTYPEP(x, tc_cons)
+#define NCPTRP(x) NTYPEP(x, tc_cptr)
+#define NFLONUMP(x) NTYPEP(x, tc_flonum)
+#define NSYMBOLP(x) NTYPEP(x, tc_symbol)
 
 #define TKBUFFERN 5120
 
 #ifndef WIN32
 #define __stdcall
 #endif
-
 
 struct gen_readio {
 	int (*getc_fcn)(void *);
@@ -199,14 +197,16 @@ struct gen_printio {
 };
 
 #define GETC_FCN(x) (*((*x).getc_fcn))((*x).cb_argument)
-#define UNGETC_FCN(c,x) (*((*x).ungetc_fcn))(c,(*x).cb_argument)
-#define PUTC_FCN(c,x) (*((*x).putc_fcn))(c,(*x).cb_argument)
-#define PUTS_FCN(c,x) (*((*x).puts_fcn))(c,(*x).cb_argument)
+#define UNGETC_FCN(c, x) (*((*x).ungetc_fcn))(c, (*x).cb_argument)
+#define PUTC_FCN(c, x) (*((*x).putc_fcn))(c, (*x).cb_argument)
+#define PUTS_FCN(c, x) (*((*x).puts_fcn))(c, (*x).cb_argument)
 
 struct repl_hooks {
 	void (*repl_puts)(char *);
-	LISP(*repl_read)(void);
-	LISP(*repl_eval)(LISP);
+	LISP(*repl_read)
+	(void);
+	LISP(*repl_eval)
+	(LISP);
 	void (*repl_print)(LISP);
 };
 
@@ -373,9 +373,9 @@ FILE *get_c_file(LISP p, FILE *deflt);
 char *last_c_errmsg(int);
 LISP llast_c_errmsg(int);
 
-#define SAFE_STRCPY(_to,_from) safe_strcpy((_to),sizeof(_to),(_from))
-#define SAFE_STRCAT(_to,_from) safe_strcat((_to),sizeof(_to),(_from))
-#define SAFE_STRLEN(_buff) safe_strlen((_buff),sizeof(_buff))
+#define SAFE_STRCPY(_to, _from) safe_strcpy((_to), sizeof(_to), (_from))
+#define SAFE_STRCAT(_to, _from) safe_strcat((_to), sizeof(_to), (_from))
+#define SAFE_STRLEN(_buff) safe_strlen((_buff), sizeof(_buff))
 
 char *safe_strcpy(char *s1, size_t size1, const char *s2);
 char *safe_strcat(char *s1, size_t size1, const char *s2);
@@ -400,7 +400,6 @@ int assemble_options(LISP, ...);
 LISP ccall_catch(LISP tag, LISP(*fcn)(void *), void *);
 LISP lref_default(LISP li, LISP x, LISP fcn);
 
-
 LISP symalist(char *item, ...);
 
 LISP encode_st_mode(LISP l);
@@ -418,5 +417,3 @@ LISP llast_win32_errmsg(DWORD);
 //#pragma message ("compiling c plus plus")
 } // extern "C"
 #endif
-
-

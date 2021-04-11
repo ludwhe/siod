@@ -7,7 +7,6 @@
 #include <sys/types.h>
 #endif
 
-
 static void init_ndbm_version(void)
 {
 	setvar(cintern("*ndbm-version*"),
@@ -24,7 +23,7 @@ DBM *get_DBM(LISP ptr, int errflg)
 	if (NTYPEP(ptr, tc_dbm))
 		err("not a DBM", ptr);
 
-	if ((p = (DBM *) ptr->storage_as.string.data))
+	if ((p = (DBM *)ptr->storage_as.string.data))
 		return (p);
 	else if (errflg)
 		err("DBM closed", ptr);
@@ -50,7 +49,7 @@ LISP ldbm_open(LISP lfname, LISP lflags, LISP lmode)
 		return (err("dbm_open", llast_c_errmsg(-1)));
 
 	result->type = tc_dbm;
-	result->storage_as.string.data = (char *) db;
+	result->storage_as.string.data = (char *)db;
 	no_interrupt(iflag);
 	return (result);
 }
@@ -241,4 +240,3 @@ void init_ndbm(void)
 	init_subr_1("dbm_error", ldbm_error);
 	init_ndbm_version();
 }
-

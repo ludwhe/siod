@@ -4,7 +4,6 @@
    author:  george j. carrette
  */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,14 +55,14 @@ LISP regcomp_l(LISP pattern, LISP flags)
 	str = get_c_string(pattern);
 	iflag = no_interrupt(1);
 	result = cons(NIL, NIL);
-	h = (struct tc_regex *) must_malloc(sizeof(struct tc_regex));
+	h = (struct tc_regex *)must_malloc(sizeof(struct tc_regex));
 	h->compflag = 0;
 	h->nmatch = 0;
 	h->r = NULL;
 	h->m = NULL;
-	result->type = (short) tc_regex;
-	result->storage_as.string.data = (char *) h;
-	h->r = (regex_t *) must_malloc(sizeof(regex_t));
+	result->type = (short)tc_regex;
+	result->storage_as.string.data = (char *)h;
+	h->r = (regex_t *)must_malloc(sizeof(regex_t));
 
 	if ((error = regcomp(h->r, str, iflags))) {
 		regerror(error, h->r, errbuff, sizeof(errbuff));
@@ -78,7 +77,7 @@ LISP regcomp_l(LISP pattern, LISP flags)
 	}
 
 	h->nmatch = h->r->re_nsub + 1;
-	h->m = (regmatch_t *) must_malloc(sizeof(regmatch_t) * h->nmatch);
+	h->m = (regmatch_t *)must_malloc(sizeof(regmatch_t) * h->nmatch);
 	no_interrupt(iflag);
 	return (result);
 }
@@ -190,4 +189,3 @@ void init_regex(void)
 #endif
 	init_regex_version();
 }
-

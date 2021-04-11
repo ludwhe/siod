@@ -8,7 +8,7 @@
 #include <fstab.h>
 #include "siod.h"
 
-#define MNT_NUMTYPES	128
+#define MNT_NUMTYPES 128
 /*
  * definition of mnt_names array moved to usr/ccs/lib/libc/getvfs.c
  */
@@ -24,10 +24,7 @@ LISP lstatfs(LISP path)
 		return (err("statfs", llast_c_errmsg(-1)));
 
 	no_interrupt(iflag);
-	return (symalist("type", (((s.f_type >= 0) && (s.f_type < MNT_NUMTYPES) &&
-	                           mnt_names[s.f_type])
-	                          ? rintern(mnt_names[s.f_type])
-	                          : flocons(s.f_type)),
+	return (symalist("type", (((s.f_type >= 0) && (s.f_type < MNT_NUMTYPES) && mnt_names[s.f_type]) ? rintern(mnt_names[s.f_type]) : flocons(s.f_type)),
 	                 "bsize", flocons(s.f_bsize),
 	                 "blocks", flocons(s.f_blocks),
 	                 "bfree", flocons(s.f_bfree),
@@ -38,7 +35,6 @@ LISP lstatfs(LISP path)
 	                 "mntfromname", strcons(-1, s.f_mntfromname),
 	                 NULL));
 }
-
 
 static LISP decode_fstab(struct fstab *p)
 {

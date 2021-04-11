@@ -126,7 +126,7 @@ LISP sqlrtl_associate(LISP l)
 {
 	LISP obj, tmp;
 	long iflag, local_flag, status;
-	struct ASSOCIATE_STR  associate_str;
+	struct ASSOCIATE_STR associate_str;
 	struct association *a;
 	char *nodename, *username, *password, *class_name;
 	long majerr, suberr1, suberr2;
@@ -150,9 +150,11 @@ LISP sqlrtl_associate(LISP l)
 	}
 
 	username = NNULLP(tmp = cadr(assq(cintern("username"), l)))
-	           ? get_c_string(tmp) : NULL;
+	           ? get_c_string(tmp)
+	           : NULL;
 	password = NNULLP(tmp = cadr(assq(cintern("password"), l)))
-	           ? get_c_string(tmp) : 0;
+	           ? get_c_string(tmp)
+	           : 0;
 	tmp = cadr(assq(cintern("class"), l));
 	class_name = NNULLP(tmp) ? get_c_string(tmp) : NULL;
 
@@ -166,16 +168,16 @@ LISP sqlrtl_associate(LISP l)
 	}
 
 	obj = extcons(sizeof(struct association), extra_tc_association);
-	a = (struct association *) obj->storage_as.string.data;
+	a = (struct association *)obj->storage_as.string.data;
 	a->args = l;
 	a->statements = NIL;
 	a->id = 0;
 	a->error_buffer_size = 512;
 	a->read_buffer_size = 1024;
 	a->write_buffer_size = 1024;
-	a->error_buffer = (char *) malloc(a->error_buffer_size);
-	a->read_buffer = (char *) malloc(a->read_buffer_size);
-	a->write_buffer = (char *) malloc(a->write_buffer_size);
+	a->error_buffer = (char *)malloc(a->error_buffer_size);
+	a->read_buffer = (char *)malloc(a->read_buffer_size);
+	a->write_buffer = (char *)malloc(a->write_buffer_size);
 	associate_str.ERRBUFLEN = a->error_buffer_size;
 	associate_str.ERRBUF = (unsigned char *)a->error_buffer;
 	associate_str.LOCAL_FLAG = local_flag;
@@ -200,7 +202,7 @@ LISP sqlrtl_associate(LISP l)
 
 	if (a->id)
 		/* The id may be set even though the status is not success.
-		   This area of the API is not well documented. */
+			   This area of the API is not well documented. */
 	{
 		sqlsrv_sqlca_error(a->id, &majerr, &suberr1, &suberr2);
 		sqlsrv_release(a->id, 0);
@@ -309,7 +311,6 @@ LISP sqlrtl_sqlca_count(LISP assoc)
 		return (sqlrtl_error(a->id));
 }
 
-
 LISP sqlrtl_execute_immediate(LISP assoc, LISP stmt)
 {
 	long status, iflag;
@@ -412,12 +413,12 @@ LISP sqlrtl_prepare(LISP assoc, LISP sql)
 	s = get_c_string(sql);
 	iflag = no_interrupt(1);
 	st = extcons(sizeof(struct statement), extra_tc_statement);
-	c = (struct statement *) st->storage_as.string.data;
+	c = (struct statement *)st->storage_as.string.data;
 	c->association = assoc;
 	tmpn = strlen(s);
 
 	if (tmpn != strcspn(s, SQL_WSR_CHARSET)) {
-		tmps = (char *) malloc(tmpn + 1);
+		tmps = (char *)malloc(tmpn + 1);
 		strcpy(tmps, s);
 
 		for (ptr = tmps; *ptr; ++ptr)
@@ -809,13 +810,13 @@ LISP sqlrtl_get_datum(SQLDA_ID x, long k)
 				d = atof(data);
 
 				if (scl != 0)
-					d = d * pow(10.0, - (double) scl);
+					d = d * pow(10.0, -(double)scl);
 
 				result = flocons(d);
 				break;
 
 			case SQLSRV_VARCHAR:
-				varlen = *((unsigned short *) data);
+				varlen = *((unsigned short *)data);
 
 				/* this varlen check is just paranoia */
 				if (varlen > len)
@@ -891,7 +892,7 @@ void sqlrtl_put_datum(SQLDA_ID x, long k, LISP value)
 		d = FLONM(value);
 
 		if (scl != 0)
-			d = d * pow(10.0, (double) scl);
+			d = d * pow(10.0, (double)scl);
 
 		string = num;
 		sprintf(string, "%g", d);
@@ -933,10 +934,10 @@ void sqlrtl_put_datum(SQLDA_ID x, long k, LISP value)
 			/* note: not signalling error on truncation */
 		{
 			memcpy(&data[2], string, len);
-			*((unsigned short *) data) = len;
+			*((unsigned short *)data) = len;
 		} else {
 			memcpy(&data[2], string, slen);
-			*((unsigned short *) data) = slen;
+			*((unsigned short *)data) = slen;
 		}
 
 		break;
@@ -1000,7 +1001,6 @@ LISP sqlrtl_error_buffer(LISP assoc, LISP resetp)
 	return (s);
 }
 
-
 LISP sqlrtl_association_statements(LISP assoc)
 {
 	struct association *a;
@@ -1015,13 +1015,13 @@ void extra_gc_scan(LISP ptr)
 
 	switch (ptr->storage_as.string.dim) {
 	case extra_tc_association:
-		a = (struct association *) ptr->storage_as.string.data;
+		a = (struct association *)ptr->storage_as.string.data;
 		a->args = gc_relocate(a->args);
 		a->statements = gc_relocate(a->statements);
 		break;
 
 	case extra_tc_statement:
-		s = (struct statement *) ptr->storage_as.string.data;
+		s = (struct statement *)ptr->storage_as.string.data;
 		s->association = gc_relocate(s->association);
 		s->param_alist = gc_relocate(s->param_alist);
 		s->select_alist = gc_relocate(s->select_alist);
@@ -1040,13 +1040,13 @@ LISP extra_gc_mark(LISP ptr)
 
 	switch (ptr->storage_as.string.dim) {
 	case extra_tc_association:
-		a = (struct association *) ptr->storage_as.string.data;
+		a = (struct association *)ptr->storage_as.string.data;
 		gc_mark(a->args);
 		gc_mark(a->statements);
 		break;
 
 	case extra_tc_statement:
-		s = (struct statement *) ptr->storage_as.string.data;
+		s = (struct statement *)ptr->storage_as.string.data;
 		gc_mark(s->association);
 		gc_mark(s->param_alist);
 		gc_mark(s->select_alist);
@@ -1076,13 +1076,13 @@ void extra_prin1(LISP ptr, struct gen_printio *f)
 
 	switch (ptr->storage_as.string.dim) {
 	case extra_tc_association:
-		a = (struct association *) ptr->storage_as.string.data;
+		a = (struct association *)ptr->storage_as.string.data;
 		sprintf(buff, "#{SQL ASSOCIATION %p}", a);
 		gput_st(f, buff);
 		break;
 
 	case extra_tc_statement:
-		s = (struct statement *) ptr->storage_as.string.data;
+		s = (struct statement *)ptr->storage_as.string.data;
 		sprintf(buff, "#{SQL STATEMENT %p}", s);
 		gput_st(f, buff);
 		break;

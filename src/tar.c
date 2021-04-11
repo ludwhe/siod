@@ -11,7 +11,6 @@ static void init_tar_version(void)
 	       NIL);
 }
 
-
 struct tar_header {
 	char name[100];
 	char mode[8];
@@ -45,7 +44,7 @@ static long safe_atol8(const char *ptr, size_t len)
 	return (x);
 }
 
-#define SAFE_ATOL8(_buff) (safe_atol8((_buff),sizeof(_buff)))
+#define SAFE_ATOL8(_buff) (safe_atol8((_buff), sizeof(_buff)))
 
 LISP decode_tartype(char c)
 {
@@ -81,7 +80,7 @@ static struct tar_header *get_tar_header(LISP bytes)
 {
 	long n;
 	struct tar_header *h;
-	h = (struct tar_header *) get_c_string_dim(bytes, &n);
+	h = (struct tar_header *)get_c_string_dim(bytes, &n);
 
 	if (n < sizeof(struct tar_header))
 		err("too small for tar header", bytes);
@@ -162,4 +161,3 @@ void init_tar(void)
 	       NIL);
 	init_tar_version();
 }
-

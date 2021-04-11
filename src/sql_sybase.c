@@ -143,7 +143,7 @@ static CS_RETCODE sybase_setup(struct sybase_state *sybase_state,
 
 	status = ct_con_props(sybase_state->conn, CS_SET, CS_PASSWORD,
 	                      sybase_pw,
-	                      CS_NULLTERM, (CS_INT *) NULL);
+	                      CS_NULLTERM, (CS_INT *)NULL);
 
 	if (status != CS_SUCCEED) {
 		complain("ct_con_props CS_PASSWORD %d", status);
@@ -153,7 +153,7 @@ static CS_RETCODE sybase_setup(struct sybase_state *sybase_state,
 
 	status = ct_con_props(sybase_state->conn, CS_SET, CS_APPNAME,
 	                      sybase_app,
-	                      CS_NULLTERM, (CS_INT *) NULL);
+	                      CS_NULLTERM, (CS_INT *)NULL);
 
 	if (status != CS_SUCCEED) {
 		complain("ct_con_props CS_APPNAME %d", status);
@@ -166,7 +166,7 @@ static CS_RETCODE sybase_setup(struct sybase_state *sybase_state,
 	if (gethostname(hostname, sizeof(hostname)) == 0) {
 		status = ct_con_props(sybase_state->conn, CS_SET, CS_HOSTNAME,
 		                      hostname,
-		                      CS_NULLTERM, (CS_INT *) NULL);
+		                      CS_NULLTERM, (CS_INT *)NULL);
 
 		if (status != CS_SUCCEED) {
 			complain("ct_con_props CS_HOSTNAME %d", status);
@@ -257,7 +257,7 @@ struct sybase_state *get_sybase_state(LISP ptr, long openp)
 	struct sybase_state *s;
 
 	if TYPEP(ptr, tc_sybase_state) {
-		if ((s = (struct sybase_state *) ptr->storage_as.string.data))
+		if ((s = (struct sybase_state *)ptr->storage_as.string.data))
 			return (s);
 		else if (openp) {
 			err("sybase connection not open", ptr);
@@ -371,7 +371,7 @@ LISP sybase_status(LISP value)
 struct col_data {
 	CS_SMALLINT indicator;
 	void *value;
-	CS_INT	valuelen;
+	CS_INT valuelen;
 };
 
 #define MAX_COL_RETURNS 50
@@ -386,16 +386,16 @@ static struct col_data *col_data = NULL;
 CS_RETCODE CS_PUBLIC fetch_data(CS_COMMAND *cmd, LISP *header, LISP *items)
 {
 	CS_RETCODE retcode;
-	CS_INT	num_cols, i, row_count = 0, rows_read = 0;
+	CS_INT num_cols, i, row_count = 0, rows_read = 0;
 	CS_DATAFMT *fmt;
 	struct col_data *data;
 	LISP row;
 
 	if (col_fmt == NULL) {
-		col_fmt = (CS_DATAFMT *) malloc(MAX_COL_RETURNS * sizeof(CS_DATAFMT));
+		col_fmt = (CS_DATAFMT *)malloc(MAX_COL_RETURNS * sizeof(CS_DATAFMT));
 		memset(col_fmt, 0, MAX_COL_RETURNS * sizeof(CS_DATAFMT));
-		col_data = (struct col_data *) malloc(MAX_COL_RETURNS *
-		                                      sizeof(struct col_data));
+		col_data = (struct col_data *)malloc(MAX_COL_RETURNS *
+		                                     sizeof(struct col_data));
 		memset(col_data, 0, MAX_COL_RETURNS * sizeof(struct col_data));
 	}
 
@@ -438,7 +438,8 @@ CS_RETCODE CS_PUBLIC fetch_data(CS_COMMAND *cmd, LISP *header, LISP *items)
 		if (siod_verbose_check(5))
 			printf(";; %d %.*s %s[%d] %d\n", (int)i, (int)fmt->namelen, fmt->name,
 			       (sybase_typestr(fmt->datatype))
-			       ? sybase_typestr(fmt->datatype) : "?",
+			       ? sybase_typestr(fmt->datatype)
+			       : "?",
 			       (int)fmt->maxlength,
 			       (int)fmt->usertype);
 
@@ -554,12 +555,12 @@ CS_RETCODE CS_PUBLIC fetch_data(CS_COMMAND *cmd, LISP *header, LISP *items)
 				case CS_CHAR_TYPE:
 					row->storage_as.lisp_array.data[i] =
 					    strcons(strlen((char *)data->value),
-					            (char *) data->value);
+					            (char *)data->value);
 					break;
 
 				case CS_FLOAT_TYPE:
 					row->storage_as.lisp_array.data[i] =
-					    flocons(*((double *) data->value));
+					    flocons(*((double *)data->value));
 					break;
 
 				case CS_IMAGE_TYPE:
@@ -640,8 +641,8 @@ LISP sybase_execute(LISP arglist)
 	iflag = no_interrupt(1);
 
 	if (!param_fmt) {
-		param_fmt = (CS_DATAFMT *) malloc(sizeof(CS_DATAFMT) * MAX_PARAM_ARGS);
-		param_data = (CS_INT *) malloc(sizeof(CS_INT) * MAX_PARAM_ARGS);
+		param_fmt = (CS_DATAFMT *)malloc(sizeof(CS_DATAFMT) * MAX_PARAM_ARGS);
+		param_data = (CS_INT *)malloc(sizeof(CS_INT) * MAX_PARAM_ARGS);
 	}
 
 	status = ct_command(sybase_state->cmd,
@@ -685,10 +686,10 @@ LISP sybase_execute(LISP arglist)
 
 			if (ivalue == argvalue->storage_as.flonum.data)
 				/* there is not always automatic conversion of parameters,
-				   hence we convert when it looks like we can.
-				   In general we could support argvalue as a PAIR,
-				   with the car being the datatype we want, and the CADR
-				   being the data */
+					   hence we convert when it looks like we can.
+					   In general we could support argvalue as a PAIR,
+					   with the car being the datatype we want, and the CADR
+					   being the data */
 			{
 				param_data[j] = ivalue;
 				data = &param_data[j];
@@ -755,10 +756,10 @@ LISP sybase_execute(LISP arglist)
 		case CS_PARAM_RESULT:
 		case CS_STATUS_RESULT:
 			result = cons(cons(cintern((restype == CS_ROW_RESULT)
-			                           ? "CS_ROW_RESULT" :
-			                           (restype == CS_PARAM_RESULT)
-			                           ? "CS_PARAM_RESULT" :
-			                           "CS_STATUS_RESULT"),
+			                           ? "CS_ROW_RESULT"
+			                           : (restype == CS_PARAM_RESULT)
+			                           ? "CS_PARAM_RESULT"
+			                           : "CS_STATUS_RESULT"),
 			                   NIL),
 			              result);
 			status = fetch_data(sybase_state->cmd, &header, &items);
@@ -834,7 +835,6 @@ void push_sybase_messages(LISP value)
 	       NIL);
 }
 
-
 static CS_RETCODE server_err_handler(CS_CONTEXT *cp,
                                      CS_CONNECTION *chp,
                                      CS_SERVERMSG *msgp)
@@ -852,13 +852,12 @@ static CS_RETCODE server_err_handler(CS_CONTEXT *cp,
 		         msgp->msgnumber, msgp->severity, msgp->state,
 		         msgp->text);
 
-	(push_sybase_messages
-	 (listn(5,
-	        cintern("server"),
-	        cons(cintern("msgnumber"), flocons(msgp->msgnumber)),
-	        cons(cintern("severity"), flocons(msgp->severity)),
-	        cons(cintern("state"), flocons(msgp->state)),
-	        cons(cintern("text"), strcons(strlen(msgp->text), msgp->text)))));
+	(push_sybase_messages(listn(5,
+	                            cintern("server"),
+	                            cons(cintern("msgnumber"), flocons(msgp->msgnumber)),
+	                            cons(cintern("severity"), flocons(msgp->severity)),
+	                            cons(cintern("state"), flocons(msgp->state)),
+	                            cons(cintern("text"), strcons(strlen(msgp->text), msgp->text)))));
 	return (CS_SUCCEED);
 }
 
@@ -936,7 +935,7 @@ void sybase_gc_free(LISP ptr)
 {
 	struct sybase_state *sybase_state;
 
-	if ((sybase_state = (struct sybase_state *) ptr->storage_as.string.data)) {
+	if ((sybase_state = (struct sybase_state *)ptr->storage_as.string.data)) {
 		sybase_teardown(sybase_state);
 		free(ptr->storage_as.string.data);
 		ptr->storage_as.string.data = NULL;
@@ -965,4 +964,3 @@ void init_sql_sybase(void)
 	setvar(sym_sybase_messages, NIL, NIL);
 	init_sql_sybase_version();
 }
-

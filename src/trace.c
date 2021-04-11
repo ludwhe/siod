@@ -24,7 +24,6 @@ static void init_trace_version(void)
 	       NIL);
 }
 
-
 static long tc_closure_traced = 0;
 
 static LISP sym_traced = NIL;
@@ -85,7 +84,7 @@ LISP ltrace_1(LISP fcn_name, LISP env)
 			                  cons(cons(sym_quote, cons(fcn_name, NIL)),
 			                       cons(cdr(code), NIL))));
 
-		fcn->type = (short) tc_closure_traced;
+		fcn->type = (short)tc_closure_traced;
 	} else if (TYPE(fcn) == tc_closure_traced)
 		;
 	else

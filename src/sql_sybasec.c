@@ -1,7 +1,6 @@
 /* provide runtime resolution of ct library symbols.
  */
 
-
 #include <stdio.h>
 #include <string.h>
 #include <ctpublic.h>
@@ -118,7 +117,6 @@ char *sybase_typestr(CS_INT n)
 
 	return (NULL);
 }
-
 
 void init_sql_sybasec(void)
 {
