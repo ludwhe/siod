@@ -66,6 +66,14 @@
 #define __stdcall
 #endif
 
+// TODO fix this in a better way
+#ifndef __stdcall
+#define __stdcall
+#endif
+#ifndef __P(argument_list)
+#define __P(argument_list) argument_list
+#endif
+
 /* types */
 typedef off_t regoff_t;
 
@@ -119,12 +127,20 @@ typedef struct {
 #define REG_LARGE 01000 /* force large representation */
 #define REG_BACKR 02000 /* force use of backref code */
 
-__BEGIN_DECLS
+// TODO was __BEGIN_DECLS
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int __stdcall regcomp __P((regex_t *, const char *, int));
 size_t __stdcall regerror __P((int, const regex_t *, char *, size_t));
 int __stdcall regexec __P((const regex_t *,
                            const char *, size_t, regmatch_t[], int));
 void __stdcall regfree __P((regex_t *));
-__END_DECLS
+
+// TODO was __END_DECLS
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* !_REGEX_H_ */

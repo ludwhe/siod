@@ -1,15 +1,14 @@
-/*    COPYRIGHT (c) 1992-1994 BY
- *    MITECH CORPORATION, ACTON, MASSACHUSETTS.
- *    See the source file SLIB.C for more information.
-
-(trace procedure1 procedure2 ...)
-(untrace procedure1 procedure2 ...)
-
-Currently only user-defined procedures can be traced.
-Fancy printing features such as indentation based on
-recursion level will also have to wait for a future version.
-
-
+/**
+ * COPYRIGHT (c) 1992-1994 BY
+ * MITECH CORPORATION, ACTON, MASSACHUSETTS.
+ * See the source file SLIB.C for more information.
+ *
+ * (trace procedure1 procedure2 ...)
+ * (untrace procedure1 procedure2 ...)
+ *
+ * Currently only user-defined procedures can be traced.
+ * Fancy printing features such as indentation based on
+ * recursion level will also have to wait for a future version.
  */
 
 #include <stdio.h>

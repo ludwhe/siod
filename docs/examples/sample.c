@@ -76,10 +76,10 @@ int main(int argc, char **argv)
 	init_trace();
 	init_slibu();
 	init_siod_version();
-	my_one = flocons((double) 1.0);
-	my_two = flocons((double) 2.0);
-	my_99 = flocons((double) 99.0);
-	my_0 = flocons((double) 0.0);
+	my_one = flocons((double)1.0);
+	my_two = flocons((double)2.0);
+	my_99 = flocons((double)99.0);
+	my_0 = flocons((double)0.0);
 	gc_protect(&my_one);
 	gc_protect(&my_two);
 	gc_protect(&my_99);
@@ -95,7 +95,7 @@ int main(int argc, char **argv)
 
 	case 1:
 		printf("Using repl_c_string\n");
-		linebuffer = (char *) malloc(256);
+		linebuffer = (char *)malloc(256);
 
 		while (fgets(linebuffer, 256, stdin)) {
 			if ((ptr = strchr(linebuffer, '\n')))
@@ -113,8 +113,8 @@ int main(int argc, char **argv)
 
 	case 3:
 		printf("Using repl_c_string I/O case\n");
-		linebuffer = (char *) malloc(256);
-		iobuff = (char *) malloc(1024);
+		linebuffer = (char *)malloc(256);
+		iobuff = (char *)malloc(1024);
 
 		while (fgets(linebuffer, 256, stdin)) {
 			if ((ptr = strchr(linebuffer, '\n')))
@@ -176,4 +176,3 @@ LISP clooptest(LISP n, LISP f)
 
 	return (result);
 }
-

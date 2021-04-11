@@ -1,7 +1,7 @@
-/*
-   name:    gd.c
-   purpose: interface to GD version 1.2 http://www.boutell.com/gd/
-   author:  george j. carrette
+/**
+ * name:    gd.c
+ * purpose: interface to GD version 1.2 http://www.boutell.com/gd/
+ * author:  george j. carrette
  */
 
 #include <stdio.h>

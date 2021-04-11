@@ -1,10 +1,10 @@
-/* 23-DEC-94 George J. Carrette.
-
-   This is a SIOD main program with additional command-line processing
-   functionality. See slib.c and siod.html for more information.
-
- $Id: siod.c,v 1.9 1997/12/01 15:22:50 gjc Exp $
-
+/**
+ * 23-DEC-94 George J. Carrette.
+ *
+ * This is a SIOD main program with additional command-line processing
+ * functionality. See slib.c and siod.html for more information.
+ *
+ * $Id: siod.c,v 1.9 1997/12/01 15:22:50 gjc Exp $
 */
 
 #include <stdio.h>

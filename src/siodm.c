@@ -1,15 +1,15 @@
-/* Code specific to Lightspeed C on MacIntosh.
-   This detects that the character APPLE-DOT is depressed,
-   and then expects that sending a newline to the console
-   will invoke the proper signal handling code.
-
-   See the file "THINK C 5.0 FOLDER/C LIBRARIES/SOURCES/CONSOLE.C"
-
-   It would be a good thing to have some code in here that would call
-   the proper inside-mac OS routines to determine allowable machine
-   stack size, because of lack of protection against stack
-   overflow bashing another program.
-
+/**
+ * Code specific to Lightspeed C on MacIntosh.
+ * This detects that the character APPLE-DOT is depressed,
+ * and then expects that sending a newline to the console
+ * will invoke the proper signal handling code.
+ *
+ * See the file "THINK C 5.0 FOLDER/C LIBRARIES/SOURCES/CONSOLE.C"
+ *
+ * It would be a good thing to have some code in here that would call
+ * the proper inside-mac OS routines to determine allowable machine
+ * stack size, because of lack of protection against stack
+ * overflow bashing another program.
  */
 
 #include <stdio.h>

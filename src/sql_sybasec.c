@@ -34,36 +34,84 @@ static struct a_cs_retcode retcodes[] = {
 	{CS_END_ITEM, "CS_END_ITEM"},
 	{CS_NOMSG, "CS_NOMSG"},
 	{CS_TIMED_OUT, "CS_TIMED_OUT"},
+#ifdef CS_PASSTHRU_EOM
 	{CS_PASSTHRU_EOM, "CS_PASSTHRU_EOM"},
+#endif
+#ifdef CS_PASSTHRU_MORE
 	{CS_PASSTHRU_MORE, "CS_PASSTHRU_MORE"},
+#endif
+#ifdef CS_TRYING
 	{CS_TRYING, "CS_TRYING"},
+#endif
+#ifdef CS_EBADPARAM
 	{CS_EBADPARAM, "CS_EBADPARAM"},
+#endif
+#ifdef CS_EBADLEN
 	{CS_EBADLEN, "CS_EBADLEN"},
+#endif
+#ifdef CS_ENOCNVRT
 	{CS_ENOCNVRT, "CS_ENOCNVRT"},
+#endif
+#ifdef CS_EOVERFLOW
 	{CS_EOVERFLOW, "CS_EOVERFLOW"},
+#endif
+#ifdef CS_EUNDERFLOW
 	{CS_EUNDERFLOW, "CS_EUNDERFLOW"},
+#endif
+#ifdef CS_EPRECISION
 	{CS_EPRECISION, "CS_EPRECISION"},
+#endif
+#ifdef CS_ESCALE
 	{CS_ESCALE, "CS_ESCALE"},
+#endif
+#ifdef CS_ESYNTAX
 	{CS_ESYNTAX, "CS_ESYNTAX"},
+#endif
+#ifdef CS_EFORMAT
 	{CS_EFORMAT, "CS_EFORMAT"},
+#endif
+#ifdef CS_EDOMAIN
 	{CS_EDOMAIN, "CS_EDOMAIN"},
+#endif
+#ifdef CS_EDIVZERO
 	{CS_EDIVZERO, "CS_EDIVZERO"},
+#endif
+#ifdef CS_ERESOURCE
 	{CS_ERESOURCE, "CS_ERESOURCE"},
+#endif
+#ifdef CS_ENULLNOIND
 	{CS_ENULLNOIND, "CS_ENULLNOIND"},
+#endif
+#ifdef CS_ETRUNCNOIND
 	{CS_ETRUNCNOIND, "CS_ETRUNCNOIND"},
+#endif
+#ifdef CS_ENOBIND
 	{CS_ENOBIND, "CS_ENOBIND"},
+#endif
+#ifdef CS_TRUNCATED
 	{CS_TRUNCATED, "CS_TRUNCATED"},
+#endif
+#ifdef CS_ESTYLE
 	{CS_ESTYLE, "CS_ESTYLE"},
+#endif
+#ifdef CS_EBADXLT
 	{CS_EBADXLT, "CS_EBADXLT"},
+#endif
+#ifdef CS_ENOXLT
 	{CS_ENOXLT, "CS_ENOXLT"}
+#endif
 };
 
 static struct a_cs_int cmds[] = {
 	{CS_LANG_CMD, "CS_LANG_CMD"},
 	{CS_RPC_CMD, "CS_RPC_CMD"},
+#ifdef CS_MSG_CMD
 	{CS_MSG_CMD, "CS_MSG_CMD"},
+#endif
 	{CS_SEND_DATA_CMD, "CS_SEND_DATA_CMD"},
+#ifdef CS_PACKAGE_CMD
 	{CS_PACKAGE_CMD, "CS_PACKAGE_CMD"},
+#endif
 	{CS_SEND_BULK_CMD, "CS_SEND_BULK_CMD"}
 };
 

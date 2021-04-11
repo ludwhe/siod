@@ -15,8 +15,8 @@
 TARNAME="siodb"
 AUX_BINFILES="snapshot-dir snapshot-compare http-get cp-build ftp-cp \
              ftp-put ftp-test ftp-get http-stress"
-wd=`pwd`
-mydir=`dirname $0`
+wd=$(pwd)
+mydir=$(dirname $0)
 case "$mydir" in
  /*)
  ;;
@@ -72,7 +72,7 @@ for x in $AUX_BINFILES; do
  chmod u+w $bindir/$x
  csiod :o=$bindir/$x $bindir/$x
 done
-echo done with recompile
+echo "done with recompile"
 exit 0
 fi
 
@@ -84,7 +84,7 @@ if [ "$OPER" = "unpack" ]; then
  gunzip -v $TARNAME.tgz
  tar xvf $TARNAME.tar
  ./siod-dist.sh recompile
- echo done with unpacking
+ echo "done with unpacking"
  exit 0
 fi
 

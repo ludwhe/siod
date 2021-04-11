@@ -2,7 +2,8 @@
 
 **NEW!**
 A wicked good port of siod to the Windows CE environment.
-See Ben Goetter's <http://www.angrygraycat.com/scheme/pscheme.htm">, which goes by the name of _pocket scheme_.
+See Ben Goetter's <http://www.angrygraycat.com/scheme/pscheme.htm">, which goes
+by the name of _pocket scheme_.
 Other mind-blowing Windows work, Brian Beckman's
 full-metal-jacket windows native function interface.
 See <http://www.angelfire.com/wa/brianbec/siodffi.html>.
