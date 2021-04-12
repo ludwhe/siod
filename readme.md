@@ -1,5 +1,7 @@
 # siod
 
+[![C CI](https://github.com/ludwhe/siod/actions/workflows/c.yml/badge.svg)](https://github.com/ludwhe/siod/actions/workflows/c.yml)
+
 This is version 3.4 of Siod, Scheme In One Defun.
 
 It is a small implementation of the Scheme programming language with some
