@@ -13,6 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: sudo apt-get install libgdbm-dev libgdbm-compat-dev libgd-dev
     - name: make
       run: make
     - name: make check
