@@ -5,6 +5,11 @@ addons:
     organization: "ludwhe"
     token:
       secure: "prXyP13LLzNobdM1JCeiDSKV1h0aNKWC1nLKhbTef0/wZ0+zVpgRXyAjeExdf8MktWpQ3fp2b48VsrdzFhfMD1H6Kxm/gWm3bhd05vQxH0HVsEMl8ZtcObGWwY5NqtllhM3zbS1F7v18eK+UJ6tPp7FG8FyzQRwJavPbWTHDk7cdxKMaaTX439oNLInovv8ab+nAlItVyn5qIW4y0NBTkhHY7ENx+Wji9DhIn1zHDpT6a9/1sotAigoonyCM/uMV8DGh4cPokC8ZD4ykluC14TmWqwUGAQuGNyYkbJAaxK5oM+b045VIaZl8bCxvPOeBl9DZ0xFh4LTr7M7/7+h99nDNrgVZe0tQyhNOvP1wps3gc32kYh7sBjFxw/eAmv6cyzSrRTYOT3cFQCQpEpQdNdTlLVlt3nC6rRa3j0pdvLQMIQ3rEZDEyb4egbczIWq94Zw/KCmSXFKNoDQVjJr0aHj7a3hhlMTGy1Y4fWAM3YbVF6M9CcPUaOmOt4GTlF7IvWPJKn+MPWu6/Ezqp9KoOl/P8ikdFVzWYaWwPms3YmnX79GDBnC4LStDaKf99LiOiCFTWcH9JjIIkaqOgERWCYyXvUJPzr81QFUR/UAy8Jj6buOzvVqS6zk5FUINcLRz1FkHz6r2YoAwvHfENM1Qli25pewFTsB7eKF8MHPfVxM="
+  apt:
+    update: true
+
+before_install:
+  - sudo apt-get -y install libgdbm-dev libgdbm-compat-dev libgd-dev
 
 script:
   - build-wrapper-linux-x86-64 --out-dir bw-output make
