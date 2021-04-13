@@ -1,6 +1,6 @@
 # siod
 
-[![C CI](https://github.com/ludwhe/siod/actions/workflows/c.yml/badge.svg)](https://github.com/ludwhe/siod/actions/workflows/c.yml)
+[![C CI](https://github.com/ludwhe/siod/actions/workflows/c.yml/badge.svg)](https://github.com/ludwhe/siod/actions/workflows/c.yml) [![Build Status](https://travis-ci.org/ludwhe/siod.svg?branch=main)](https://travis-ci.org/ludwhe/siod) [![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=ludwhe_siod)](https://sonarcloud.io/dashboard?id=ludwhe_siod)
 
 This is version 3.4 of Siod, Scheme In One Defun.
 
