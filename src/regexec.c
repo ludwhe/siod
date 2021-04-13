@@ -162,12 +162,7 @@ static int nope = 0; /* for use in asserts; shuts lint up */
  * have been prototyped.
  */
 int __stdcall /* 0 success, REG_NOMATCH failure */
-regexec(preg, string, nmatch, pmatch, eflags)
-const regex_t *preg;
-const char *string;
-size_t nmatch;
-regmatch_t pmatch[];
-int eflags;
+regexec(const regex_t *preg, const char *string, size_t nmatch, regmatch_t pmatch[], int eflags)
 {
 	register struct re_guts *g = preg->re_g;
 #ifdef REDEBUG

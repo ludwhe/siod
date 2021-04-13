@@ -36,12 +36,11 @@ static long safe_atol8(const char *ptr, size_t len)
 {
 	long x = 0;
 	int c;
-	size_t j;
 
-	for (j = 0; j < len && (c = ptr[j]) && isdigit(c); ++j)
+	for (size_t j = 0; j < len && (c = ptr[j]) && isdigit(c); ++j)
 		x = x * 8 + c - '0';
 
-	return (x);
+	return x;
 }
 
 #define SAFE_ATOL8(_buff) (safe_atol8((_buff), sizeof(_buff)))
@@ -85,7 +84,7 @@ static struct tar_header *get_tar_header(LISP bytes)
 	if (n < sizeof(struct tar_header))
 		err("too small for tar header", bytes);
 
-	return (h);
+	return h;
 }
 
 LISP decode_tar_header(LISP bytes)
@@ -129,13 +128,12 @@ LISP decode_tar_header(LISP bytes)
 static unsigned long checksum(void *start,
                               void *end)
 {
-	unsigned char *ptr;
 	unsigned long sum = 0;
 
-	for (ptr = (unsigned char *)start; ptr < (unsigned char *)end; ++ptr)
+	for (unsigned char *ptr = (unsigned char *)start; ptr < (unsigned char *)end; ++ptr)
 		sum += *ptr;
 
-	return (sum);
+	return sum;
 }
 
 LISP checksum_tar_header(LISP bytes, LISP whole)

@@ -75,7 +75,7 @@ LISP lgetutent(void)
 	iflag = no_interrupt(1);
 	p = getutent();
 	no_interrupt(iflag);
-	return ((p) ? decode_utmp(p) : NIL);
+	return (p) ? decode_utmp(p) : NIL;
 }
 
 LISP lsetutent(void)

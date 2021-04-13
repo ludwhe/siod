@@ -74,7 +74,7 @@ static long tc_sock_stream = 0;
 
 LISP lgetproto(LISP lproto)
 {
-	long iflag, j;
+	long iflag;
 	LISP result = NIL;
 	struct protoent *p;
 	iflag = no_interrupt(1);
@@ -82,7 +82,7 @@ LISP lgetproto(LISP lproto)
 	if ((p = getprotobynumber(get_c_long(lproto)))) {
 		result = cons(rintern(p->p_name), NIL);
 
-		for (j = 0; p->p_aliases[j]; ++j)
+		for (long j = 0; p->p_aliases[j]; ++j)
 			result = cons(rintern(p->p_aliases[j]), result);
 	}
 
@@ -92,7 +92,7 @@ LISP lgetproto(LISP lproto)
 
 LISP lgetservice(LISP lport, LISP lproto)
 {
-	long iflag, j;
+	long iflag;
 	LISP result = NIL;
 	struct servent *p;
 	iflag = no_interrupt(1);
@@ -102,7 +102,7 @@ LISP lgetservice(LISP lport, LISP lproto)
 		result = cons(rintern(p->s_proto), NIL);
 		result = cons(rintern(p->s_name), result);
 
-		for (j = 0; p->s_aliases[j]; ++j)
+		for (long j = 0; p->s_aliases[j]; ++j)
 			result = cons(rintern(p->s_aliases[j]), result);
 	}
 
@@ -117,11 +117,14 @@ aflag means get things ready to do a listen
 followed by an accept. */
 {
 	long iflag;
-	int sd, status, save_errno, iv;
+	int sd;
+	int save_errno;
+	int iv;
 	short port;
 	LISP s;
 	char *hname;
-	struct sockaddr_in local, remote;
+	struct sockaddr_in local;
+	struct sockaddr_in remote;
 	struct hostent *hostinfo;
 	struct servent *servinfo;
 	struct sock_stream *ss;
@@ -140,16 +143,20 @@ followed by an accept. */
 	if FLONUMP(lhost) {
 		remote.sin_family = AF_INET;
 		remote.sin_addr.s_addr = htonl(get_c_long(lhost));
-	} else if ((remote.sin_addr.s_addr =
-	                inet_addr(hname = get_c_string(lhost))) != INADDR_NONE)
-		remote.sin_family = AF_INET;
-	else {
-		if (!(hostinfo = gethostbyname(hname)))
-			err("could not get hostinfo", lhost);
+	} else {
+		hname = get_c_string(lhost);
+		remote.sin_addr.s_addr = inet_addr(hname);
+		if (remote.sin_addr.s_addr != INADDR_NONE)
+			remote.sin_family = AF_INET;
+		else {
+			hostinfo = gethostbyname(hname);
+			if (!hostinfo)
+				err("could not get hostinfo", lhost);
 
-		remote.sin_family = hostinfo->h_addrtype;
-		memcpy(&remote.sin_addr.s_addr, hostinfo->h_addr_list[0],
-		       hostinfo->h_length);
+			remote.sin_family = hostinfo->h_addrtype;
+			memcpy(&remote.sin_addr.s_addr, hostinfo->h_addr_list[0],
+		    	hostinfo->h_length);
+		}
 	}
 
 	if ((sd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -161,13 +168,13 @@ followed by an accept. */
 	local.sin_addr.s_addr = 0;
 
 	if NULLP(aflag) {
-		if ((status = bind(sd, (struct sockaddr *)&local, sizeof(local)))) {
+		if (bind(sd, (struct sockaddr *)&local, sizeof(local))) {
 			save_errno = errno;
 			close(sd);
 			err("binding socket", llast_c_errmsg(save_errno));
 		}
 
-		if ((status = connect(sd, (struct sockaddr *)&remote, sizeof(remote)))) {
+		if (connect(sd, (struct sockaddr *)&remote, sizeof(remote))) {
 			save_errno = errno;
 			close(sd);
 			err("connect socket", llast_c_errmsg(save_errno));
@@ -181,13 +188,13 @@ followed by an accept. */
 			err("setsockopt SO_REUSEADDR", llast_c_errmsg(save_errno));
 		}
 
-		if ((status = bind(sd, (struct sockaddr *)&remote, sizeof(remote)))) {
+		if (bind(sd, (struct sockaddr *)&remote, sizeof(remote))) {
 			save_errno = errno;
 			close(sd);
 			err("binding socket", llast_c_errmsg(save_errno));
 		}
 
-		if ((status = listen(sd, get_c_long(aflag)))) {
+		if (listen(sd, get_c_long(aflag))) {
 			save_errno = errno;
 			close(sd);
 			err("listen socket", llast_c_errmsg(save_errno));
@@ -226,7 +233,7 @@ followed by an accept. */
 	s->storage_as.string.data = (char *)ss;
 	s->storage_as.string.dim = 1;
 	no_interrupt(iflag);
-	return (s);
+	return s;
 }
 
 LISP gethostbyaddr_l(LISP addr)
@@ -245,7 +252,9 @@ LISP gethostbyaddr_l(LISP addr)
 LISP decode_hostent(struct hostent *p)
 {
 	LISP name;
-	LISP aliases = NIL, addr_list = NIL, addr;
+	LISP aliases = NIL;
+	LISP addr_list = NIL;
+	LISP addr;
 	int j;
 	name = strcons(strlen(p->h_name), p->h_name);
 
@@ -283,19 +292,13 @@ LISP inet_addr_l(LISP str)
 	unsigned int x;
 	double g;
 
-	switch
-	TYPE(str) {
-	case tc_byte_array:
+	if (TYPE(str) == tc_byte_array){
 		if (str->storage_as.string.dim != 4)
 			err("address must be 4 bytes", str);
 
 		x = *((int *)str->storage_as.string.data);
-		break;
-
-	default:
+	} else
 		x = inet_addr(get_c_string(str));
-		break;
-	}
 
 	if (x != INADDR_NONE) {
 		x = ntohl(x);
@@ -310,9 +313,7 @@ LISP inet_ntoa_l(LISP str)
 	char buff[50];
 	unsigned int x;
 
-	switch
-	TYPE(str) {
-	case tc_byte_array:
+	if (TYPE(str) == tc_byte_array){
 		if (str->storage_as.string.dim != 4)
 			err("address must be 4 bytes", str);
 
@@ -321,16 +322,13 @@ LISP inet_ntoa_l(LISP str)
 		        str->storage_as.string.data[1],
 		        str->storage_as.string.data[2],
 		        str->storage_as.string.data[3]);
-		break;
-
-	default:
+	} else {
 		x = get_c_long(str);
 		sprintf(buff, "%u.%u.%u.%u",
 		        ((x & 0xFF000000) >> 24) & 0xFF,
 		        ((x & 0x00FF0000) >> 16) & 0xFF,
 		        ((x & 0x0000FF00) >> 8) & 0xFF,
 		        ((x & 0x000000FF) >> 0) & 0xFF);
-		break;
 	}
 
 	return (strcons(-1, buff));
@@ -366,7 +364,8 @@ static int select_read_tmo(int sd, double tmo)
 LISP s_accept(LISP as, LISP tmo)
 {
 	struct sock_stream *ss;
-	int iflag, sd;
+	long iflag;
+	int sd;
 	LISP s;
 	iflag = no_interrupt(1);
 	ss = get_ss(as, 1);
@@ -501,12 +500,13 @@ static void sent_zero(void)
 
 void ss_force(struct sock_stream *ss)
 {
-	int status, size, j;
+	ssize_t status;
+	int size;
 	size = ss->bufsiz - ((ss->ocnt > 0) ? ss->ocnt : 0);
 	ss->ocnt = ss->bufsiz;
 	ss->optr = ss->obase;
 
-	for (j = 0; size > 0; j += status, size -= status)
+	for (int j = 0; size > 0; j += status, size -= status)
 		if ((status = send(ss->sd, &ss->obase[j], size, 0)) < 0)
 			err("send", llast_c_errmsg(-1));
 		else if (status == 0)
@@ -516,15 +516,16 @@ void ss_force(struct sock_stream *ss)
 int ss_flsbuf(int c, struct sock_stream *ss)
 {
 	ss_force(ss);
-	--(ss)->ocnt;
-	*(ss)->optr++ = c;
-	return (c);
+	--ss->ocnt;
+	*ss->optr++ = c;
+	return c;
 }
 
 LISP s_getc(LISP s)
 {
 	struct sock_stream *ss = get_ss(s, 1);
-	int c, iflag;
+	int c;
+	long iflag;
 	iflag = no_interrupt(1);
 	c = SS_GETC(ss);
 	no_interrupt(iflag);
@@ -539,7 +540,8 @@ LISP s_icnt(LISP s)
 LISP s_putc(LISP lc, LISP s)
 {
 	struct sock_stream *ss = get_ss(s, 1);
-	int c = get_c_long(lc), iflag;
+	int c = get_c_long(lc);
+	long iflag;
 	iflag = no_interrupt(1);
 	SS_PUTC(c, ss);
 	no_interrupt(iflag);
@@ -550,7 +552,8 @@ LISP s_puts(LISP str, LISP s)
 {
 	struct sock_stream *ss = get_ss(s, 1);
 	char *data = get_c_string(str);
-	int c, iflag;
+	int c;
+	long iflag;
 	iflag = no_interrupt(1);
 
 	while ((c = *data++))
@@ -565,7 +568,9 @@ LISP s_write(LISP string, LISP file)
 	long flag;
 	char *data;
 	struct sock_stream *ss = get_ss(file, 1);
-	long j, dim, len, status;
+	long dim;
+	long len;
+	long status;
 	data = get_c_string_dim(CONSP(string) ? car(string) : string, &dim);
 	len = CONSP(string) ? get_c_long(cadr(string)) : dim;
 
@@ -580,12 +585,12 @@ LISP s_write(LISP string, LISP file)
 	if (len < ss->bufsiz)
 
 		/* might as well copy the data to the large buffer */
-		for (j = 0; j < len; ++j)
+		for (long j = 0; j < len; ++j)
 			SS_PUTC(data[j], ss);
 	else {
 		ss_force(ss);
 
-		for (j = 0; len > 0; j += status, len -= status)
+		for (long j = 0; len > 0; j += status, len -= status)
 			if ((status = send(ss->sd, &data[j], len, 0)) < 0)
 				err("send", llast_c_errmsg(-1));
 			else if (status == 0)
@@ -599,10 +604,10 @@ LISP s_write(LISP string, LISP file)
 LISP s_drain(LISP s)
 {
 	struct sock_stream *ss = get_ss(s, 1);
-	int c, iflag;
+	long iflag;
 	iflag = no_interrupt(1);
 
-	while ((c = SS_GETC(ss)) != EOF)
+	while (SS_GETC(ss) != EOF)
 		;
 
 	no_interrupt(iflag);
@@ -612,7 +617,9 @@ LISP s_drain(LISP s)
 LISP s_gets(LISP str, LISP s)
 {
 	struct sock_stream *ss;
-	int c, iflag, j;
+	int c;
+	int iflag;
+	int j;
 	char buffer[4096];
 
 	if NULLP(s) {
@@ -631,12 +638,9 @@ LISP s_gets(LISP str, LISP s)
 				no_interrupt(iflag);
 				return (NIL);
 			}
-
-			break;
 		} else if (c == '\n') {
 			buffer[j] = c;
 			++j;
-			break;
 		} else
 			buffer[j] = c;
 	}
@@ -647,7 +651,11 @@ LISP s_gets(LISP str, LISP s)
 
 LISP s_read(LISP size, LISP file)
 {
-	long flag, n, ret, m, maxlen;
+	long flag;
+	long n;
+	long ret;
+	long m;
+	long maxlen;
 	char *buffer;
 	LISP s;
 	struct sock_stream *ss;
@@ -677,7 +685,7 @@ LISP s_read(LISP size, LISP file)
 
 	default:
 		n = get_c_long(size);
-		buffer = (char *)must_malloc(n + 1);
+		buffer = must_malloc(n + 1);
 		buffer[n] = 0;
 		m = 1;
 	}
@@ -711,7 +719,7 @@ LISP s_read(LISP size, LISP file)
 		}
 
 		no_interrupt(flag);
-		return (s);
+		return s;
 	}
 
 	no_interrupt(flag);
@@ -747,7 +755,7 @@ void ss_prin1(LISP s, struct gen_printio *f)
 	unsigned char *p;
 	struct sock_stream *ss;
 	struct sockaddr_in a;
-	size_t len, j;
+	size_t len;
 	ss = get_ss(s, 0);
 
 	if (s->storage_as.string.dim) {
@@ -755,7 +763,7 @@ void ss_prin1(LISP s, struct gen_printio *f)
 		gput_st(f, buff);
 		p = ((unsigned char *)&a.sin_addr.s_addr);
 
-		for (j = 0; j < 2; ++j) {
+		for (size_t j = 0; j < 2; ++j) {
 			len = sizeof(a);
 
 			if (((j == 0)
@@ -795,12 +803,12 @@ LISP l_getname(int (*fcn)(int fn, struct sockaddr *, size_t *), char *msg, LISP 
 
 LISP l_getsockname(LISP s)
 {
-	return (l_getname(getsockname, "getsockname", s));
+	return (l_getname(&getsockname, "getsockname", s));
 }
 
 LISP l_getpeername(LISP s)
 {
-	return (l_getname(getpeername, "getpeername", s));
+	return (l_getname(&getpeername, "getpeername", s));
 }
 
 #else

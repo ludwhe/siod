@@ -46,8 +46,10 @@ struct tc_regex *get_tc_regex(LISP ptr)
 
 LISP regcomp_l(LISP pattern, LISP flags)
 {
-	long iflag, iflags;
-	char *str, errbuff[1024];
+	long iflag;
+	long iflags;
+	char *str;
+	char errbuff[1024];
 	int error;
 	LISP result;
 	struct tc_regex *h;
@@ -73,13 +75,13 @@ LISP regcomp_l(LISP pattern, LISP flags)
 
 	if (iflags & REG_NOSUB) {
 		no_interrupt(iflag);
-		return (result);
+		return result;
 	}
 
 	h->nmatch = h->r->re_nsub + 1;
 	h->m = (regmatch_t *)must_malloc(sizeof(regmatch_t) * h->nmatch);
 	no_interrupt(iflag);
-	return (result);
+	return result;
 }
 
 LISP regerror_l(LISP code, LISP ptr)

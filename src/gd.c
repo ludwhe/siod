@@ -204,7 +204,7 @@ void gdImageGifmem(gdImagePtr im, char *buffer, size_t *len)
 	char tmpname[32];
 	struct stat sb;
 	strcpy(tmpname, "/tmp/gd.XXXXXX");
-	mktemp(tmpname);
+	mkstemp(tmpname);
 
 	if ((f = fopen(tmpname, "wb+")) != NULL) {
 		gdImageGif(im, f);

@@ -12,7 +12,9 @@ However, some of these should be moved to siod.h
 */
 
 extern char *tkbuffer;
-extern LISP heap, heap_end, heap_org;
+extern LISP heap;
+extern LISP heap_end;
+extern LISP heap_org;
 extern LISP sym_t;
 
 extern long siod_verbose_level;

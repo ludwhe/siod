@@ -147,10 +147,7 @@ static struct rerr {
  = extern size_t regerror(int, const regex_t *, char *, size_t);
  */
 /* ARGSUSED */
-size_t __stdcall regerror(ierrcode, preg, errbuf, errbuf_size) int ierrcode;
-const regex_t *preg;
-char *errbuf;
-size_t errbuf_size;
+size_t __stdcall regerror(int ierrcode, const regex_t *preg, char *errbuf, size_t errbuf_size)
 {
 	register struct rerr *r;
 	register size_t len;
@@ -188,7 +185,7 @@ size_t errbuf_size;
 		}
 	}
 
-	return (len);
+	return len;
 }
 
 /*
@@ -196,9 +193,7 @@ size_t errbuf_size;
  == static char *regatoi(const regex_t *preg, char *localbuf);
  */
 static char *
-regatoi(preg, localbuf)
-const regex_t *preg;
-char *localbuf;
+regatoi(const regex_t *preg, char *localbuf)
 {
 	register struct rerr *r;
 
@@ -210,5 +205,5 @@ char *localbuf;
 		return ("0");
 
 	sprintf(localbuf, "%d", r->code);
-	return (localbuf);
+	return localbuf;
 }

@@ -24,7 +24,7 @@ DBM *get_DBM(LISP ptr, int errflg)
 		err("not a DBM", ptr);
 
 	if ((p = (DBM *)ptr->storage_as.string.data))
-		return (p);
+		return p;
 	else if (errflg)
 		err("DBM closed", ptr);
 
@@ -51,7 +51,7 @@ LISP ldbm_open(LISP lfname, LISP lflags, LISP lmode)
 	result->type = tc_dbm;
 	result->storage_as.string.data = (char *)db;
 	no_interrupt(iflag);
-	return (result);
+	return result;
 }
 
 LISP ldbm_close(LISP ldbm)
@@ -75,7 +75,7 @@ static LISP cons_from_datum(datum *dat)
 	else {
 		result = arcons(tc_byte_array, dat->dsize, 0);
 		memcpy(result->storage_as.string.data, dat->dptr, dat->dsize);
-		return (result);
+		return result;
 	}
 }
 
@@ -85,7 +85,9 @@ LISP ldbm_fetch(LISP ldbm, LISP lkey)
 	DBM *db;
 	char *key;
 	long keysize;
-	datum dat1, dat2;
+	datum dat1;
+	datum dat2;
+
 	db = get_DBM(ldbm, 1);
 	key = get_c_string_dim(lkey, &keysize);
 	dat1.dptr = key;
@@ -143,11 +145,15 @@ LISP ldbm_delete(LISP ldbm, LISP lkey)
 
 LISP ldbm_store(LISP ldb, LISP lkey, LISP ldata, LISP lflags)
 {
-	long iflag, status;
+	long iflag;
+	long status;
 	DBM *db;
-	char *key, *data;
-	long keysize, datasize;
-	datum dat1, dat2;
+	char *key;
+	char *data;
+	long keysize;
+	long datasize;
+	datum dat1;
+	datum dat2;
 	int flags;
 	db = get_DBM(ldb, 1);
 	key = get_c_string_dim(lkey, &keysize);

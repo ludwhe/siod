@@ -72,7 +72,8 @@ LISP ltrace_fcn_name(LISP body)
 
 LISP ltrace_1(LISP fcn_name, LISP env)
 {
-	LISP fcn, code;
+	LISP fcn;
+	LISP code;
 	fcn = leval(fcn_name, env);
 
 	if (TYPE(fcn) == tc_closure) {
@@ -94,9 +95,7 @@ LISP ltrace_1(LISP fcn_name, LISP env)
 
 LISP ltrace(LISP fcn_names, LISP env)
 {
-	LISP l;
-
-	for (l = fcn_names; NNULLP(l); l = cdr(l))
+	for (LISP l = fcn_names; NNULLP(l); l = cdr(l))
 		ltrace_1(car(l), env);
 
 	return (NIL);
@@ -116,9 +115,7 @@ LISP luntrace_1(LISP fcn)
 
 LISP luntrace(LISP fcns)
 {
-	LISP l;
-
-	for (l = fcns; NNULLP(l); l = cdr(l))
+	for (LISP l = fcns; NNULLP(l); l = cdr(l))
 		luntrace_1(car(l));
 
 	return (NIL);
@@ -147,13 +144,17 @@ void ct_prin1(LISP ptr, struct gen_printio *f)
 
 LISP ct_eval(LISP ct, LISP *px, LISP *penv)
 {
-	LISP fcn_name, args, env, result, l;
+	LISP fcn_name;
+	LISP args;
+	LISP env;
+	LISP result;
+
 	fcn_name = ltrace_fcn_name(cdr(ct->storage_as.closure.code));
 	args = leval_args(CDR(*px), *penv);
 	fput_st(stdout, "->");
 	lprin1f(fcn_name, stdout);
 
-	for (l = args; NNULLP(l); l = cdr(l)) {
+	for (LISP l = args; NNULLP(l); l = cdr(l)) {
 		fput_st(stdout, " ");
 		lprin1f(car(l), stdout);
 	}
