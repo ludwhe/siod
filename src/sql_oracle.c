@@ -185,7 +185,7 @@ static char *errmsg(long code)
 	if (ptr = strchr(errmsg_str0, '\n'))
 		* ptr = 0;
 
-	return (errmsg_str0);
+	return errmsg_str0;
 }
 
 char *cda_errmsg(struct cda_def *cur)
@@ -224,7 +224,7 @@ static LISP extcons(long length, long typec)
 	s->storage_as.string.dim = typec;
 	memset(s->storage_as.string.data, 0, length);
 	no_interrupt(flag);
-	return (s);
+	return s;
 }
 
 struct cda_def *allocate_cursor(void)
@@ -241,7 +241,7 @@ struct cda_def *allocate_cursor(void)
 	}
 
 	++ncursors;
-	return (cur);
+	return cur;
 }
 
 void free_cursor(struct cda_def *cur)
@@ -280,7 +280,7 @@ LISP l_orlon(LISP username, LISP password)
 			orlon_ok = 1;
 	}
 
-	return (NIL);
+	return NIL;
 }
 
 LISP l_ologof(void)
@@ -298,7 +298,7 @@ LISP l_ologof(void)
 	}
 
 	no_interrupt(flag);
-	return (NIL);
+	return NIL;
 }
 
 void freeloc(void **x)
@@ -483,7 +483,7 @@ LISP oracle_sql_prepare(LISP str)
 	c->nselects = -1;
 	prepare_statement(get_c_string(str), c);
 	no_interrupt(iflag);
-	return (result);
+	return result;
 }
 
 static struct cstatement *get_cstatement(LISP st)
@@ -499,7 +499,7 @@ static struct cstatement *get_cstatement(LISP st)
 	if (!c->cursor)
 		err("statement has been released", st);
 
-	return (c);
+	return c;
 }
 
 LISP oracle_sql_release(LISP s)
@@ -508,7 +508,7 @@ LISP oracle_sql_release(LISP s)
 	iflag = no_interrupt(1);
 	release_statement(get_cstatement(s));
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 LISP oracle_execute(LISP s)
@@ -522,7 +522,7 @@ LISP oracle_execute(LISP s)
 		ferr(s, "oexec: %s", cda_errmsg(c->cursor));
 
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 LISP oracle_nselects(LISP s)
@@ -551,7 +551,7 @@ char *oracle_date_to_string(struct oracle_date *d)
 	        d->century - 100, d->year - 100,
 	        d->month, d->day,
 	        d->hour - 1, d->minute - 1, d->second - 1);
-	return (buff);
+	return buff;
 }
 
 LISP oracle_select_column_value(LISP s, LISP n)
@@ -569,7 +569,7 @@ LISP oracle_select_column_value(LISP s, LISP n)
 	sel = &c->selects[j];
 
 	if (sel->fetchlenstat < 0)
-		return (NIL);
+		return NIL;
 
 	switch (sel->etype) {
 	case ORACLE_ETYPE_FLOAT:
@@ -597,14 +597,14 @@ LISP oracle_fetch(LISP s)
 	if (ofetch(c->cursor)) {
 		if (c->cursor->rc == ORA_NO_DATA_FOUND) {
 			no_interrupt(iflag);
-			return (NIL);
+			return NIL;
 		}
 
 		ferr(s, "fetch: %s", cda_errmsg(c->cursor));
 	}
 
 	no_interrupt(iflag);
-	return (s);
+	return s;
 }
 
 static void extra_gc_free(LISP ptr)

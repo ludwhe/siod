@@ -40,7 +40,7 @@ static int interrupt_key_down(void)
 		if ((l->evtQWhat == keyDown) &&
 		    ((char)l->evtQMessage == '.') &&
 		    (l->evtQModifiers & cmdKey))
-			return (1);
+			return 1;
 
-	return (0);
+	return 0;
 }

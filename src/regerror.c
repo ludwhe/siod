@@ -202,7 +202,7 @@ regatoi(const regex_t *preg, char *localbuf)
 			break;
 
 	if (r->code == 0)
-		return ("0");
+		return "0";
 
 	sprintf(localbuf, "%d", r->code);
 	return localbuf;

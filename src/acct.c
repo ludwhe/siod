@@ -84,7 +84,7 @@ LISP lsetutent(void)
 	iflag = no_interrupt(1);
 	setutent();
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 LISP lendutent(void)
@@ -93,7 +93,7 @@ LISP lendutent(void)
 	iflag = no_interrupt(1);
 	endutent();
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 LISP lutmpname(LISP name)
@@ -102,7 +102,7 @@ LISP lutmpname(LISP name)
 	iflag = no_interrupt(1);
 	utmpname(get_c_string(name));
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 #if defined(__osf__)

@@ -244,7 +244,7 @@ LISP gethostbyaddr_l(LISP addr)
 	x = htonl(x);
 
 	if (!(hostinfo = gethostbyaddr((char *)&x, sizeof(x), AF_INET)))
-		return (NIL);
+		return NIL;
 
 	return (strcons(strlen(hostinfo->h_name), hostinfo->h_name));
 }
@@ -282,7 +282,7 @@ LISP gethostbyname_l(LISP name)
 	struct hostent *hostinfo;
 
 	if (!(hostinfo = gethostbyname(get_c_string(name))))
-		return (NIL);
+		return NIL;
 
 	return (decode_hostent(hostinfo));
 }
@@ -305,7 +305,7 @@ LISP inet_addr_l(LISP str)
 		g = x;
 		return (flocons(g));
 	} else
-		return (NIL);
+		return NIL;
 }
 
 LISP inet_ntoa_l(LISP str)
@@ -348,16 +348,16 @@ static int select_read_tmo(int sd, double tmo)
 	retval = select(FD_SETSIZE, &readfds, NULL, NULL, &timeout);
 
 	if (retval == 0)
-		return (1);
+		return 1;
 	else if (retval < 0)
 		err("select", llast_c_errmsg(-1));
 
-	return (0);
+	return 0;
 }
 #else
 static int select_read_tmo(int sd, double tmo)
 {
-	return (0);
+	return 0;
 }
 #endif
 
@@ -372,7 +372,7 @@ LISP s_accept(LISP as, LISP tmo)
 
 	if (NNULLP(tmo) && select_read_tmo(ss->sd, get_c_double(tmo))) {
 		no_interrupt(iflag);
-		return (NULL);
+		return NULL;
 	}
 
 	if ((sd = accept(ss->sd, NULL, NULL)) < 0)
@@ -410,7 +410,7 @@ LISP s_accept(LISP as, LISP tmo)
 	s->storage_as.string.data = (char *)ss;
 	s->storage_as.string.dim = 1;
 	no_interrupt(iflag);
-	return (s);
+	return s;
 }
 
 struct sock_stream *get_ss(LISP s, long openchk)
@@ -441,7 +441,7 @@ LISP s_close(LISP s)
 		err("socket close", llast_c_errmsg(-1));
 
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 LISP s_shutdown(LISP s, LISP flag)
@@ -466,7 +466,7 @@ LISP s_shutdown(LISP s, LISP flag)
 		err("socket shutdown", llast_c_errmsg(-1));
 
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 int ss_filbuf(struct sock_stream *ss)
@@ -479,12 +479,12 @@ int ss_filbuf(struct sock_stream *ss)
 		ss->iptr = ss->ibase;
 		ss->icnt = status;
 		--ss->icnt;
-		return (*ss->iptr++);
+		return *ss->iptr++;
 	} else if (status == 0)
-		return (EOF);
+		return EOF;
 	else {
 		err("recv", llast_c_errmsg(-1));
-		return (EOF);
+		return EOF;
 	}
 }
 
@@ -545,7 +545,7 @@ LISP s_putc(LISP lc, LISP s)
 	iflag = no_interrupt(1);
 	SS_PUTC(c, ss);
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 LISP s_puts(LISP str, LISP s)
@@ -560,7 +560,7 @@ LISP s_puts(LISP str, LISP s)
 		SS_PUTC(c, ss);
 
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 LISP s_write(LISP string, LISP file)
@@ -575,7 +575,7 @@ LISP s_write(LISP string, LISP file)
 	len = CONSP(string) ? get_c_long(cadr(string)) : dim;
 
 	if (len <= 0)
-		return (NIL);
+		return NIL;
 
 	if (len > dim)
 		err("write length too long", string);
@@ -598,7 +598,7 @@ LISP s_write(LISP string, LISP file)
 	}
 
 	no_interrupt(flag);
-	return (NIL);
+	return NIL;
 }
 
 LISP s_drain(LISP s)
@@ -611,7 +611,7 @@ LISP s_drain(LISP s)
 		;
 
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 LISP s_gets(LISP str, LISP s)
@@ -636,7 +636,7 @@ LISP s_gets(LISP str, LISP s)
 		if (c == EOF) {
 			if (j == 0) {
 				no_interrupt(iflag);
-				return (NIL);
+				return NIL;
 			}
 		} else if (c == '\n') {
 			buffer[j] = c;
@@ -703,7 +703,7 @@ LISP s_read(LISP size, LISP file)
 			free(buffer);
 
 		no_interrupt(flag);
-		return (NIL);
+		return NIL;
 	}
 
 	if (m) {
@@ -733,7 +733,7 @@ LISP s_force_output(LISP s)
 	iflag = no_interrupt(1);
 	ss_force(ss);
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 void ss_gc_free(LISP s)
@@ -861,7 +861,7 @@ int ss_getc_fcn(struct sock_stream *ss)
 	iflag = no_interrupt(1);
 	c = SS_GETC(ss);
 	no_interrupt(iflag);
-	return (c);
+	return c;
 }
 
 void ss_ungetc_fcn(int c, struct sock_stream *ss)

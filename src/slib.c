@@ -92,7 +92,7 @@ static void init_slib_version(void)
 
 char *__stdcall siod_version(void)
 {
-	return ("3.6.2 12-MAY-07");
+	return "3.6.2 12-MAY-07";
 }
 
 long nheaps = 2;
@@ -320,7 +320,7 @@ long no_interrupt(long n)
 		err_ctrl_c();
 	}
 
-	return (x);
+	return x;
 }
 
 void handle_sigfpe(int sig SIG_restargs)
@@ -362,7 +362,7 @@ void err_ctrl_c(void)
 
 LISP get_eof_val(void)
 {
-	return (eof_val);
+	return eof_val;
 }
 
 long repl_driver(long want_sigint, long want_init, struct repl_hooks *h)
@@ -384,7 +384,7 @@ long repl_driver(long want_sigint, long want_init, struct repl_hooks *h)
 		signal(SIGFPE, osigfpe);
 		stack_start_ptr = NULL;
 		stack_limit_ptr = NULL;
-		return (2);
+		return 2;
 	}
 
 	if (want_sigint)
@@ -421,7 +421,7 @@ long repl_driver(long want_sigint, long want_init, struct repl_hooks *h)
 	signal(SIGFPE, osigfpe);
 	stack_start_ptr = NULL;
 	stack_limit_ptr = NULL;
-	return (rv);
+	return rv;
 }
 
 static void ignore_puts(char *st)
@@ -485,7 +485,7 @@ static int rcsp_puts(char *from, void *cb)
 	if (cplen != fromlen)
 		err("repl_c_string_print overflow", NIL);
 
-	return (1);
+	return 1;
 }
 
 static void repl_c_string_print(LISP x)
@@ -531,11 +531,11 @@ long __stdcall repl_c_string(char *str,
 	retval = repl_driver(want_sigint, want_init, &h);
 
 	if (retval != 0)
-		return (retval);
+		return retval;
 	else if (repl_c_string_flag == 1)
-		return (0);
+		return 0;
 	else
-		return (2);
+		return 2;
 }
 
 #ifdef unix
@@ -587,7 +587,7 @@ double myrealtime(void)
 	if (!getclock(TIMEOFDAY, &x))
 		return (x.tv_sec + (((double)x.tv_nsec) * 1.0e-9));
 	else
-		return (0.0);
+		return 0.0;
 }
 #endif
 
@@ -604,9 +604,9 @@ double myrealtime(void)
 		if (c == 0.0)
 			c = pow((double)2, (double)31) * 100.0e-9;
 
-		return (x[0] * 100.0e-9 + x[1] * c);
+		return x[0] * 100.0e-9 + x[1] * c;
 	} else
-		return (0.0);
+		return 0.0;
 }
 
 #endif
@@ -622,7 +622,7 @@ double myrealtime(void)
 	struct timeval x;
 
 	if (gettimeofday(&x, NULL))
-		return (0.0);
+		return 0.0;
 
 	return (((double)x.tv_sec) + ((double)x.tv_usec) * 1.0E-6);
 }
@@ -679,7 +679,7 @@ void fput_st(FILE *f, char *st)
 int fputs_fcn(char *st, void *cb)
 {
 	fput_st((FILE *)cb, st);
-	return (1);
+	return 1;
 }
 
 void put_st(char *st)
@@ -767,7 +767,7 @@ long repl(struct repl_hooks *h)
 			(*h->repl_print)(x);
 	}
 
-	return (0);
+	return 0;
 }
 
 void set_fatal_exit_hook(void (*fcn)(void))
@@ -839,7 +839,7 @@ LISP err(const char *message, LISP x)
 	else
 		exit(10);
 
-	return (NIL);
+	return NIL;
 }
 
 LISP errswitch(void)
@@ -864,7 +864,7 @@ LISP stack_limit(LISP amount, LISP silent)
 		sprintf(tkbuffer, "Stack_size = %ld bytes, [%p,%p]\n",
 		        stack_size, stack_start_ptr, stack_limit_ptr);
 		put_st(tkbuffer);
-		return (NIL);
+		return NIL;
 	} else
 		return (flocons(stack_size));
 }
@@ -874,9 +874,9 @@ char *try_get_c_string(LISP x)
 	if TYPEP(x, tc_symbol)
 		return (PNAME(x));
 	else if TYPEP(x, tc_string)
-		return (x->storage_as.string.data);
+		return x->storage_as.string.data;
 	else
-		return (NULL);
+		return NULL;
 }
 
 char *get_c_string(LISP x)
@@ -884,11 +884,11 @@ char *get_c_string(LISP x)
 	if TYPEP(x, tc_symbol)
 		return (PNAME(x));
 	else if TYPEP(x, tc_string)
-		return (x->storage_as.string.data);
+		return x->storage_as.string.data;
 	else
 		err("not a symbol or string", x);
 
-	return (NULL);
+	return NULL;
 }
 
 char *get_c_string_dim(LISP x, long *len)
@@ -901,7 +901,7 @@ char *get_c_string_dim(LISP x, long *len)
 	case tc_string:
 	case tc_byte_array:
 		*len = x->storage_as.string.dim;
-		return (x->storage_as.string.data);
+		return x->storage_as.string.data;
 
 	case tc_long_array:
 		*len = x->storage_as.long_array.dim * sizeof(long);
@@ -909,7 +909,7 @@ char *get_c_string_dim(LISP x, long *len)
 
 	default:
 		err("not a symbol or string", x);
-		return (NULL);
+		return NULL;
 	}
 }
 
@@ -920,7 +920,7 @@ LISP lerr(LISP message, LISP x)
 	else
 		err(get_c_string(message), x);
 
-	return (NIL);
+	return NIL;
 }
 
 void gc_fatal_error(void)
@@ -932,7 +932,7 @@ LISP newcell(long type)
 {
 	LISP z;
 	NEWCELL(z, type);
-	return (z);
+	return z;
 }
 
 LISP cons(LISP x, LISP y)
@@ -941,15 +941,15 @@ LISP cons(LISP x, LISP y)
 	NEWCELL(z, tc_cons);
 	CAR(z) = x;
 	CDR(z) = y;
-	return (z);
+	return z;
 }
 
 LISP consp(LISP x)
 {
 	if CONSP(x)
-		return (sym_t);
+		return sym_t;
 	else
-		return (NIL);
+		return NIL;
 }
 
 LISP car(LISP x)
@@ -957,7 +957,7 @@ LISP car(LISP x)
 	switch
 	TYPE(x) {
 	case tc_nil:
-		return (NIL);
+		return NIL;
 
 	case tc_cons:
 		return (CAR(x));
@@ -972,7 +972,7 @@ LISP cdr(LISP x)
 	switch
 	TYPE(x) {
 	case tc_nil:
-		return (NIL);
+		return NIL;
 
 	case tc_cons:
 		return (CDR(x));
@@ -1007,19 +1007,19 @@ LISP flocons(double x)
 	    ((x - (n = (long)x)) == 0) &&
 	    (x >= 0) &&
 	    (n < inums_dim))
-		return (inums[n]);
+		return inums[n];
 
 	NEWCELL(z, tc_flonum);
 	FLONM(z) = x;
-	return (z);
+	return z;
 }
 
 LISP numberp(LISP x)
 {
 	if FLONUMP(x)
-		return (sym_t);
+		return sym_t;
 	else
-		return (NIL);
+		return NIL;
 }
 
 LISP plus(LISP x, LISP y)
@@ -1092,7 +1092,7 @@ LISP lllabs(LISP x)
 	if (v < 0)
 		return (flocons(-v));
 	else
-		return (x);
+		return x;
 }
 
 LISP lsqrt(LISP x)
@@ -1112,9 +1112,9 @@ LISP greaterp(LISP x, LISP y)
 		err("wta(2nd) to greaterp", y);
 
 	if (FLONM(x) > FLONM(y))
-		return (sym_t);
+		return sym_t;
 
-	return (NIL);
+	return NIL;
 }
 
 LISP lessp(LISP x, LISP y)
@@ -1126,9 +1126,9 @@ LISP lessp(LISP x, LISP y)
 		err("wta(2nd) to lessp", y);
 
 	if (FLONM(x) < FLONM(y))
-		return (sym_t);
+		return sym_t;
 
-	return (NIL);
+	return NIL;
 }
 
 LISP greaterEp(LISP x, LISP y)
@@ -1140,9 +1140,9 @@ LISP greaterEp(LISP x, LISP y)
 		err("wta(2nd) to greaterp", y);
 
 	if (FLONM(x) >= FLONM(y))
-		return (sym_t);
+		return sym_t;
 
-	return (NIL);
+	return NIL;
 }
 
 LISP lessEp(LISP x, LISP y)
@@ -1154,15 +1154,15 @@ LISP lessEp(LISP x, LISP y)
 		err("wta(2nd) to lessp", y);
 
 	if (FLONM(x) <= FLONM(y))
-		return (sym_t);
+		return sym_t;
 
-	return (NIL);
+	return NIL;
 }
 
 LISP lmax(LISP x, LISP y)
 {
 	if NULLP(y)
-		return (x);
+		return x;
 
 	if NFLONUMP(x)
 		err("wta(1st) to max", x);
@@ -1176,7 +1176,7 @@ LISP lmax(LISP x, LISP y)
 LISP lmin(LISP x, LISP y)
 {
 	if NULLP(y)
-		return (x);
+		return x;
 
 	if NFLONUMP(x)
 		err("wta(1st) to min", x);
@@ -1190,23 +1190,23 @@ LISP lmin(LISP x, LISP y)
 LISP eq(LISP x, LISP y)
 {
 	if EQ(x, y)
-		return (sym_t);
+		return sym_t;
 	else
-		return (NIL);
+		return NIL;
 }
 
 LISP eql(LISP x, LISP y)
 {
 	if EQ(x, y)
-		return (sym_t);
+		return sym_t;
 	else if NFLONUMP(x)
-		return (NIL);
+		return NIL;
 	else if NFLONUMP(y)
-		return (NIL);
+		return NIL;
 	else if (FLONM(x) == FLONM(y))
-		return (sym_t);
+		return sym_t;
 
-	return (NIL);
+	return NIL;
 }
 
 LISP symcons(char *pname, LISP vcell)
@@ -1215,15 +1215,15 @@ LISP symcons(char *pname, LISP vcell)
 	NEWCELL(z, tc_symbol);
 	PNAME(z) = pname;
 	VCELL(z) = vcell;
-	return (z);
+	return z;
 }
 
 LISP symbolp(LISP x)
 {
 	if SYMBOLP(x)
-		return (sym_t);
+		return sym_t;
 	else
-		return (NIL);
+		return NIL;
 }
 
 LISP err_ubv(LISP v)
@@ -1241,12 +1241,12 @@ LISP symbol_boundp(LISP x, LISP env)
 	tmp = envlookup(x, env);
 
 	if NNULLP(tmp)
-		return (sym_t);
+		return sym_t;
 
 	if EQ(VCELL(x), unbound_marker)
-		return (NIL);
+		return NIL;
 	else
-		return (sym_t);
+		return sym_t;
 }
 
 LISP symbol_value(LISP x, LISP env)
@@ -1266,7 +1266,7 @@ LISP symbol_value(LISP x, LISP env)
 	if EQ(tmp, unbound_marker)
 		err_ubv(x);
 
-	return (tmp);
+	return tmp;
 }
 
 char *must_malloc(unsigned long size)
@@ -1277,7 +1277,7 @@ char *must_malloc(unsigned long size)
 	if (tmp == (char *)NULL)
 		err("failed to allocate storage from system", NIL);
 
-	return (tmp);
+	return tmp;
 }
 
 LISP gen_intern(char *name, long copyp)
@@ -1318,7 +1318,7 @@ LISP gen_intern(char *name, long copyp)
 
 	oblistvar = cons(sym, oblistvar);
 	no_interrupt(flag);
-	return (sym);
+	return sym;
 }
 
 LISP cintern(char *name)
@@ -1342,7 +1342,7 @@ LISP subrcons(long type, char *name, SUBR_FUNC f)
 	NEWCELL(z, type);
 	(*z).storage_as.subr.name = name;
 	(*z).storage_as.subr0.f = f;
-	return (z);
+	return z;
 }
 
 LISP closure(LISP env, LISP code)
@@ -1351,7 +1351,7 @@ LISP closure(LISP env, LISP code)
 	NEWCELL(z, tc_closure);
 	(*z).storage_as.closure.env = env;
 	(*z).storage_as.closure.code = code;
-	return (z);
+	return z;
 }
 
 void gc_protect(LISP *location)
@@ -1537,13 +1537,13 @@ LISP assq(LISP x, LISP alist)
 		tmp = CAR(l);
 
 		if (CONSP(tmp) && EQ(CAR(tmp), x))
-			return (tmp);
+			return tmp;
 
 		INTERRUPT_CHECK();
 	}
 
 	if EQ(l, NIL)
-		return (NIL);
+		return NIL;
 
 	return (err("improper list to assq", alist));
 }
@@ -1559,11 +1559,11 @@ struct user_type_hooks *get_user_type_hooks(long type)
 	}
 
 	if ((type >= 0) && (type < tc_table_dim))
-		return (&user_types[type]);
+		return &user_types[type];
 	else
 		err("type number out of range", NIL);
 
-	return (NULL);
+	return NULL;
 }
 
 long allocate_user_tc(void)
@@ -1574,7 +1574,7 @@ long allocate_user_tc(void)
 		err("ran out of user type codes", NIL);
 
 	++user_tc_next;
-	return (x);
+	return x;
 }
 
 void set_gc_hooks(long type,
@@ -1599,7 +1599,7 @@ LISP gc_relocate(LISP x)
 	struct user_type_hooks *p;
 
 	if EQ(x, NIL)
-		return (NIL);
+		return NIL;
 
 	if ((*x).gc_mark == 1)
 		return (CAR(x));
@@ -1643,7 +1643,7 @@ LISP gc_relocate(LISP x)
 
 	(*x).gc_mark = 1;
 	CAR(x) = nw;
-	return (nw);
+	return nw;
 }
 
 LISP get_newspace(void)
@@ -1658,7 +1658,7 @@ LISP get_newspace(void)
 	heap = newspace;
 	heap_org = heap;
 	heap_end = heap + heap_size;
-	return (newspace);
+	return newspace;
 }
 
 void scan_newspace(LISP newspace)
@@ -1786,10 +1786,10 @@ LISP allocate_aheap(void)
 
 			freelist = heaps[j];
 			flag = no_interrupt(flag);
-			return (sym_t);
+			return sym_t;
 		}
 
-	return (NIL);
+	return NIL;
 }
 
 void gc_for_newcell(void)
@@ -1966,9 +1966,9 @@ long looks_pointerp(LISP p)
 		    (p < (h + heap_size)) &&
 		    (((((char *)p) - ((char *)h)) % sizeof(struct obj)) == 0) &&
 		    NTYPEP(p, tc_free_cell))
-			return (1);
+			return 1;
 
-	return (0);
+	return 0;
 }
 
 void mark_locations_array(LISP *x, long n)
@@ -2062,7 +2062,7 @@ LISP user_gc(LISP args)
 	gc_status_flag = old_status_flag;
 	errjmp_ok = 1;
 	no_interrupt(flag);
-	return (NIL);
+	return NIL;
 }
 
 long nactive_heaps(void)
@@ -2072,7 +2072,7 @@ long nactive_heaps(void)
 	for (m = 0; (m < nheaps) && heaps[m]; ++m)
 		;
 
-	return (m);
+	return m;
 }
 
 long freelist_length(void)
@@ -2084,7 +2084,7 @@ long freelist_length(void)
 		l = CDR(l);
 
 	n += (heap_end - heap);
-	return (n);
+	return n;
 }
 
 LISP gc_status(LISP args)
@@ -2121,7 +2121,7 @@ LISP gc_status(LISP args)
 		}
 	}
 
-	return (NIL);
+	return NIL;
 }
 
 LISP gc_info(LISP arg)
@@ -2145,7 +2145,7 @@ LISP gc_info(LISP arg)
 		                : freelist_length()));
 
 	default:
-		return (NIL);
+		return NIL;
 	}
 }
 
@@ -2154,7 +2154,7 @@ LISP leval_args(LISP l, LISP env)
 	LISP result, v1, v2, tmp;
 
 	if NULLP(l)
-		return (NIL);
+		return NIL;
 
 	if NCONSP(l)
 		err("bad syntax argument list", l);
@@ -2171,7 +2171,7 @@ LISP leval_args(LISP l, LISP env)
 	if NNULLP(v2)
 		err("bad syntax argument list", l);
 
-	return (result);
+	return result;
 }
 
 LISP extend_env(LISP actuals, LISP formals, LISP env)
@@ -2199,7 +2199,7 @@ LISP envlookup(LISP var, LISP env)
 				err("too few arguments", tmp);
 
 			if EQ(CAR(fl), var)
-				return (al);
+				return al;
 		}
 
 		/* suggested by a user. It works for reference (although conses)
@@ -2215,7 +2215,7 @@ LISP envlookup(LISP var, LISP env)
 	if NNULLP(frame)
 		err("damaged env", env);
 
-	return (NIL);
+	return NIL;
 }
 
 void set_eval_hooks(long type, LISP(*fcn)(LISP, LISP *, LISP *))
@@ -2257,7 +2257,7 @@ loop:
 		if EQ(tmp, unbound_marker)
 			err_ubv(x);
 
-		return (tmp);
+		return tmp;
 
 	case tc_cons:
 		tmp = CAR(x);
@@ -2309,7 +2309,7 @@ loop:
 			for (x = cdr(x); CONSP(x); x = CDR(x))
 				arg1 = SUBR2(tmp)(arg1, leval(CAR(x), env));
 
-			return (arg1);
+			return arg1;
 
 		case tc_subr_3:
 			x = CDR(x);
@@ -2346,7 +2346,7 @@ loop:
 
 		case tc_msubr:
 			if NULLP(SUBRM(tmp)(&x, &env))
-				return (x);
+				return x;
 
 			goto loop;
 
@@ -2415,7 +2415,7 @@ loop:
 
 			if (p->leval) {
 				if NULLP((*p->leval)(tmp, &x, &env))
-					return (x);
+					return x;
 				else
 					goto loop;
 			}
@@ -2424,7 +2424,7 @@ loop:
 		}
 
 	default:
-		return (x);
+		return x;
 	}
 }
 
@@ -2452,7 +2452,7 @@ LISP lapply(LISP fcn, LISP args)
 		for (args = cdr(cdr(args)); CONSP(args); args = CDR(args))
 			acc = SUBR2(fcn)(acc, CAR(args));
 
-		return (acc);
+		return acc;
 
 	case tc_subr_3:
 		return (SUBR3(fcn)(car(args), car(cdr(args)), car(cdr(cdr(args)))));
@@ -2543,7 +2543,7 @@ LISP leval_setq(LISP args, LISP env)
 LISP syntax_define(LISP args)
 {
 	if SYMBOLP(car(args))
-		return (args);
+		return args;
 
 	return (syntax_define(
 	            cons(car(car(args)),
@@ -2574,7 +2574,7 @@ LISP leval_define(LISP args, LISP env)
 	tmp = car(env);
 	setcar(tmp, cons(var, car(tmp)));
 	setcdr(tmp, cons(val, cdr(tmp)));
-	return (val);
+	return val;
 }
 
 LISP leval_if(LISP *pform, LISP *penv)
@@ -2588,7 +2588,7 @@ LISP leval_if(LISP *pform, LISP *penv)
 	else
 		*pform = car(cdr(cdr(args)));
 
-	return (sym_t);
+	return sym_t;
 }
 
 LISP leval_lambda(LISP args, LISP env)
@@ -2617,7 +2617,7 @@ LISP leval_progn(LISP *pform, LISP *penv)
 	}
 
 	*pform = car(l);
-	return (sym_t);
+	return sym_t;
 }
 
 LISP leval_or(LISP *pform, LISP *penv)
@@ -2632,7 +2632,7 @@ LISP leval_or(LISP *pform, LISP *penv)
 
 		if NNULLP(val) {
 			*pform = val;
-			return (NIL);
+			return NIL;
 		}
 
 		l = next;
@@ -2640,7 +2640,7 @@ LISP leval_or(LISP *pform, LISP *penv)
 	}
 
 	*pform = car(l);
-	return (sym_t);
+	return sym_t;
 }
 
 LISP leval_and(LISP *pform, LISP *penv)
@@ -2651,7 +2651,7 @@ LISP leval_and(LISP *pform, LISP *penv)
 
 	if NULLP(l) {
 		*pform = sym_t;
-		return (NIL);
+		return NIL;
 	}
 
 	next = cdr(l);
@@ -2659,7 +2659,7 @@ LISP leval_and(LISP *pform, LISP *penv)
 	while (NNULLP(next)) {
 		if NULLP(leval(car(l), env)) {
 			*pform = NIL;
-			return (NIL);
+			return NIL;
 		}
 
 		l = next;
@@ -2667,7 +2667,7 @@ LISP leval_and(LISP *pform, LISP *penv)
 	}
 
 	*pform = car(l);
-	return (sym_t);
+	return sym_t;
 }
 
 LISP leval_catch_1(LISP forms, LISP env)
@@ -2678,7 +2678,7 @@ LISP leval_catch_1(LISP forms, LISP env)
 		val = leval(car(l), env);
 
 	catch_framep = catch_framep->next;
-	return (val);
+	return val;
 }
 
 LISP leval_catch(LISP args, LISP env)
@@ -2692,7 +2692,7 @@ LISP leval_catch(LISP args, LISP env)
 
 	if (k == 2) {
 		catch_framep = frame.next;
-		return (frame.retval);
+		return frame.retval;
 	}
 
 	return (leval_catch_1(cdr(args), env));
@@ -2710,7 +2710,7 @@ LISP lthrow(LISP tag, LISP value)
 		}
 
 	err("no *catch found with this tag", tag);
-	return (NIL);
+	return NIL;
 }
 
 LISP leval_let(LISP *pform, LISP *penv)
@@ -2720,7 +2720,7 @@ LISP leval_let(LISP *pform, LISP *penv)
 	env = *penv;
 	*penv = extend_env(leval_args(car(cdr(l)), env), car(l), env);
 	*pform = car(cdr(cdr(l)));
-	return (sym_t);
+	return sym_t;
 }
 
 LISP letstar_macro(LISP form)
@@ -2735,7 +2735,7 @@ LISP letstar_macro(LISP form)
 		                       NIL)));
 
 	setcar(form, cintern("let"));
-	return (form);
+	return form;
 }
 
 LISP letrec_macro(LISP form)
@@ -2749,7 +2749,7 @@ LISP letrec_macro(LISP form)
 
 	setcdr(form, cons(letb, setb));
 	setcar(form, cintern("let"));
-	return (form);
+	return form;
 }
 
 LISP reverse(LISP l)
@@ -2760,7 +2760,7 @@ LISP reverse(LISP l)
 	for (p = l; NNULLP(p); p = cdr(p))
 		n = cons(car(p), n);
 
-	return (n);
+	return n;
 }
 
 LISP let_macro(LISP form)
@@ -2790,7 +2790,7 @@ LISP let_macro(LISP form)
 
 	setcdr(form, cons(reverse(fl), cons(reverse(al), cons(p, NIL))));
 	setcar(form, cintern("let-internal"));
-	return (form);
+	return form;
 }
 
 LISP leval_quote(LISP args, LISP env)
@@ -2800,7 +2800,7 @@ LISP leval_quote(LISP args, LISP env)
 
 LISP leval_tenv(LISP args, LISP env)
 {
-	return (env);
+	return env;
 }
 
 LISP leval_while(LISP args, LISP env)
@@ -2812,7 +2812,7 @@ LISP leval_while(LISP args, LISP env)
 		for (l = cdr(args); NNULLP(l); l = cdr(l))
 			leval(car(l), env);
 
-	return (NIL);
+	return NIL;
 }
 
 LISP symbolconc(LISP args)
@@ -2850,37 +2850,37 @@ char *subr_kind_str(long n)
 {
 	switch (n) {
 	case tc_subr_0:
-		return ("subr_0");
+		return "subr_0";
 
 	case tc_subr_1:
-		return ("subr_1");
+		return "subr_1";
 
 	case tc_subr_2:
-		return ("subr_2");
+		return "subr_2";
 
 	case tc_subr_2n:
-		return ("subr_2n");
+		return "subr_2n";
 
 	case tc_subr_3:
-		return ("subr_3");
+		return "subr_3";
 
 	case tc_subr_4:
-		return ("subr_4");
+		return "subr_4";
 
 	case tc_subr_5:
-		return ("subr_5");
+		return "subr_5";
 
 	case tc_lsubr:
-		return ("lsubr");
+		return "lsubr";
 
 	case tc_fsubr:
-		return ("fsubr");
+		return "fsubr";
 
 	case tc_msubr:
-		return ("msubr");
+		return "msubr";
 
 	default:
-		return ("???");
+		return "???";
 	}
 }
 
@@ -2970,7 +2970,7 @@ LISP lprin1g(LISP exp, struct gen_printio *f)
 		}
 	}
 
-	return (NIL);
+	return NIL;
 }
 
 LISP lprint(LISP exp, LISP lf)
@@ -2978,14 +2978,14 @@ LISP lprint(LISP exp, LISP lf)
 	FILE *f = get_c_file(lf, stdout);
 	lprin1f(exp, f);
 	fput_st(f, "\n");
-	return (NIL);
+	return NIL;
 }
 
 LISP lprin1(LISP exp, LISP lf)
 {
 	FILE *f = get_c_file(lf, stdout);
 	lprin1f(exp, f);
-	return (NIL);
+	return NIL;
 }
 
 LISP lprin1f(LISP exp, FILE *f)
@@ -2995,7 +2995,7 @@ LISP lprin1f(LISP exp, FILE *f)
 	s.puts_fcn = fputs_fcn;
 	s.cb_argument = f;
 	lprin1g(exp, &s);
-	return (NIL);
+	return NIL;
 }
 
 LISP lread(LISP f)
@@ -3018,7 +3018,7 @@ int f_getc(FILE *f)
 
 #endif
 	no_interrupt(iflag);
-	return (c);
+	return c;
 }
 
 void f_ungetc(int c, FILE *f)
@@ -3038,7 +3038,7 @@ int flush_ws(struct gen_readio *f, char *eoferr)
 			if (eoferr)
 				err(eoferr, NIL);
 			else
-				return (c);
+				return c;
 
 		if (commentp) {
 			if (c == '\n')
@@ -3046,7 +3046,7 @@ int flush_ws(struct gen_readio *f, char *eoferr)
 		} else if (c == ';')
 			commentp = 1;
 		else if (!isspace(c))
-			return (c);
+			return c;
 	}
 }
 
@@ -3065,7 +3065,7 @@ LISP readtl(struct gen_readio *f)
 	c = flush_ws(f, (char *)NULL);
 
 	if (c == EOF)
-		return (eof_val);
+		return eof_val;
 
 	UNGETC_FCN(c, f);
 	return (lreadr(f));
@@ -3161,7 +3161,7 @@ LISP lreadparen(struct gen_readio *f)
 	c = flush_ws(f, "end of file inside list");
 
 	if (c == ')')
-		return (NIL);
+		return NIL;
 
 	UNGETC_FCN(c, f);
 	tmp = lreadr(f);
@@ -3173,7 +3173,7 @@ LISP lreadparen(struct gen_readio *f)
 		if (c != ')')
 			err("missing close paren", NIL);
 
-		return (tmp);
+		return tmp;
 	}
 
 	return (cons(tmp, lreadparen(f)));
@@ -3191,7 +3191,7 @@ LISP lreadtk(char *buffer, long j)
 		tmp = (*user_readt)(p, j, &flag);
 
 		if (flag)
-			return (tmp);
+			return tmp;
 	}
 
 	if (*p == '-')
@@ -3242,7 +3242,7 @@ a_symbol:
 LISP copy_list(LISP x)
 {
 	if NULLP(x)
-		return (NIL);
+		return NIL;
 
 	STACK_CHECK(&x);
 	return (cons(car(x), copy_list(cdr(x))));
@@ -3264,7 +3264,7 @@ LISP apropos(LISP matchl)
 			result = cons(CAR(l), result);
 	}
 
-	return (result);
+	return result;
 }
 
 LISP fopen_cg(FILE * (*fcn)(const char *, const char *), char *name, char *how)
@@ -3286,7 +3286,7 @@ LISP fopen_cg(FILE * (*fcn)(const char *, const char *), char *name, char *how)
 	sym->storage_as.c_file.name = (char *)must_malloc(strlen(name) + 1);
 	strcpy(sym->storage_as.c_file.name, name);
 	no_interrupt(flag);
-	return (sym);
+	return sym;
 }
 
 LISP fopen_c(char *name, char *how)
@@ -3302,7 +3302,7 @@ LISP fopen_l(LISP name, LISP how)
 LISP delq(LISP elem, LISP l)
 {
 	if NULLP(l)
-		return (l);
+		return l;
 
 	STACK_CHECK(&elem);
 
@@ -3310,7 +3310,7 @@ LISP delq(LISP elem, LISP l)
 		return (delq(elem, cdr(l)));
 
 	setcdr(l, delq(elem, cdr(l)));
-	return (l);
+	return l;
 }
 
 LISP fclose_l(LISP p)
@@ -3323,7 +3323,7 @@ LISP fclose_l(LISP p)
 
 	file_gc_free(p);
 	no_interrupt(flag);
-	return (NIL);
+	return NIL;
 }
 
 LISP vload(char *ofname, long cflag, long rflag)
@@ -3445,7 +3445,7 @@ LISP vload(char *ofname, long cflag, long rflag)
 	if (siod_verbose_level >= 3)
 		put_st("done.\n");
 
-	return (result);
+	return result;
 }
 
 LISP load(LISP fname, LISP cflag, LISP rflag)
@@ -3466,7 +3466,7 @@ LISP require(LISP fname)
 		setvar(sym, sym_t, NIL);
 	}
 
-	return (sym);
+	return sym;
 }
 
 LISP save_forms(LISP fname, LISP forms, LISP how)
@@ -3503,7 +3503,7 @@ LISP save_forms(LISP fname, LISP forms, LISP how)
 	if (siod_verbose_level >= 3)
 		put_st("done.\n");
 
-	return (sym_t);
+	return sym_t;
 }
 
 LISP quit(void)
@@ -3514,9 +3514,9 @@ LISP quit(void)
 LISP nullp(LISP x)
 {
 	if EQ(x, NIL)
-		return (sym_t);
+		return sym_t;
 	else
-		return (NIL);
+		return NIL;
 }
 
 LISP arglchk(LISP x)
@@ -3525,7 +3525,7 @@ LISP arglchk(LISP x)
 	LISP l;
 
 	if SYMBOLP(x)
-		return (x);
+		return x;
 
 	for (l = x; CONSP(l); l = CDR(l))
 		;
@@ -3534,7 +3534,7 @@ LISP arglchk(LISP x)
 		err("improper formal argument list", x);
 
 #endif
-	return (x);
+	return x;
 }
 
 void file_gc_free(LISP ptr)
@@ -3569,7 +3569,7 @@ void file_prin1(LISP ptr, struct gen_printio *f)
 FILE *get_c_file(LISP p, FILE *deflt)
 {
 	if (NULLP(p) && deflt)
-		return (deflt);
+		return deflt;
 
 	if NTYPEP(p, tc_c_file)
 		err("not a file", p);
@@ -3577,7 +3577,7 @@ FILE *get_c_file(LISP p, FILE *deflt)
 	if (!p->storage_as.c_file.f)
 		err("file is closed", p);
 
-	return (p->storage_as.c_file.f);
+	return p->storage_as.c_file.f;
 }
 
 LISP lgetc(LISP p)
@@ -3596,7 +3596,7 @@ LISP lungetc(LISP ii, LISP p)
 		f_ungetc(i, get_c_file(p, stdin));
 	}
 
-	return (NIL);
+	return NIL;
 }
 
 LISP lputc(LISP c, LISP p)
@@ -3614,13 +3614,13 @@ LISP lputc(LISP c, LISP p)
 	flag = no_interrupt(1);
 	putc(i, f);
 	no_interrupt(flag);
-	return (NIL);
+	return NIL;
 }
 
 LISP lputs(LISP str, LISP p)
 {
 	fput_st(get_c_file(p, stdout), get_c_string(str));
-	return (NIL);
+	return NIL;
 }
 
 LISP lftell(LISP file)
@@ -3650,12 +3650,12 @@ void __stdcall init_subrs(void)
 
 LISP closure_code(LISP exp)
 {
-	return (exp->storage_as.closure.code);
+	return exp->storage_as.closure.code;
 }
 
 LISP closure_env(LISP exp)
 {
-	return (exp->storage_as.closure.env);
+	return exp->storage_as.closure.env;
 }
 
 LISP lwhile(LISP form, LISP env)
@@ -3666,7 +3666,7 @@ LISP lwhile(LISP form, LISP env)
 		for (l = cdr(form); NNULLP(l); l = cdr(l))
 			leval(car(l), env);
 
-	return (NIL);
+	return NIL;
 }
 
 LISP nreverse(LISP x)
@@ -3680,7 +3680,7 @@ LISP nreverse(LISP x)
 		newp = oldp;
 	}
 
-	return (newp);
+	return newp;
 }
 
 LISP siod_verbose(LISP arg)
@@ -3741,12 +3741,12 @@ LISP lrand(LISP m)
 LISP lsrand(LISP s)
 {
 	srand(get_c_long(s));
-	return (NIL);
+	return NIL;
 }
 
 LISP a_true_value(void)
 {
-	return (sym_t);
+	return sym_t;
 }
 
 LISP poparg(LISP *ptr, LISP defaultv)
@@ -3754,11 +3754,11 @@ LISP poparg(LISP *ptr, LISP defaultv)
 	LISP value;
 
 	if NULLP(*ptr)
-		return (defaultv);
+		return defaultv;
 
 	value = car(*ptr);
 	*ptr = cdr(*ptr);
-	return (value);
+	return value;
 }
 
 char *last_c_errmsg(int num)
@@ -3773,7 +3773,7 @@ char *last_c_errmsg(int num)
 		errmsg = serrmsg;
 	}
 
-	return (errmsg);
+	return errmsg;
 }
 
 LISP llast_c_errmsg(int num)
@@ -3797,9 +3797,9 @@ size_t safe_strlen(const char *s, size_t size)
 	char *end;
 
 	if ((end = (char *)memchr(s, 0, size)))
-		return (end - s);
+		return end - s;
 	else
-		return (size);
+		return size;
 }
 
 char *safe_strcpy(char *s1, size_t size1, const char *s2)
@@ -3807,7 +3807,7 @@ char *safe_strcpy(char *s1, size_t size1, const char *s2)
 	size_t len2;
 
 	if (size1 == 0)
-		return (s1);
+		return s1;
 
 	len2 = strlen(s2);
 
@@ -3821,7 +3821,7 @@ char *safe_strcpy(char *s1, size_t size1, const char *s2)
 		s1[size1 - 1] = 0;
 	}
 
-	return (s1);
+	return s1;
 }
 
 char *safe_strcat(char *s1, size_t size1, const char *s2)
@@ -3829,7 +3829,7 @@ char *safe_strcat(char *s1, size_t size1, const char *s2)
 	size_t len1;
 	len1 = safe_strlen(s1, size1);
 	safe_strcpy(&s1[len1], size1 - len1, s2);
-	return (s1);
+	return s1;
 }
 
 static LISP parser_read(LISP ignore)
@@ -3848,7 +3848,7 @@ static LISP os_classification(void)
 #ifdef VMS
 	return (cintern("vms"));
 #endif
-	return (NIL);
+	return NIL;
 }
 
 void init_subrs_1(void)

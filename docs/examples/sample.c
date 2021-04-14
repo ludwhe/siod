@@ -131,7 +131,7 @@ int main(int argc, char **argv)
 
 	printf("EXIT\n");
 	exit(retval);
-	return (0);
+	return 0;
 }
 
 /* This is cfib, (compiled fib). Test to see what the overhead
@@ -141,7 +141,7 @@ int main(int argc, char **argv)
 LISP cfib(LISP x)
 {
 	if NNULLP(lessp(x, my_two))
-		return (x);
+		return x;
 	else
 		return (plus(cfib(difference(x, my_one)),
 		             cfib(difference(x, my_two))));
@@ -174,5 +174,5 @@ LISP clooptest(LISP n, LISP f)
 		}
 	}
 
-	return (result);
+	return result;
 }

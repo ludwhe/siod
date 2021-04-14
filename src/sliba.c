@@ -68,7 +68,7 @@ LISP array_gc_relocate(LISP ptr)
 
 	heap = nw + 1;
 	memcpy(nw, ptr, sizeof(struct obj));
-	return (nw);
+	return nw;
 }
 
 void array_gc_scan(LISP ptr)
@@ -89,7 +89,7 @@ LISP array_gc_mark(LISP ptr)
 		for (j = 0; j < ptr->storage_as.lisp_array.dim; ++j)
 			gc_mark(ptr->storage_as.lisp_array.data[j]);
 
-	return (NIL);
+	return NIL;
 }
 
 void array_gc_free(LISP ptr)
@@ -236,7 +236,7 @@ LISP strcons(long length, const char *data)
 
 	s->storage_as.string.data[length] = 0;
 	no_interrupt(flag);
-	return (s);
+	return s;
 }
 
 int rfs_getc(unsigned char **p)
@@ -245,10 +245,10 @@ int rfs_getc(unsigned char **p)
 	i = **p;
 
 	if (!i)
-		return (EOF);
+		return EOF;
 
 	*p = *p + 1;
-	return (i);
+	return i;
 }
 
 void rfs_ungetc(unsigned char c, unsigned char **p)
@@ -282,7 +282,7 @@ int pts_puts(char *from, void *cb)
 	if (fitsize < fromlen)
 		err("print to string overflow", NIL);
 
-	return (1);
+	return 1;
 }
 
 LISP err_wta_str(LISP exp)
@@ -305,7 +305,7 @@ LISP print_to_string(LISP exp, LISP str, LISP nostart)
 		str->storage_as.string.data[0] = 0;
 
 	lprin1g(exp, &s);
-	return (str);
+	return str;
 }
 
 LISP aref1(LISP a, LISP i)
@@ -350,7 +350,7 @@ LISP aref1(LISP a, LISP i)
 		if (k >= a->storage_as.lisp_array.dim)
 			err("index too large", i);
 
-		return (a->storage_as.lisp_array.data[k]);
+		return a->storage_as.lisp_array.data[k];
 
 	default:
 		return (err("invalid argument to aref", a));
@@ -390,7 +390,7 @@ LISP aset1(LISP a, LISP i, LISP v)
 			err1_aset1(i);
 
 		a->storage_as.string.data[k] = (char)FLONM(v);
-		return (v);
+		return v;
 
 	case tc_double_array:
 		if NFLONUMP(v)
@@ -400,7 +400,7 @@ LISP aset1(LISP a, LISP i, LISP v)
 			err1_aset1(i);
 
 		a->storage_as.double_array.data[k] = FLONM(v);
-		return (v);
+		return v;
 
 	case tc_long_array:
 		if NFLONUMP(v)
@@ -410,14 +410,14 @@ LISP aset1(LISP a, LISP i, LISP v)
 			err1_aset1(i);
 
 		a->storage_as.long_array.data[k] = (long)FLONM(v);
-		return (v);
+		return v;
 
 	case tc_lisp_array:
 		if (k >= a->storage_as.lisp_array.dim)
 			err1_aset1(i);
 
 		a->storage_as.lisp_array.data[k] = v;
-		return (v);
+		return v;
 
 	default:
 		return (err("invalid argument to aset", a));
@@ -487,7 +487,7 @@ LISP arcons(long typecode, long n, long initp)
 
 	a->type = (short)typecode;
 	no_interrupt(flag);
-	return (a);
+	return a;
 }
 
 LISP mallocl(void *place, long size)
@@ -502,7 +502,7 @@ LISP mallocl(void *place, long size)
 
 	retval = arcons(tc_long_array, n, 0);
 	*(long **)place = retval->storage_as.long_array.data;
-	return (retval);
+	return retval;
 }
 
 LISP cons_array(LISP dim, LISP kind)
@@ -559,7 +559,7 @@ LISP cons_array(LISP dim, LISP kind)
 		err("bad type of array", kind);
 
 	no_interrupt(flag);
-	return (a);
+	return a;
 }
 
 LISP string_append(LISP args)
@@ -579,7 +579,7 @@ LISP string_append(LISP args)
 	for (l = args; NNULLP(l); l = cdr(l))
 		strcat(data, get_c_string(car(l)));
 
-	return (s);
+	return s;
 }
 
 LISP bytes_append(LISP args)
@@ -603,7 +603,7 @@ LISP bytes_append(LISP args)
 		j += n;
 	}
 
-	return (s);
+	return s;
 }
 
 LISP substring(LISP str, LISP start, LISP end)
@@ -637,7 +637,7 @@ LISP string_search(LISP token, LISP str)
 	if (ptr)
 		return (flocons(ptr - s1));
 	else
-		return (NIL);
+		return NIL;
 }
 
 #define IS_TRIM_SPACE(_x) (strchr(" \t\r\n", (_x)))
@@ -695,7 +695,7 @@ LISP string_upcase(LISP str)
 	for (j = 0; j < n; ++j)
 		s2[j] = toupper(s2[j]);
 
-	return (result);
+	return result;
 }
 
 LISP string_downcase(LISP str)
@@ -711,7 +711,7 @@ LISP string_downcase(LISP str)
 	for (j = 0; j < n; ++j)
 		s2[j] = tolower(s2[j]);
 
-	return (result);
+	return result;
 }
 
 LISP lreadstring(struct gen_readio *f)
@@ -802,14 +802,14 @@ LISP lreadsharp(struct gen_readio *f)
 		for (l = obj, j = 0; j < n; l = cdr(l), ++j)
 			result->storage_as.lisp_array.data[j] = car(l);
 
-		return (result);
+		return result;
 
 	case '.':
 		obj = lreadr(f);
 		return (leval(obj, NIL));
 
 	case 'f':
-		return (NIL);
+		return NIL;
 
 	case 't':
 		return (flocons(1));
@@ -854,7 +854,7 @@ long c_sxhash(LISP obj, long n)
 	switch
 	TYPE(obj) {
 	case tc_nil:
-		return (0);
+		return 0;
 
 	case tc_cons:
 		hash = c_sxhash(CAR(obj), n);
@@ -863,13 +863,13 @@ long c_sxhash(LISP obj, long n)
 			hash = HASH_COMBINE(hash, c_sxhash(CAR(tmp), n), n);
 
 		hash = HASH_COMBINE(hash, c_sxhash(tmp, n), n);
-		return (hash);
+		return hash;
 
 	case tc_symbol:
 		for (hash = 0, s = (unsigned char *)PNAME(obj); *s; ++s)
 			hash = HASH_COMBINE(hash, *s, n);
 
-		return (hash);
+		return hash;
 
 	case tc_subr_0:
 	case tc_subr_1:
@@ -883,7 +883,7 @@ long c_sxhash(LISP obj, long n)
 		for (hash = 0, s = (unsigned char *)obj->storage_as.subr.name; *s; ++s)
 			hash = HASH_COMBINE(hash, *s, n);
 
-		return (hash);
+		return hash;
 
 	case tc_flonum:
 		return (((unsigned long)FLONM(obj)) % n);
@@ -894,7 +894,7 @@ long c_sxhash(LISP obj, long n)
 		if (p->c_sxhash)
 			return ((*p->c_sxhash)(obj, n));
 		else
-			return (0);
+			return 0;
 	}
 }
 
@@ -912,17 +912,17 @@ loop:
 	INTERRUPT_CHECK();
 
 	if EQ(a, b)
-		return (sym_t);
+		return sym_t;
 
 	atype = TYPE(a);
 
 	if (atype != TYPE(b))
-		return (NIL);
+		return NIL;
 
 	switch (atype) {
 	case tc_cons:
 		if NULLP(equal(car(a), car(b)))
-			return (NIL);
+			return NIL;
 
 		a = cdr(a);
 		b = cdr(b);
@@ -932,7 +932,7 @@ loop:
 		return ((FLONM(a) == FLONM(b)) ? sym_t : NIL);
 
 	case tc_symbol:
-		return (NIL);
+		return NIL;
 
 	default:
 		p = get_user_type_hooks(atype);
@@ -940,7 +940,7 @@ loop:
 		if (p->equal)
 			return ((*p->equal)(a, b));
 		else
-			return (NIL);
+			return NIL;
 	}
 }
 
@@ -954,51 +954,51 @@ LISP array_equal(LISP a, LISP b)
 		len = a->storage_as.string.dim;
 
 		if (len != b->storage_as.string.dim)
-			return (NIL);
+			return NIL;
 
 		if (memcmp(a->storage_as.string.data, b->storage_as.string.data, len) == 0)
-			return (sym_t);
+			return sym_t;
 		else
-			return (NIL);
+			return NIL;
 
 	case tc_long_array:
 		len = a->storage_as.long_array.dim;
 
 		if (len != b->storage_as.long_array.dim)
-			return (NIL);
+			return NIL;
 
 		if (memcmp(a->storage_as.long_array.data,
 		           b->storage_as.long_array.data,
 		           len * sizeof(long)) == 0)
-			return (sym_t);
+			return sym_t;
 		else
-			return (NIL);
+			return NIL;
 
 	case tc_double_array:
 		len = a->storage_as.double_array.dim;
 
 		if (len != b->storage_as.double_array.dim)
-			return (NIL);
+			return NIL;
 
 		for (j = 0; j < len; ++j)
 			if (a->storage_as.double_array.data[j] !=
 			    b->storage_as.double_array.data[j])
-				return (NIL);
+				return NIL;
 
-		return (sym_t);
+		return sym_t;
 
 	case tc_lisp_array:
 		len = a->storage_as.lisp_array.dim;
 
 		if (len != b->storage_as.lisp_array.dim)
-			return (NIL);
+			return NIL;
 
 		for (j = 0; j < len; ++j)
 			if NULLP(equal(a->storage_as.lisp_array.data[j],
 			               b->storage_as.lisp_array.data[j]))
-				return (NIL);
+				return NIL;
 
-		return (sym_t);
+		return sym_t;
 
 	default:
 		return (errswitch());
@@ -1022,7 +1022,7 @@ long array_sxhash(LISP a, long n)
 		     ++j, ++char_data)
 			hash = HASH_COMBINE(hash, *char_data, n);
 
-		return (hash);
+		return hash;
 
 	case tc_long_array:
 		len = a->storage_as.long_array.dim;
@@ -1032,7 +1032,7 @@ long array_sxhash(LISP a, long n)
 		     ++j, ++long_data)
 			hash = HASH_COMBINE(hash, *long_data % n, n);
 
-		return (hash);
+		return hash;
 
 	case tc_double_array:
 		len = a->storage_as.double_array.dim;
@@ -1042,7 +1042,7 @@ long array_sxhash(LISP a, long n)
 		     ++j, ++double_data)
 			hash = HASH_COMBINE(hash, (unsigned long) * double_data % n, n);
 
-		return (hash);
+		return hash;
 
 	case tc_lisp_array:
 		len = a->storage_as.lisp_array.dim;
@@ -1052,11 +1052,11 @@ long array_sxhash(LISP a, long n)
 			                    c_sxhash(a->storage_as.lisp_array.data[j], n),
 			                    n);
 
-		return (hash);
+		return hash;
 
 	default:
 		errswitch();
-		return (0);
+		return 0;
 	}
 }
 
@@ -1071,9 +1071,9 @@ long href_index(LISP table, LISP key)
 
 	if ((index < 0) || (index >= table->storage_as.lisp_array.dim)) {
 		err("sxhash inconsistency", table);
-		return (0);
+		return 0;
 	} else
-		return (index);
+		return index;
 }
 
 LISP href(LISP table, LISP key)
@@ -1094,7 +1094,7 @@ LISP hset(LISP table, LISP key, LISP value)
 
 	cell = cons(key, value);
 	table->storage_as.lisp_array.data[index] = cons(cell, l);
-	return (value);
+	return value;
 }
 
 LISP assoc(LISP x, LISP alist)
@@ -1105,13 +1105,13 @@ LISP assoc(LISP x, LISP alist)
 		tmp = CAR(l);
 
 		if (CONSP(tmp) && equal(CAR(tmp), x))
-			return (tmp);
+			return tmp;
 
 		INTERRUPT_CHECK();
 	}
 
 	if EQ(l, NIL)
-		return (NIL);
+		return NIL;
 
 	return (err("improper list to assoc", alist));
 }
@@ -1124,13 +1124,13 @@ LISP assv(LISP x, LISP alist)
 		tmp = CAR(l);
 
 		if (CONSP(tmp) && NNULLP(eql(CAR(tmp), x)))
-			return (tmp);
+			return tmp;
 
 		INTERRUPT_CHECK();
 	}
 
 	if EQ(l, NIL)
-		return (NIL);
+		return NIL;
 
 	return (err("improper list to assv", alist));
 }
@@ -1144,7 +1144,7 @@ long get_long(FILE *f)
 {
 	long i;
 	fread(&i, sizeof(long), 1, f);
-	return (i);
+	return i;
 }
 
 long fast_print_table(LISP obj, LISP table)
@@ -1154,25 +1154,25 @@ long fast_print_table(LISP obj, LISP table)
 	f = get_c_file(car(table), (FILE *)NULL);
 
 	if NULLP(ht = car(cdr(table)))
-		return (1);
+		return 1;
 
 	index = href(ht, obj);
 
 	if NNULLP(index) {
 		putc(FO_fetch, f);
 		put_long(get_c_long(index), f);
-		return (0);
+		return 0;
 	}
 
 	if NULLP(index = car(cdr(cdr(table))))
-		return (1);
+		return 1;
 
 	hset(ht, obj, index);
 	FLONM(bashnum) = 1.0;
 	setcar(cdr(cdr(table)), plus(index, bashnum));
 	putc(FO_store, f);
 	put_long(get_c_long(index), f);
-	return (1);
+	return 1;
 }
 
 LISP fast_print(LISP obj, LISP table)
@@ -1187,7 +1187,7 @@ LISP fast_print(LISP obj, LISP table)
 	switch (TYPE(obj)) {
 	case tc_nil:
 		putc(tc_nil, f);
-		return (NIL);
+		return NIL;
 
 	case tc_cons:
 		for (len = 0, tmp = obj; CONSP(tmp); tmp = CDR(tmp)) {
@@ -1215,7 +1215,7 @@ LISP fast_print(LISP obj, LISP table)
 			fast_print(tmp, table);
 		}
 
-		return (NIL);
+		return NIL;
 
 	case tc_flonum:
 		putc(tc_flonum, f);
@@ -1223,7 +1223,7 @@ LISP fast_print(LISP obj, LISP table)
 		       sizeof(obj->storage_as.flonum.data),
 		       1,
 		       f);
-		return (NIL);
+		return NIL;
 
 	case tc_symbol:
 		if (fast_print_table(obj, table)) {
@@ -1235,9 +1235,9 @@ LISP fast_print(LISP obj, LISP table)
 
 			put_long(len, f);
 			fwrite(PNAME(obj), len, 1, f);
-			return (sym_t);
+			return sym_t;
 		} else
-			return (NIL);
+			return NIL;
 
 	default:
 		p = get_user_type_hooks(TYPE(obj));
@@ -1260,14 +1260,14 @@ LISP fast_read(LISP table)
 	c = getc(f);
 
 	if (c == EOF)
-		return (table);
+		return table;
 
 	switch (c) {
 	case FO_comment:
 		while ((c = getc(f)))
 			switch (c) {
 			case EOF:
-				return (table);
+				return table;
 
 			case '\n':
 				return (fast_read(table));
@@ -1282,10 +1282,10 @@ LISP fast_read(LISP table)
 		len = get_long(f);
 		tmp = fast_read(table);
 		hset(car(cdr(table)), flocons(len), tmp);
-		return (tmp);
+		return tmp;
 
 	case tc_nil:
-		return (NIL);
+		return NIL;
 
 	case tc_cons:
 		tmp = fast_read(table);
@@ -1309,7 +1309,7 @@ LISP fast_read(LISP table)
 		if (c == FO_listd)
 			CDR(tmp) = fast_read(table);
 
-		return (l);
+		return l;
 
 	case tc_flonum:
 		tmp = newcell(tc_flonum);
@@ -1317,7 +1317,7 @@ LISP fast_read(LISP table)
 		      sizeof(tmp->storage_as.flonum.data),
 		      1,
 		      f);
-		return (tmp);
+		return tmp;
 
 	case tc_symbol:
 		len = get_long(f);
@@ -1352,21 +1352,21 @@ LISP array_fast_print(LISP ptr, LISP table)
 		len = ptr->storage_as.string.dim;
 		put_long(len, f);
 		fwrite(ptr->storage_as.string.data, len, 1, f);
-		return (NIL);
+		return NIL;
 
 	case tc_double_array:
 		putc(tc_double_array, f);
 		len = ptr->storage_as.double_array.dim * sizeof(double);
 		put_long(len, f);
 		fwrite(ptr->storage_as.double_array.data, len, 1, f);
-		return (NIL);
+		return NIL;
 
 	case tc_long_array:
 		putc(tc_long_array, f);
 		len = ptr->storage_as.long_array.dim * sizeof(long);
 		put_long(len, f);
 		fwrite(ptr->storage_as.long_array.data, len, 1, f);
-		return (NIL);
+		return NIL;
 
 	case tc_lisp_array:
 		putc(tc_lisp_array, f);
@@ -1376,7 +1376,7 @@ LISP array_fast_print(LISP ptr, LISP table)
 		for (j = 0; j < len; ++j)
 			fast_print(ptr->storage_as.lisp_array.data[j], table);
 
-		return (NIL);
+		return NIL;
 
 	default:
 		return (errswitch());
@@ -1396,7 +1396,7 @@ LISP array_fast_read(int code, LISP table)
 		ptr = strcons(len, NULL);
 		fread(ptr->storage_as.string.data, len, 1, f);
 		ptr->storage_as.string.data[len] = 0;
-		return (ptr);
+		return ptr;
 
 	case tc_byte_array:
 		len = get_long(f);
@@ -1407,7 +1407,7 @@ LISP array_fast_read(int code, LISP table)
 		    (char *)must_malloc(len);
 		fread(ptr->storage_as.string.data, len, 1, f);
 		no_interrupt(iflag);
-		return (ptr);
+		return ptr;
 
 	case tc_double_array:
 		len = get_long(f);
@@ -1418,7 +1418,7 @@ LISP array_fast_read(int code, LISP table)
 		    (double *)must_malloc(len * sizeof(double));
 		fread(ptr->storage_as.double_array.data, sizeof(double), len, f);
 		no_interrupt(iflag);
-		return (ptr);
+		return ptr;
 
 	case tc_long_array:
 		len = get_long(f);
@@ -1429,7 +1429,7 @@ LISP array_fast_read(int code, LISP table)
 		    (long *)must_malloc(len * sizeof(long));
 		fread(ptr->storage_as.long_array.data, sizeof(long), len, f);
 		no_interrupt(iflag);
-		return (ptr);
+		return ptr;
 
 	case tc_lisp_array:
 		len = get_long(f);
@@ -1439,7 +1439,7 @@ LISP array_fast_read(int code, LISP table)
 		for (j = 0; j < len; ++j)
 			ptr->storage_as.lisp_array.data[j] = fast_read(table);
 
-		return (ptr);
+		return ptr;
 
 	default:
 		return (errswitch());
@@ -1474,7 +1474,7 @@ LISP make_list(LISP x, LISP v)
 		--n;
 	}
 
-	return (l);
+	return l;
 }
 
 LISP lfread(LISP size, LISP file)
@@ -1509,7 +1509,7 @@ LISP lfread(LISP size, LISP file)
 			free(buffer);
 
 		no_interrupt(flag);
-		return (NIL);
+		return NIL;
 	}
 
 	if (m) {
@@ -1525,7 +1525,7 @@ LISP lfread(LISP size, LISP file)
 		}
 
 		no_interrupt(flag);
-		return (s);
+		return s;
 	}
 
 	no_interrupt(flag);
@@ -1543,7 +1543,7 @@ LISP lfwrite(LISP string, LISP file)
 	len = CONSP(string) ? get_c_long(cadr(string)) : dim;
 
 	if (len <= 0)
-		return (NIL);
+		return NIL;
 
 	if (len > dim)
 		err("write length too long", string);
@@ -1551,7 +1551,7 @@ LISP lfwrite(LISP string, LISP file)
 	flag = no_interrupt(1);
 	fwrite(data, 1, len, f);
 	no_interrupt(flag);
-	return (NIL);
+	return NIL;
 }
 
 LISP lfflush(LISP file)
@@ -1562,7 +1562,7 @@ LISP lfflush(LISP file)
 	flag = no_interrupt(1);
 	fflush(f);
 	no_interrupt(flag);
-	return (NIL);
+	return NIL;
 }
 
 LISP string_length(LISP string)
@@ -1592,19 +1592,19 @@ long nlength(LISP obj)
 		return (strlen(obj->storage_as.string.data));
 
 	case tc_byte_array:
-		return (obj->storage_as.string.dim);
+		return obj->storage_as.string.dim;
 
 	case tc_double_array:
-		return (obj->storage_as.double_array.dim);
+		return obj->storage_as.double_array.dim;
 
 	case tc_long_array:
-		return (obj->storage_as.long_array.dim);
+		return obj->storage_as.long_array.dim;
 
 	case tc_lisp_array:
-		return (obj->storage_as.lisp_array.dim);
+		return obj->storage_as.lisp_array.dim;
 
 	case tc_nil:
-		return (0);
+		return 0;
 
 	case tc_cons:
 		for (l = obj, n = 0; CONSP(l); l = CDR(l), ++n)
@@ -1613,11 +1613,11 @@ long nlength(LISP obj)
 		if NNULLP(l)
 			err("improper list to length", obj);
 
-		return (n);
+		return n;
 
 	default:
 		err("wta to length", obj);
-		return (0);
+		return 0;
 	}
 }
 
@@ -1746,7 +1746,7 @@ LISP lstrcpy(LISP dest, LISP src)
 
 	memcpy(d, s, slen);
 	d[slen] = 0;
-	return (NIL);
+	return NIL;
 }
 
 LISP lstrcat(LISP dest, LISP src)
@@ -1763,7 +1763,7 @@ LISP lstrcat(LISP dest, LISP src)
 
 	memcpy(&d[dlen], s, slen);
 	d[dlen + slen] = 0;
-	return (NIL);
+	return NIL;
 }
 
 LISP lstrbreakup(LISP str, LISP lmarker)
@@ -1870,7 +1870,7 @@ LISP base64encode(LISP in)
 		errswitch();
 	}
 
-	return (out);
+	return out;
 }
 
 LISP base64decode(LISP in)
@@ -1903,16 +1903,16 @@ LISP base64decode(LISP in)
 
 	for (j = 0, p1 = (unsigned char *)s; j < chunks; ++j, p1 += 4) {
 		if ((item1 = t[p1[0]]) & ~BITMSK(6))
-			return (NIL);
+			return NIL;
 
 		if ((item2 = t[p1[1]]) & ~BITMSK(6))
-			return (NIL);
+			return NIL;
 
 		if ((item3 = t[p1[2]]) & ~BITMSK(6))
-			return (NIL);
+			return NIL;
 
 		if ((item4 = t[p1[3]]) & ~BITMSK(6))
-			return (NIL);
+			return NIL;
 
 		*p2++ = (unsigned char)((item1 << 2) | (item2 >> 4));
 		*p2++ = (unsigned char)((item2 << 4) | (item3 >> 2));
@@ -1925,23 +1925,23 @@ LISP base64decode(LISP in)
 
 	case 1:
 		if ((item1 = t[p1[0]]) & ~BITMSK(6))
-			return (NIL);
+			return NIL;
 
 		if ((item2 = t[p1[1]]) & ~BITMSK(6))
-			return (NIL);
+			return NIL;
 
 		*p2++ = (unsigned char)((item1 << 2) | (item2 >> 4));
 		break;
 
 	case 2:
 		if ((item1 = t[p1[0]]) & ~BITMSK(6))
-			return (NIL);
+			return NIL;
 
 		if ((item2 = t[p1[1]]) & ~BITMSK(6))
-			return (NIL);
+			return NIL;
 
 		if ((item3 = t[p1[2]]) & ~BITMSK(6))
-			return (NIL);
+			return NIL;
 
 		*p2++ = (unsigned char)((item1 << 2) | (item2 >> 4));
 		*p2++ = (unsigned char)((item2 << 4) | (item3 >> 2));
@@ -1951,7 +1951,7 @@ LISP base64decode(LISP in)
 		errswitch();
 	}
 
-	return (out);
+	return out;
 }
 
 LISP memq(LISP x, LISP il)
@@ -1962,13 +1962,13 @@ LISP memq(LISP x, LISP il)
 		tmp = CAR(l);
 
 		if EQ(x, tmp)
-			return (l);
+			return l;
 
 		INTERRUPT_CHECK();
 	}
 
 	if EQ(l, NIL)
-		return (NIL);
+		return NIL;
 
 	return (err("improper list to memq", il));
 }
@@ -1981,13 +1981,13 @@ LISP member(LISP x, LISP il)
 		tmp = CAR(l);
 
 		if NNULLP(equal(x, tmp))
-			return (l);
+			return l;
 
 		INTERRUPT_CHECK();
 	}
 
 	if EQ(l, NIL)
-		return (NIL);
+		return NIL;
 
 	return (err("improper list to member", il));
 }
@@ -2000,13 +2000,13 @@ LISP memv(LISP x, LISP il)
 		tmp = CAR(l);
 
 		if NNULLP(eql(x, tmp))
-			return (l);
+			return l;
 
 		INTERRUPT_CHECK();
 	}
 
 	if EQ(l, NIL)
-		return (NIL);
+		return NIL;
 
 	return (err("improper list to memv", il));
 }
@@ -2041,7 +2041,7 @@ LISP lref_default(LISP li, LISP x, LISP fcn)
 	else if NNULLP(fcn)
 		return (lapply(fcn, NIL));
 	else
-		return (NIL);
+		return NIL;
 }
 
 LISP larg_default(LISP li, LISP x, LISP dval)
@@ -2056,14 +2056,14 @@ LISP larg_default(LISP li, LISP x, LISP dval)
 		if (TYPEP(elem, tc_string) && strchr("-:", *get_c_string(elem)))
 			l = cdr(l);
 		else if (j == n)
-			return (elem);
+			return elem;
 		else {
 			l = cdr(l);
 			++j;
 		}
 	}
 
-	return (dval);
+	return dval;
 }
 
 LISP lkey_default(LISP li, LISP key, LISP dval)
@@ -2085,12 +2085,12 @@ LISP lkey_default(LISP li, LISP key, LISP dval)
 		l = cdr(l);
 	}
 
-	return (dval);
+	return dval;
 }
 
 LISP llist(LISP l)
 {
-	return (l);
+	return l;
 }
 
 LISP writes1(FILE *f, LISP l)
@@ -2117,7 +2117,7 @@ LISP writes1(FILE *f, LISP l)
 		break;
 	}
 
-	return (NIL);
+	return NIL;
 }
 
 LISP writes(LISP args)
@@ -2137,7 +2137,7 @@ LISP last(LISP l)
 		v2 = CDR(v2);
 	}
 
-	return (v1);
+	return v1;
 }
 
 LISP butlast(LISP l)
@@ -2150,7 +2150,7 @@ LISP butlast(LISP l)
 
 	if CONSP(l)
 		if NULLP(CDR(l))
-			return (NIL);
+			return NIL;
 		else
 			return (cons(CAR(l), butlast(CDR(l))));
 
@@ -2160,10 +2160,10 @@ LISP butlast(LISP l)
 LISP nconc(LISP a, LISP b)
 {
 	if NULLP(a)
-		return (b);
+		return b;
 
 	setcdr(last(a), b);
-	return (a);
+	return a;
 }
 
 LISP funcall1(LISP fcn, LISP a1)
@@ -2215,7 +2215,7 @@ LISP lqsort(LISP l, LISP f, LISP g)
 		err("bad list to qsort", l);
 
 	if (n == 0)
-		return (NIL);
+		return NIL;
 
 	j = rand() % n;
 
@@ -2242,9 +2242,9 @@ LISP lqsort(LISP l, LISP f, LISP g)
 LISP string_lessp(LISP s1, LISP s2)
 {
 	if (strcmp(get_c_string(s1), get_c_string(s2)) < 0)
-		return (sym_t);
+		return sym_t;
 	else
-		return (NIL);
+		return NIL;
 }
 
 LISP benchmark_funcall1(LISP ln, LISP f, LISP a1)
@@ -2256,7 +2256,7 @@ LISP benchmark_funcall1(LISP ln, LISP f, LISP a1)
 	for (j = 0; j < n; ++j)
 		value = funcall1(f, a1);
 
-	return (value);
+	return value;
 }
 
 LISP benchmark_funcall2(LISP l)
@@ -2272,7 +2272,7 @@ LISP benchmark_funcall2(LISP l)
 	for (j = 0; j < n; ++j)
 		value = funcall2(f, a1, a2);
 
-	return (value);
+	return value;
 }
 
 LISP benchmark_eval(LISP ln, LISP exp, LISP env)
@@ -2284,7 +2284,7 @@ LISP benchmark_eval(LISP ln, LISP exp, LISP env)
 	for (j = 0; j < n; ++j)
 		value = leval(exp, env);
 
-	return (value);
+	return value;
 }
 
 LISP mapcar1(LISP fcn, LISP in)
@@ -2292,14 +2292,14 @@ LISP mapcar1(LISP fcn, LISP in)
 	LISP res, ptr, l;
 
 	if NULLP(in)
-		return (NIL);
+		return NIL;
 
 	res = ptr = cons(funcall1(fcn, car(in)), NIL);
 
 	for (l = cdr(in); CONSP(l); l = CDR(l))
 		ptr = CDR(ptr) = cons(funcall1(fcn, CAR(l)), CDR(ptr));
 
-	return (res);
+	return res;
 }
 
 LISP mapcar2(LISP fcn, LISP in1, LISP in2)
@@ -2307,14 +2307,14 @@ LISP mapcar2(LISP fcn, LISP in1, LISP in2)
 	LISP res, ptr, l1, l2;
 
 	if (NULLP(in1) || NULLP(in2))
-		return (NIL);
+		return NIL;
 
 	res = ptr = cons(funcall2(fcn, car(in1), car(in2)), NIL);
 
 	for (l1 = cdr(in1), l2 = cdr(in2); CONSP(l1) && CONSP(l2); l1 = CDR(l1), l2 = CDR(l2))
 		ptr = CDR(ptr) = cons(funcall2(fcn, CAR(l1), CAR(l2)), CDR(ptr));
 
-	return (res);
+	return res;
 }
 
 LISP mapcar(LISP l)
@@ -2363,13 +2363,13 @@ LISP ass(LISP x, LISP alist, LISP fcn)
 		tmp = CAR(l);
 
 		if (CONSP(tmp) && NNULLP(funcall2(fcn, CAR(tmp), x)))
-			return (tmp);
+			return tmp;
 
 		INTERRUPT_CHECK();
 	}
 
 	if EQ(l, NIL)
-		return (NIL);
+		return NIL;
 
 	return (err("improper list to ass", alist));
 }
@@ -2391,7 +2391,7 @@ LISP append2(LISP l1, LISP l2)
 	for (p2 = l2; NNULLP(p2); p1 = cdr(p1), p2 = cdr(p2))
 		setcar(p1, car(p2));
 
-	return (result);
+	return result;
 }
 
 LISP append(LISP l)
@@ -2400,7 +2400,7 @@ LISP append(LISP l)
 	INTERRUPT_CHECK();
 
 	if NULLP(l)
-		return (NIL);
+		return NIL;
 	else if NULLP(cdr(l))
 		return (car(l));
 	else if NULLP(cddr(l))
@@ -2424,7 +2424,7 @@ LISP listn(long n, ...)
 		setcar(ptr, va_arg(args, LISP));
 
 	va_end(args);
-	return (result);
+	return result;
 }
 
 LISP fast_load(LISP lfname, LISP noeval)
@@ -2516,7 +2516,7 @@ LISP fast_save(LISP fname, LISP forms, LISP nohash, LISP comment, LISP fmode)
 	if (siod_verbose_level >= 3)
 		put_st("done.\n");
 
-	return (NIL);
+	return NIL;
 }
 
 void swrite1(LISP stream, LISP data)
@@ -2553,9 +2553,9 @@ static LISP swrite2(LISP name, LISP table)
 
 		return (CAR(value));
 	} else if (NULLP(value))
-		return (name);
+		return name;
 	else
-		return (value);
+		return value;
 }
 
 LISP swrite(LISP stream, LISP table, LISP data)
@@ -2590,7 +2590,7 @@ LISP swrite(LISP stream, LISP table, LISP data)
 		swrite1(stream, data);
 	}
 
-	return (NIL);
+	return NIL;
 }
 
 LISP lpow(LISP x, LISP y)
@@ -2661,18 +2661,18 @@ LISP hexstr(LISP a)
 	for (out = get_c_string(result), j = 0; j < dim; ++j, out += 2)
 		sprintf(out, "%02x", in[j]);
 
-	return (result);
+	return result;
 }
 
 static int xdigitvalue(int c)
 {
 	if (isdigit(c))
-		return (c - '0');
+		return c - '0';
 
 	if (isxdigit(c))
 		return (toupper(c) - 'A' + 10);
 
-	return (0);
+	return 0;
 }
 
 LISP hexstr2bytes(LISP a)
@@ -2689,7 +2689,7 @@ LISP hexstr2bytes(LISP a)
 	for (j = 0; j < dim; ++j)
 		out[j] = xdigitvalue(in[j * 2]) * 16 + xdigitvalue(in[j * 2 + 1]);
 
-	return (result);
+	return result;
 }
 
 LISP getprop(LISP plist, LISP key)
@@ -2702,13 +2702,13 @@ LISP getprop(LISP plist, LISP key)
 		else
 			INTERRUPT_CHECK();
 
-	return (NIL);
+	return NIL;
 }
 
 LISP setprop(LISP plist, LISP key, LISP value)
 {
 	err("not implemented", NIL);
-	return (NIL);
+	return NIL;
 }
 
 LISP putprop(LISP plist, LISP value, LISP key)
@@ -2875,7 +2875,7 @@ LISP leval_prog1(LISP args, LISP env)
 	for (l = cdr(args); NNULLP(l); l = cdr(l))
 		leval(car(l), env);
 
-	return (retval);
+	return retval;
 }
 
 LISP leval_cond(LISP *pform, LISP *penv)
@@ -2886,7 +2886,7 @@ LISP leval_cond(LISP *pform, LISP *penv)
 
 	if NULLP(args) {
 		*pform = NIL;
-		return (NIL);
+		return NIL;
 	}
 
 	next = cdr(args);
@@ -2901,7 +2901,7 @@ LISP leval_cond(LISP *pform, LISP *penv)
 
 			if NULLP(clause) {
 				*pform = value;
-				return (NIL);
+				return NIL;
 			} else {
 				next = cdr(clause);
 
@@ -2912,7 +2912,7 @@ LISP leval_cond(LISP *pform, LISP *penv)
 				}
 
 				*pform = car(clause);
-				return (sym_t);
+				return sym_t;
 			}
 		}
 
@@ -2925,14 +2925,14 @@ LISP leval_cond(LISP *pform, LISP *penv)
 
 	if NULLP(next) {
 		*pform = car(clause);
-		return (sym_t);
+		return sym_t;
 	}
 
 	value = leval(car(clause), env);
 
 	if NULLP(value) {
 		*pform = NIL;
-		return (NIL);
+		return NIL;
 	}
 
 	clause = next;
@@ -2945,7 +2945,7 @@ LISP leval_cond(LISP *pform, LISP *penv)
 	}
 
 	*pform = car(clause);
-	return (sym_t);
+	return sym_t;
 }
 
 LISP lstrspn(LISP str1, LISP str2)
@@ -2968,7 +2968,7 @@ LISP substring_equal(LISP str1, LISP str2, LISP start, LISP end)
 	e = NULLP(end) ? len1 : get_c_long(end);
 
 	if ((s < 0) || (s > e) || (e < 0) || (e > n) || ((e - s) != len1))
-		return (NIL);
+		return NIL;
 
 	return ((memcmp(cstr1, &cstr2[s], e - s) == 0) ? a_true_value() : NIL);
 }
@@ -2983,22 +2983,22 @@ int strncasecmp(const char *s1, const char *s2, int n)
 		c2 = toupper(s2[j]);
 
 		if ((c1 == 0) && (c2 == 0))
-			return (0);
+			return 0;
 
 		if (c1 == 0)
-			return (-1);
+			return -1;
 
 		if (c2 == 0)
-			return (1);
+			return 1;
 
 		if (c1 < c2)
-			return (-1);
+			return -1;
 
 		if (c2 > c1)
-			return (1);
+			return 1;
 	}
 
-	return (0);
+	return 0;
 }
 #endif
 
@@ -3012,7 +3012,7 @@ LISP substring_equalcase(LISP str1, LISP str2, LISP start, LISP end)
 	e = NULLP(end) ? len1 : get_c_long(end);
 
 	if ((s < 0) || (s > e) || (e < 0) || (e > n) || ((e - s) != len1))
-		return (NIL);
+		return NIL;
 
 	return ((strncasecmp(cstr1, &cstr2[s], e - s) == 0) ? a_true_value() : NIL);
 }
@@ -3027,7 +3027,7 @@ LISP set_eval_history(LISP len, LISP circ)
 
 	setvar(cintern("*eval-history-ptr*"), data, NIL);
 	setvar(cintern("*eval-history*"), data, NIL);
-	return (len);
+	return len;
 }
 
 static LISP parser_fasl(LISP ignore)
@@ -3048,7 +3048,7 @@ static LISP parser_fasl_hook(LISP env, LISP f)
 	if EQ(result, env)
 		return (get_eof_val());
 	else
-		return (result);
+		return result;
 }
 
 void init_subrs_a(void)

@@ -48,7 +48,7 @@ static LISP decode_fstab(struct fstab *p)
 		                 "mntops", strcons(-1, p->fs_mntops),
 		                 NULL));
 	else
-		return (NIL);
+		return NIL;
 }
 
 LISP lgetfsent(void)
@@ -58,7 +58,7 @@ LISP lgetfsent(void)
 	iflag = no_interrupt(1);
 	result = decode_fstab(getfsent());
 	no_interrupt(iflag);
-	return (result);
+	return result;
 }
 
 LISP lsetfsent(void)
@@ -68,7 +68,7 @@ LISP lsetfsent(void)
 	iflag = no_interrupt(1);
 	result = flocons(setfsent());
 	no_interrupt(iflag);
-	return (result);
+	return result;
 }
 
 LISP lendfsent(void)
@@ -77,7 +77,7 @@ LISP lendfsent(void)
 	iflag = no_interrupt(1);
 	endfsent();
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 void init_statfs(void)

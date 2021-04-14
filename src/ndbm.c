@@ -28,7 +28,7 @@ DBM *get_DBM(LISP ptr, int errflg)
 	else if (errflg)
 		err("DBM closed", ptr);
 
-	return (NULL);
+	return NULL;
 }
 
 LISP ldbm_open(LISP lfname, LISP lflags, LISP lmode)
@@ -63,7 +63,7 @@ LISP ldbm_close(LISP ldbm)
 	dbm_close(db);
 	ldbm->storage_as.string.data = NULL;
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 static LISP cons_from_datum(datum *dat)
@@ -71,7 +71,7 @@ static LISP cons_from_datum(datum *dat)
 	LISP result;
 
 	if (!dat->dptr)
-		return (NIL);
+		return NIL;
 	else {
 		result = arcons(tc_byte_array, dat->dsize, 0);
 		memcpy(result->storage_as.string.data, dat->dptr, dat->dsize);
@@ -140,7 +140,7 @@ LISP ldbm_delete(LISP ldbm, LISP lkey)
 	if (status)
 		err("dbm_delete", llast_c_errmsg(-1));
 
-	return (NIL);
+	return NIL;
 }
 
 LISP ldbm_store(LISP ldb, LISP lkey, LISP ldata, LISP lflags)
@@ -168,7 +168,7 @@ LISP ldbm_store(LISP ldb, LISP lkey, LISP ldata, LISP lflags)
 	no_interrupt(iflag);
 
 	if ((status == 1) && (flags == DBM_INSERT))
-		return (NIL);
+		return NIL;
 	else if (status)
 		return (err("dbm_store", llast_c_errmsg(-1)));
 	else

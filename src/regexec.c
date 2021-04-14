@@ -124,7 +124,7 @@ static int nope = 0; /* for use in asserts; shuts lint up */
 	{                                                \
 		(m)->space = malloc((nv) * (m)->g->nstates); \
 		if ((m)->space == NULL)                      \
-			return (REG_ESPACE);                     \
+			return REG_ESPACE;                     \
 		(m)->vn = 0;                                 \
 	}
 #define STATETEARDOWN(m)  \
@@ -172,12 +172,12 @@ regexec(const regex_t *preg, const char *string, size_t nmatch, regmatch_t pmatc
 #endif
 
 	if (preg->re_magic != MAGIC1 || g->magic != MAGIC2)
-		return (REG_BADPAT);
+		return REG_BADPAT;
 
 	assert(!(g->iflags & BAD));
 
 	if (g->iflags & BAD) /* backstop for no-debug case */
-		return (REG_BADPAT);
+		return REG_BADPAT;
 
 	eflags = GOODFLAGS(eflags);
 

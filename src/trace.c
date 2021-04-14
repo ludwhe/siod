@@ -44,28 +44,28 @@ LISP ltrace_fcn_name(LISP body)
 	LISP tmp;
 
 	if NCONSP(body)
-		return (NIL);
+		return NIL;
 
 	if NEQ(CAR(body), sym_begin)
-		return (NIL);
+		return NIL;
 
 	tmp = CDR(body);
 
 	if NCONSP(tmp)
-		return (NIL);
+		return NIL;
 
 	tmp = CAR(tmp);
 
 	if NCONSP(tmp)
-		return (NIL);
+		return NIL;
 
 	if NEQ(CAR(tmp), sym_quote)
-		return (NIL);
+		return NIL;
 
 	tmp = CDR(tmp);
 
 	if NCONSP(tmp)
-		return (NIL);
+		return NIL;
 
 	return (CAR(tmp));
 }
@@ -90,7 +90,7 @@ LISP ltrace_1(LISP fcn_name, LISP env)
 	else
 		err("not a closure, cannot trace", fcn);
 
-	return (NIL);
+	return NIL;
 }
 
 LISP ltrace(LISP fcn_names, LISP env)
@@ -98,7 +98,7 @@ LISP ltrace(LISP fcn_names, LISP env)
 	for (LISP l = fcn_names; NNULLP(l); l = cdr(l))
 		ltrace_1(car(l), env);
 
-	return (NIL);
+	return NIL;
 }
 
 LISP luntrace_1(LISP fcn)
@@ -110,7 +110,7 @@ LISP luntrace_1(LISP fcn)
 	else
 		err("not a closure, cannot untrace", fcn);
 
-	return (NIL);
+	return NIL;
 }
 
 LISP luntrace(LISP fcns)
@@ -118,7 +118,7 @@ LISP luntrace(LISP fcns)
 	for (LISP l = fcns; NNULLP(l); l = cdr(l))
 		luntrace_1(car(l));
 
-	return (NIL);
+	return NIL;
 }
 
 static void ct_gc_scan(LISP ptr)
@@ -130,7 +130,7 @@ static void ct_gc_scan(LISP ptr)
 static LISP ct_gc_mark(LISP ptr)
 {
 	gc_mark(ptr->storage_as.closure.code);
-	return (ptr->storage_as.closure.env);
+	return ptr->storage_as.closure.env;
 }
 
 void ct_prin1(LISP ptr, struct gen_printio *f)
@@ -170,7 +170,7 @@ LISP ct_eval(LISP ct, LISP *px, LISP *penv)
 	lprin1f(result, stdout);
 	fput_st(stdout, "\n");
 	*px = result;
-	return (NIL);
+	return NIL;
 }
 
 void __stdcall init_trace(void)

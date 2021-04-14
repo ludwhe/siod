@@ -117,7 +117,7 @@ char *strdup(char *in)
 	char *r;
 	r = (char *)malloc(strlen(in) + 1);
 	strcpy(r, in);
-	return (r);
+	return r;
 }
 #endif
 
@@ -156,7 +156,7 @@ LISP lcrypt(LISP key, LISP salt)
 	if ((result = crypt(get_c_string(key), get_c_string(salt))))
 		return (strcons(strlen(result), result));
 	else
-		return (NIL);
+		return NIL;
 }
 
 #endif
@@ -209,7 +209,7 @@ static char *strfield(char *name, LISP alist)
 	LISP value, key = rintern(name);
 
 	if NULLP(value = assq(key, alist))
-		return ("");
+		return "";
 
 	return (get_c_string(cdr(value)));
 }
@@ -219,7 +219,7 @@ static long longfield(char *name, LISP alist)
 	LISP value, key = rintern(name);
 
 	if NULLP(value = assq(key, alist))
-		return (0);
+		return 0;
 
 	return (get_c_long(cdr(value)));
 }
@@ -257,7 +257,7 @@ LISP lgetpwuid(LISP luid)
 		result = ldecode_pwent(p);
 
 	no_interrupt(iflag);
-	return (result);
+	return result;
 }
 
 LISP lgetpwnam(LISP nam)
@@ -271,7 +271,7 @@ LISP lgetpwnam(LISP nam)
 		result = ldecode_pwent(p);
 
 	no_interrupt(iflag);
-	return (result);
+	return result;
 }
 
 LISP lgetpwent(void)
@@ -285,7 +285,7 @@ LISP lgetpwent(void)
 		result = ldecode_pwent(p);
 
 	no_interrupt(iflag);
-	return (result);
+	return result;
 }
 
 LISP lsetpwent(void)
@@ -293,7 +293,7 @@ LISP lsetpwent(void)
 	int iflag = no_interrupt(1);
 	setpwent();
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 LISP lendpwent(void)
@@ -301,7 +301,7 @@ LISP lendpwent(void)
 	int iflag = no_interrupt(1);
 	endpwent();
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 LISP lsetuid(LISP n)
@@ -312,7 +312,7 @@ LISP lsetuid(LISP n)
 	if (setuid(uid))
 		return (err("setuid", llast_c_errmsg(-1)));
 	else
-		return (NIL);
+		return NIL;
 }
 
 LISP lseteuid(LISP n)
@@ -323,7 +323,7 @@ LISP lseteuid(LISP n)
 	if (seteuid(uid))
 		return (err("seteuid", llast_c_errmsg(-1)));
 	else
-		return (NIL);
+		return NIL;
 }
 
 LISP lgeteuid(void)
@@ -337,7 +337,7 @@ LISP lsetpwfile(LISP fname)
 	int iflag = no_interrupt(1);
 	setpwfile(get_c_string(fname));
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 #endif
 
@@ -349,7 +349,7 @@ LISP lputpwent(LISP alist, LISP file)
 	lencode_pwent(alist, &p);
 	status = putpwent(&p, get_c_file(file, NULL));
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 LISP laccess_problem(LISP lfname, LISP lacc)
@@ -386,7 +386,7 @@ LISP laccess_problem(LISP lfname, LISP lacc)
 	if (retval < 0)
 		return (llast_c_errmsg(-1));
 	else
-		return (NIL);
+		return NIL;
 }
 
 LISP lsymlink(LISP p1, LISP p2)
@@ -398,7 +398,7 @@ LISP lsymlink(LISP p1, LISP p2)
 		return (err("symlink", llast_c_errmsg(-1)));
 
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 LISP llink(LISP p1, LISP p2)
@@ -410,7 +410,7 @@ LISP llink(LISP p1, LISP p2)
 		return (err("link", llast_c_errmsg(-1)));
 
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 LISP lunlink(LISP p)
@@ -422,7 +422,7 @@ LISP lunlink(LISP p)
 		return (err("unlink", llast_c_errmsg(-1)));
 
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 LISP lrmdir(LISP p)
@@ -434,7 +434,7 @@ LISP lrmdir(LISP p)
 		return (err("rmdir", llast_c_errmsg(-1)));
 
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 LISP lmkdir(LISP p, LISP m)
@@ -446,7 +446,7 @@ LISP lmkdir(LISP p, LISP m)
 		return (err("mkdir", llast_c_errmsg(-1)));
 
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 LISP lreadlink(LISP p)
@@ -472,7 +472,7 @@ LISP lrename(LISP p1, LISP p2)
 		return (err("rename", llast_c_errmsg(-1)));
 
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 #endif
@@ -499,7 +499,7 @@ LISP lsrandom(LISP n)
 #if defined(__osf__) || defined(linux)
 	srandom(seed);
 #endif
-	return (NIL);
+	return NIL;
 }
 
 #ifdef unix
@@ -513,7 +513,7 @@ LISP lfork(void)
 
 	if (pid == 0) {
 		no_interrupt(iflag);
-		return (NIL);
+		return NIL;
 	}
 
 	if (pid == -1)
@@ -540,7 +540,7 @@ char **list2char(LISP *safe, LISP v)
 	}
 
 	x[n] = NULL;
-	return (x);
+	return x;
 }
 
 #ifdef unix
@@ -589,7 +589,7 @@ int assemble_options(LISP l, ...)
 	va_list syms;
 
 	if NULLP(l)
-		return (0);
+		return 0;
 
 	noptions = CONSP(l) ? get_c_long(llength(l)) : -1;
 	va_start(syms, l);
@@ -614,7 +614,7 @@ int assemble_options(LISP l, ...)
 	    ((noptions > 0) && (nmask != ((1 << noptions) - 1))))
 		err("contains undefined options", l);
 
-	return (result);
+	return result;
 }
 
 #ifdef unix
@@ -639,7 +639,7 @@ LISP lwait(LISP lpid, LISP loptions)
 	no_interrupt(iflag);
 
 	if (ret == 0)
-		return (NIL);
+		return NIL;
 	else if (ret == -1)
 		return (err("wait", llast_c_errmsg(-1)));
 	else
@@ -658,7 +658,7 @@ LISP lkill(LISP pid, LISP sig)
 	else
 		no_interrupt(iflag);
 
-	return (NIL);
+	return NIL;
 }
 
 #endif
@@ -693,7 +693,7 @@ LISP lgetgrgid(LISP n)
 	}
 
 	no_interrupt(iflag);
-	return (result);
+	return result;
 }
 
 #endif
@@ -716,7 +716,7 @@ LISP lexit(LISP val)
 	int iflag = no_interrupt(1);
 	exit(get_c_long(val));
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 LISP ltrunc(LISP x)
@@ -743,7 +743,7 @@ LISP lputenv(LISP lstr)
 	if (putenv(cpy))
 		return (err("putenv", llast_c_errmsg(-1)));
 	else
-		return (NIL);
+		return NIL;
 }
 #endif
 
@@ -754,7 +754,7 @@ MD5_CTX *get_md5_ctx(LISP a)
 		return ((MD5_CTX *)a->storage_as.string.data);
 	else {
 		err("not an MD5_CTX array", a);
-		return (NULL);
+		return NULL;
 	}
 }
 
@@ -762,7 +762,7 @@ LISP md5_init(void)
 {
 	LISP a = arcons(tc_byte_array, sizeof(MD5_CTX), 1);
 	MD5Init(get_md5_ctx(a));
-	return (a);
+	return a;
 }
 
 void md5_update_from_file(MD5_CTX *ctx, FILE *f, unsigned char *buff, long dim)
@@ -782,7 +782,7 @@ LISP md5_update(LISP ctx, LISP str, LISP len)
 	if TYPEP(len, tc_c_file) {
 		md5_update_from_file(get_md5_ctx(ctx), get_c_file(len, NULL),
 		                     (unsigned char *)buffer, dim);
-		return (NIL);
+		return NIL;
 	} else if NULLP(len)
 		n = dim;
 	else {
@@ -793,7 +793,7 @@ LISP md5_update(LISP ctx, LISP str, LISP len)
 	}
 
 	MD5Update(get_md5_ctx(ctx), (unsigned char *)buffer, n);
-	return (NIL);
+	return NIL;
 }
 
 LISP md5_final(LISP ctx)
@@ -801,7 +801,7 @@ LISP md5_final(LISP ctx)
 	LISP result = arcons(tc_byte_array, 16, 0);
 	MD5Final((unsigned char *)result->storage_as.string.data,
 	         get_md5_ctx(ctx));
-	return (result);
+	return result;
 }
 
 #if defined(__osf__) || defined(sun)
@@ -843,7 +843,7 @@ LISP cpu_usage_limits(LISP soft, LISP hard)
 		if (setrlimit(RLIMIT_CPU, &x))
 			return (err("setrlimit", llast_c_errmsg(-1)));
 		else
-			return (NIL);
+			return NIL;
 	}
 }
 
@@ -940,7 +940,7 @@ LISP l_opendir(LISP name)
 	value->type = tc_opendir;
 	CAR(value) = (LISP)d;
 	no_interrupt(iflag);
-	return (value);
+	return value;
 }
 
 DIR *get_opendir(LISP v, long oflag)
@@ -952,7 +952,7 @@ DIR *get_opendir(LISP v, long oflag)
 		if (oflag)
 			err("opendir not open", v);
 
-		return (NULL);
+		return NULL;
 	}
 
 	return ((DIR *)CAR(v));
@@ -971,7 +971,7 @@ LISP l_closedir(LISP v)
 		return (err("closedir", llast_c_errmsg(old_errno)));
 
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 void opendir_gc_free(LISP v)
@@ -993,7 +993,7 @@ LISP l_readdir(LISP v)
 	no_interrupt(iflag);
 
 	if (!r)
-		return (NIL);
+		return NIL;
 
 #if defined(sun) || defined(sgi) || defined(linux)
 	namlen = safe_strlen(r->d_name, r->d_reclen);
@@ -1058,7 +1058,7 @@ LISP l_opendir(LISP name)
 		return (err("FindFirstFile", llast_win32_errmsg(0)));
 
 	no_interrupt(iflag);
-	return (value);
+	return value;
 }
 
 DIR *get_opendir(LISP v, long oflag)
@@ -1070,7 +1070,7 @@ DIR *get_opendir(LISP v, long oflag)
 		if (oflag)
 			err("opendir not open", v);
 
-		return (NULL);
+		return NULL;
 	}
 
 	return ((DIR *)CAR(v));
@@ -1091,7 +1091,7 @@ LISP l_closedir(LISP v)
 		return (err("closedir", llast_win32_errmsg(0)));
 
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 void opendir_gc_free(LISP v)
@@ -1116,7 +1116,7 @@ LISP l_readdir(LISP v)
 		if (!FindNextFile(d->h, &d->s))
 			if (GetLastError() == ERROR_NO_MORE_FILES) {
 				no_interrupt(1);
-				return (NIL);
+				return NIL;
 			}
 
 	++d->count;
@@ -1142,7 +1142,7 @@ LISP file_times(LISP fname)
 	no_interrupt(iflag);
 
 	if (ret)
-		return (NIL);
+		return NIL;
 	else
 		return (cons(flocons((double)st.st_ctime),
 		             cons(flocons((double)st.st_mtime), NIL)));
@@ -1209,7 +1209,7 @@ LISP decode_st_moden(mode_t mode)
 	if (S_ISSOCK(mode))
 		ret = cons(cintern("SOCK"), ret);
 
-	return (ret);
+	return ret;
 }
 
 LISP encode_st_mode(LISP l)
@@ -1254,7 +1254,7 @@ LISP decode_st_moden(int mode)
 	if (mode & _S_IFREG)
 		ret = cons(cintern("REG"), ret);
 
-	return (ret);
+	return ret;
 }
 
 LISP encode_st_mode(LISP l)
@@ -1305,7 +1305,7 @@ LISP g_stat(LISP fname, int (*fcn)(const char *, struct stat *))
 	no_interrupt(iflag);
 
 	if (ret)
-		return (NIL);
+		return NIL;
 	else
 		return (decode_stat(&st));
 }
@@ -1324,7 +1324,7 @@ LISP l_fstat(LISP f)
 	no_interrupt(iflag);
 
 	if (ret)
-		return (NIL);
+		return NIL;
 	else
 		return (decode_stat(&st));
 }
@@ -1343,7 +1343,7 @@ LISP l_fnmatch(LISP pat, LISP str, LISP flgs)
 	if (fnmatch(get_c_string(pat),
 	            get_c_string(str),
 	            0))
-		return (NIL);
+		return NIL;
 	else
 		return (a_true_value());
 }
@@ -1357,7 +1357,7 @@ LISP l_chmod(LISP path, LISP mode)
 	if (chmod(get_c_string(path), get_c_long(mode)))
 		return (err("chmod", llast_c_errmsg(-1)));
 	else
-		return (NIL);
+		return NIL;
 }
 
 #endif
@@ -1373,7 +1373,7 @@ LISP lutime(LISP fname, LISP mod, LISP ac)
 	if (utime(get_c_string(fname), &x))
 		return (err("utime", llast_c_errmsg(-1)));
 	else
-		return (NIL);
+		return NIL;
 }
 
 LISP lfchmod(LISP file, LISP mode)
@@ -1381,7 +1381,7 @@ LISP lfchmod(LISP file, LISP mode)
 	if (fchmod(fileno(get_c_file(file, NULL)), get_c_long(mode)))
 		return (err("fchmod", llast_c_errmsg(-1)));
 	else
-		return (NIL);
+		return NIL;
 }
 
 LISP encode_open_flags(LISP l)
@@ -1419,9 +1419,9 @@ LISP gsetlk(int op, LISP lfd, LISP ltype, LISP whence, LISP start, LISP len)
 	if (fcntl(fd, op, &f) == -1)
 		return (llast_c_errmsg(-1));
 	else if (op != F_GETLK)
-		return (NIL);
+		return NIL;
 	else if (f.l_type == F_UNLCK)
-		return (NIL);
+		return NIL;
 	else
 		return (listn(2, flocons(f.l_type), flocons(f.l_pid)));
 }
@@ -1459,7 +1459,7 @@ LISP delete_file(LISP fname)
 	if (ret)
 		return (strcons(-1, last_c_errmsg(-1)));
 	else
-		return (NIL);
+		return NIL;
 }
 
 LISP utime2str(LISP u)
@@ -1475,14 +1475,14 @@ LISP utime2str(LISP u)
 		        btm->tm_hour, btm->tm_min, btm->tm_sec, 0);
 		return (strcons(strlen(sbuff), sbuff));
 	} else
-		return (NIL);
+		return NIL;
 }
 
 #ifdef WIN32
 LISP win32_debug(void)
 {
 	DebugBreak();
-	return (NIL);
+	return NIL;
 }
 #endif
 
@@ -1503,7 +1503,7 @@ LISP arg;
 		lib$signal(SS$_DEBUG, 1, arg1);
 	}
 
-	return (NIL);
+	return NIL;
 }
 
 struct dsc$descriptor *set_dsc_cst(struct dsc$descriptor *d, char *s)
@@ -1512,7 +1512,7 @@ struct dsc$descriptor *set_dsc_cst(struct dsc$descriptor *d, char *s)
 	d->dsc$b_dtype = DSC$K_DTYPE_T;
 	d->dsc$b_class = DSC$K_CLASS_S;
 	d->dsc$a_pointer = s;
-	return (d);
+	return d;
 }
 
 void err_vms(long retval)
@@ -1557,7 +1557,7 @@ LISP lcrembx(LISP l)
 	tmp = car(tmp);
 	tmp->storage_as.flonum.data = chan;
 	no_interrupt(iflag);
-	return (tmp);
+	return tmp;
 }
 
 LISP lset_logical(LISP name, LISP value, LISP table, LISP attributes)
@@ -1586,7 +1586,7 @@ LISP lset_logical(LISP name, LISP value, LISP table, LISP attributes)
 		err_vms(status);
 
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 #endif
@@ -1598,7 +1598,7 @@ LISP lgetenv(LISP var)
 	if ((str = getenv(get_c_string(var))))
 		return (strcons(strlen(str), str));
 	else
-		return (NIL);
+		return NIL;
 }
 
 LISP unix_time(void)
@@ -1622,7 +1622,7 @@ LISP unix_ctime(LISP value)
 
 		return (strcons(strlen(buff), buff));
 	} else
-		return (NIL);
+		return NIL;
 }
 
 LISP http_date(LISP value)
@@ -1638,7 +1638,7 @@ LISP http_date(LISP value)
 		time(&b);
 
 	if (!(t = gmtime(&b)))
-		return (NIL);
+		return NIL;
 
 	(sprintf(buff, "%s, %02d %s %04d %02d:%02d:%02d GMT",
 	         &"Sun\0Mon\0Tue\0Wed\0Thu\0Fri\0Sat"[t->tm_wday * 4],
@@ -1692,7 +1692,7 @@ LISP http_date_parse(LISP input)
 		   doing the same sort of thing, although perhaps it uses tzset */
 		return (flocons(t + gmtoff));
 	} else
-		return (NIL);
+		return NIL;
 }
 
 #endif
@@ -1729,7 +1729,7 @@ LISP lsleep(LISP ns)
 	sleep((unsigned int)val);
 #endif
 #endif
-	return (NIL);
+	return NIL;
 }
 
 LISP url_encode(LISP in)
@@ -1747,7 +1747,7 @@ LISP url_encode(LISP in)
 			++regulars;
 
 	if ((spaces == 0) && (specials == 0))
-		return (in);
+		return in;
 
 	out = strcons(spaces + regulars + specials * 3, NULL);
 
@@ -1761,7 +1761,7 @@ LISP url_encode(LISP in)
 			*r++ = c;
 
 	*r = 0;
-	return (out);
+	return out;
 }
 
 LISP url_decode(LISP in)
@@ -1777,12 +1777,12 @@ LISP url_decode(LISP in)
 			if (isxdigit(p[1]) && isxdigit(p[2]))
 				++specials;
 			else
-				return (NIL);
+				return NIL;
 		} else
 			++regulars;
 
 	if ((pluses == 0) && (specials == 0))
-		return (in);
+		return in;
 
 	out = strcons(regulars + pluses + specials, NULL);
 
@@ -1801,7 +1801,7 @@ LISP url_decode(LISP in)
 			*r++ = c;
 
 	*r = 0;
-	return (out);
+	return out;
 }
 
 LISP html_encode(LISP in)
@@ -1816,7 +1816,7 @@ LISP html_encode(LISP in)
 		break;
 
 	default:
-		return (in);
+		return in;
 	}
 
 	str = get_c_string(in);
@@ -1838,7 +1838,7 @@ LISP html_encode(LISP in)
 		}
 
 	if (n == m)
-		return (in);
+		return in;
 
 	out = strcons(m, NULL);
 
@@ -1863,12 +1863,12 @@ LISP html_encode(LISP in)
 			*ptr++ = str[j];
 		}
 
-	return (out);
+	return out;
 }
 
 LISP html_decode(LISP in)
 {
-	return (in);
+	return in;
 }
 
 LISP lgets(LISP file, LISP buffn)
@@ -1894,7 +1894,7 @@ LISP lgets(LISP file, LISP buffn)
 	}
 
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 LISP readline(LISP file)
@@ -1904,7 +1904,7 @@ LISP readline(LISP file)
 	result = lgets(file, NIL);
 
 	if NULLP(result)
-		return (NIL);
+		return NIL;
 
 	start = get_c_string(result);
 
@@ -1913,11 +1913,11 @@ LISP readline(LISP file)
 		/* we also change the dim, because otherwise our equal? function
 		   is confused. What we really need are arrays with fill pointers. */
 		result->storage_as.string.dim = ptr - start;
-		return (result);
+		return result;
 	} else
 		/* we should be doing lgets until we  get a string with a newline or NIL,
 		   and then append the results */
-		return (result);
+		return result;
 }
 
 #ifndef WIN32
@@ -1931,7 +1931,7 @@ LISP l_chown(LISP path, LISP uid, LISP gid)
 		err("chown", cons(path, llast_c_errmsg(-1)));
 
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 #endif
@@ -1946,7 +1946,7 @@ LISP l_lchown(LISP path, LISP uid, LISP gid)
 		err("lchown", cons(path, llast_c_errmsg(-1)));
 
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 #endif
 
@@ -2019,7 +2019,7 @@ LISP so_ext(LISP fname)
 	lext = strcons(strlen(ext), ext);
 
 	if NULLP(fname)
-		return (lext);
+		return lext;
 	else
 		return (string_append(listn(2, fname, lext)));
 }
@@ -2132,7 +2132,7 @@ LISP load_so(LISP fname, LISP iname)
 	if (siod_verbose_check(3))
 		put_st("done.\n");
 
-	return (init_name);
+	return init_name;
 }
 
 LISP require_so(LISP fname)
@@ -2145,7 +2145,7 @@ LISP require_so(LISP fname)
 		load_so(fname, NIL);
 		return (setvar(init_name, a_true_value(), NIL));
 	} else
-		return (NIL);
+		return NIL;
 }
 
 LISP siod_lib_l(void)
@@ -2158,7 +2158,7 @@ LISP ccall_catch_1(LISP(*fcn)(void *), void *arg)
 	LISP val;
 	val = (*fcn)(arg);
 	catch_framep = catch_framep->next;
-	return (val);
+	return val;
 }
 
 LISP ccall_catch(LISP tag, LISP(*fcn)(void *), void *arg)
@@ -2172,7 +2172,7 @@ LISP ccall_catch(LISP tag, LISP(*fcn)(void *), void *arg)
 
 	if (k == 2) {
 		catch_framep = frame.next;
-		return (frame.retval);
+		return frame.retval;
 	}
 
 	return (ccall_catch_1(fcn, arg));
@@ -2203,7 +2203,7 @@ LISP symalist(char *arg, ...)
 	char *key;
 
 	if (!arg)
-		return (NIL);
+		return NIL;
 
 	va_start(args, arg);
 	val = va_arg(args, LISP);
@@ -2217,7 +2217,7 @@ LISP symalist(char *arg, ...)
 	}
 
 	va_end(args);
-	return (result);
+	return result;
 }
 
 void encode_tm(LISP alist, struct tm *t)
@@ -2283,7 +2283,7 @@ LISP lgmtime(LISP value)
 LISP ltzset(void)
 {
 	tzset();
-	return (NIL);
+	return NIL;
 }
 #endif
 
@@ -2311,7 +2311,7 @@ LISP lstrptime(LISP str, LISP fmt, LISP in)
 #endif
 		return (decode_tm(&tm));
 	} else
-		return (NIL);
+		return NIL;
 }
 
 #endif
@@ -2333,13 +2333,13 @@ LISP lstrftime(LISP fmt, LISP in)
 		time(&b);
 
 		if (!(t = gmtime(&b)))
-			return (NIL);
+			return NIL;
 	}
 
 	if ((ret = strftime(buff, sizeof(buff), get_c_string(fmt), t)))
 		return (strcons(ret, buff));
 	else
-		return (NIL);
+		return NIL;
 }
 
 #endif
@@ -2367,7 +2367,7 @@ LISP lchdir(LISP dir)
 #else
 		err("fchdir not supported in os", NIL);
 #endif
-		return (NIL);
+		return NIL;
 
 	default:
 		path = get_c_string(dir);
@@ -2377,7 +2377,7 @@ LISP lchdir(LISP dir)
 			return (err("chdir", llast_c_errmsg(-1)));
 
 		no_interrupt(iflag);
-		return (NIL);
+		return NIL;
 	}
 }
 
@@ -2407,7 +2407,7 @@ LISP lgetpass(LISP lprompt)
 	if (result)
 		return (strcons(strlen(result), result));
 	else
-		return (NIL);
+		return NIL;
 }
 #endif
 
@@ -2599,7 +2599,7 @@ static LISP cgi_main(LISP result)
 		err("cgi-main", NIL);
 	}
 
-	return (NIL);
+	return NIL;
 }
 
 static int htqs_arg(char *value)
@@ -2707,7 +2707,7 @@ int __stdcall siod_main(int argc, char **argv, char **env)
 		retval = 1;
 
 #endif
-	return (retval);
+	return retval;
 }
 
 /* A megabyte seems like a huge bootstrap exe,
@@ -2731,7 +2731,7 @@ long position_script(FILE *f, char *buff, size_t bufflen)
 
 		switch (c) {
 		case EOF:
-			return (-1);
+			return -1;
 
 		case '#':
 			s = '#';
@@ -2756,7 +2756,7 @@ long position_script(FILE *f, char *buff, size_t bufflen)
 				if (strspn(buff, " \t\r") == strlen(buff))
 					buff[0] = 0;
 
-				return (pos);
+				return pos;
 			}
 
 			s = 0;
@@ -2768,7 +2768,7 @@ long position_script(FILE *f, char *buff, size_t bufflen)
 		}
 	}
 
-	return (-1);
+	return -1;
 }
 
 #ifdef WIN32
@@ -2784,7 +2784,7 @@ char *find_exe_self(char *cmd)
 	if (retsize > 0)
 		return (strdup(exe_self));
 	else
-		return (cmd);
+		return cmd;
 }
 #endif
 
@@ -2849,7 +2849,7 @@ LISP lposition_script(LISP lfile)
 	no_interrupt(iflag);
 
 	if (pos < 0)
-		return (NIL);
+		return NIL;
 
 	return (cons(flocons(pos), strcons(-1, flbuff)));
 }

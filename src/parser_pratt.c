@@ -118,7 +118,7 @@ LISP pratt_read_token(LISP buffer, LISP chars, LISP stream)
 		else
 			err_token_overflow();
 
-	return (NIL);
+	return NIL;
 }
 
 void init_parser_pratt(void)

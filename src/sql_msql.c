@@ -52,7 +52,7 @@ static m_result *get_c_statement(LISP st)
 		err("not a statement", st);
 
 	c = (m_result *)st->storage_as.string.data;
-	return (c);
+	return c;
 }
 
 /* return an empty LISP-statement */
@@ -66,7 +66,7 @@ static LISP extcons(long typec)
 	s->type = tc_extra;
 	s->storage_as.string.dim = typec;
 	no_interrupt(flag);
-	return (s);
+	return s;
 }
 
 /* newhandle is pointer to the actuall database */
@@ -95,7 +95,7 @@ LISP msql_open(LISP host, LISP db)
 		err("unknown database: ", db);
 
 	no_interrupt(flag);
-	return (NIL);
+	return NIL;
 }
 
 /* close the opend database */
@@ -106,7 +106,7 @@ LISP msql_close(void)
 	flag = no_interrupt(1);
 	msqlClose(newhandle);
 	no_interrupt(flag);
-	return (NIL);
+	return NIL;
 }
 
 /* sql-query as a sting via LISP */
@@ -117,7 +117,7 @@ LISP msql_query(LISP str)
 	LISP result;
 
 	if (newhandle == 0)
-		return (NIL);
+		return NIL;
 
 	flag = no_interrupt(1);
 	result = extcons(extra_tc_statement);
@@ -129,11 +129,11 @@ LISP msql_query(LISP str)
 
 	if (result->storage_as.string.data == NULL) {
 		no_interrupt(flag);
-		return (NIL);
+		return NIL;
 	}
 
 	no_interrupt(flag);
-	return (result);
+	return result;
 }
 
 /* it is like msql-query but dont allocate memory */
@@ -143,7 +143,7 @@ LISP msql_update(LISP str)
 	long flag;
 
 	if (newhandle == 0)
-		return (NIL);
+		return NIL;
 
 	flag = no_interrupt(1);
 
@@ -151,7 +151,7 @@ LISP msql_update(LISP str)
 		err("cant handle query: ", str);
 
 	no_interrupt(flag);
-	return (NIL);
+	return NIL;
 }
 
 /* how many fields ? */
@@ -221,11 +221,11 @@ LISP msql_fetch_row(LISP s)
 		}
 
 		no_interrupt(flag);
-		return (anker);
+		return anker;
 	}
 
 	no_interrupt(flag);
-	return (NIL);
+	return NIL;
 }
 
 /* rows in direct access */
@@ -284,11 +284,11 @@ LISP msql_data_seek(LISP s, LISP cursor)
 		}
 
 		no_interrupt(flag);
-		return (anker);
+		return anker;
 	}
 
 	no_interrupt(flag);
-	return (NIL);
+	return NIL;
 }
 
 /* list of table of database */
@@ -307,10 +307,10 @@ LISP msql_list_tables(void)
 	anker = liste;
 
 	if ((res = msqlListTables(newhandle)) == NULL)
-		return (NIL);
+		return NIL;
 
 	if ((count = msqlNumFields(res)) != 1)
-		return (NIL);
+		return NIL;
 
 	while (thisrow = msqlFetchRow(res)) {
 		liste->storage_as.cons.car = strcons(strlen(thisrow[0]) + 1, thisrow[0]);
@@ -320,7 +320,7 @@ LISP msql_list_tables(void)
 	}
 
 	no_interrupt(flag);
-	return (anker);
+	return anker;
 }
 
 /* list of structure of selected table */
@@ -336,7 +336,7 @@ LISP msql_list_fields(LISP table)
 	flag = no_interrupt(1);
 
 	if ((res = msqlListFields(newhandle, get_c_string(table))) == NULL)
-		return (NIL);
+		return NIL;
 
 	count = msqlNumFields(res);
 
@@ -369,7 +369,7 @@ LISP msql_list_fields(LISP table)
 
 	no_interrupt(flag);
 	printf("\n");
-	return (NIL);
+	return NIL;
 }
 
 /* gives memory allocated free */
@@ -379,7 +379,7 @@ LISP msql_free_result(LISP s)
 	m_result *res;
 	res = get_c_statement(s);
 	msqlFreeResult(res);
-	return (NIL);
+	return NIL;
 }
 
 /* init function for scheme interpreter */

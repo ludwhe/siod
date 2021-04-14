@@ -149,9 +149,9 @@ char *sybase_retstr(CS_RETCODE n)
 
 	for (j = 0; j < m; ++j)
 		if (n == retcodes[j].n)
-			return (retcodes[j].name);
+			return retcodes[j].name;
 
-	return (NULL);
+	return NULL;
 }
 
 char *sybase_typestr(CS_INT n)
@@ -161,9 +161,9 @@ char *sybase_typestr(CS_INT n)
 
 	for (j = 0; j < m; ++j)
 		if (n == types[j].n)
-			return (types[j].name);
+			return types[j].name;
 
-	return (NULL);
+	return NULL;
 }
 
 void init_sql_sybasec(void)

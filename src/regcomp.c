@@ -195,11 +195,11 @@ int cflags;
 	cflags = GOODFLAGS(cflags);
 
 	if ((cflags & REG_EXTENDED) && (cflags & REG_NOSPEC))
-		return (REG_INVARG);
+		return REG_INVARG;
 
 	if (cflags & REG_PEND) {
 		if (preg->re_endp < pattern)
-			return (REG_INVARG);
+			return REG_INVARG;
 
 		len = preg->re_endp - pattern;
 	} else
@@ -210,7 +210,7 @@ int cflags;
 	                             (NC - 1) * sizeof(cat_t));
 
 	if (g == NULL)
-		return (REG_ESPACE);
+		return REG_ESPACE;
 
 	p->ssize = len / (size_t)2 * (size_t)3 + (size_t)1; /* ugh */
 	p->strip = (sop *)malloc(p->ssize * sizeof(sop));
@@ -218,7 +218,7 @@ int cflags;
 
 	if (p->strip == NULL) {
 		free((char *)g);
-		return (REG_ESPACE);
+		return REG_ESPACE;
 	}
 
 	/* set things up */
@@ -282,7 +282,7 @@ int cflags;
 	if (p->error != 0) /* lose */
 		regfree(preg);
 
-	return (p->error);
+	return p->error;
 }
 
 /*
@@ -701,9 +701,9 @@ int starordinary; /* is a leading * an ordinary character? */
 			SETERROR(REG_BADBR);
 		}
 	} else if (c == (unsigned char)'$') /* $ (but not \$) ends it */
-		return (1);
+		return 1;
 
-	return (0);
+	return 0;
 }
 
 /*
@@ -722,7 +722,7 @@ p_count(p) register struct parse *p;
 	}
 
 	REQUIRE(ndigits > 0 && count <= DUPMAX, REG_BADBR);
-	return (count);
+	return count;
 }
 
 /*
@@ -955,7 +955,7 @@ p_b_symbol(p) register struct parse *p;
 	/* collating symbol */
 	value = p_b_coll_elem(p, '.');
 	REQUIRE(EATTWO('.', ']'), REG_ECOLLATE);
-	return (value);
+	return value;
 }
 
 /*
@@ -975,20 +975,20 @@ int endc; /* name ended by endc,']' */
 
 	if (!MORE()) {
 		SETERROR(REG_EBRACK);
-		return (0);
+		return 0;
 	}
 
 	len = p->next - sp;
 
 	for (cp = cnames; cp->name != NULL; cp++)
 		if (strncmp(cp->name, sp, len) == 0 && cp->name[len] == '\0')
-			return (cp->code); /* known name */
+			return cp->code; /* known name */
 
 	if (len == 1)
-		return (*sp); /* single character */
+		return *sp; /* single character */
 
 	SETERROR(REG_ECOLLATE); /* neither */
-	return (0);
+	return 0;
 }
 
 /*
@@ -1005,7 +1005,7 @@ othercase(ch) int ch;
 	else if (islower(ch))
 		return (toupper(ch));
 	else /* peculiar, but could happen */
-		return (ch);
+		return ch;
 }
 
 /*
@@ -1169,7 +1169,7 @@ int e;
 
 	p->next = nuls; /* try to bring things to a halt */
 	p->end = nuls;
-	return (0); /* make the return value well-defined */
+	return 0; /* make the return value well-defined */
 }
 
 /*
@@ -1227,7 +1227,7 @@ allocset(p) register struct parse *p;
 	cs->hash = 0;
 	cs->smultis = 0;
 	cs->multis = NULL;
-	return (cs);
+	return cs;
 }
 
 /*
@@ -1306,7 +1306,7 @@ register cset *cs;
 			return ((char)i);
 
 	assert(never);
-	return (0); /* arbitrary */
+	return 0; /* arbitrary */
 }
 
 /*
@@ -1325,7 +1325,7 @@ register cset *cs;
 		if (CHIN(cs, i))
 			n++;
 
-	return (n);
+	return n;
 }
 
 /*
@@ -1402,13 +1402,13 @@ register char *cp;
 	register char *p;
 
 	if (cs->multis == NULL)
-		return (NULL);
+		return NULL;
 
 	for (p = cs->multis; *p != '\0'; p += strlen(p) + 1)
 		if (strcmp(cp, p) == 0)
-			return (p);
+			return p;
 
-	return (NULL);
+	return NULL;
 }
 
 /*
@@ -1454,9 +1454,9 @@ int c;
 
 	for (i = 0, col = g->setbits; i < ncols; i++, col += g->csetsize)
 		if (col[uc] != 0)
-			return (1);
+			return 1;
 
-	return (0);
+	return 0;
 }
 
 /*
@@ -1476,9 +1476,9 @@ int c2;
 
 	for (i = 0, col = g->setbits; i < ncols; i++, col += g->csetsize)
 		if (col[uc1] != col[uc2])
-			return (0);
+			return 0;
 
-	return (1);
+	return 1;
 }
 
 /*
@@ -1523,14 +1523,14 @@ sopno finish; /* to this less one */
 	assert(finish >= start);
 
 	if (len == 0)
-		return (ret);
+		return ret;
 
 	enlarge(p, p->ssize + len); /* this many unexpected additions */
 	assert(p->ssize >= p->slen + len);
 	(void)memcpy((char *)(p->strip + p->slen),
 	             (char *)(p->strip + start), (size_t)len * sizeof(sop));
 	p->slen += len;
-	return (ret);
+	return ret;
 }
 
 /*
@@ -1774,7 +1774,7 @@ register struct re_guts *g;
 	register sopno maxnest = 0;
 
 	if (p->error != 0)
-		return (0); /* there may not be an OEND */
+		return 0; /* there may not be an OEND */
 
 	scan = g->strip + 1;
 
@@ -1798,5 +1798,5 @@ register struct re_guts *g;
 	if (plusnest != 0)
 		g->iflags |= BAD;
 
-	return (maxnest);
+	return maxnest;
 }

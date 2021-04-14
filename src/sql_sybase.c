@@ -84,7 +84,7 @@ static CS_RETCODE sybase_setup(struct sybase_state *sybase_state,
 	if (status != CS_SUCCEED) {
 		complain("cs_ctx_alloc %d", status);
 		sybase_teardown(sybase_state);
-		return (status);
+		return status;
 	}
 
 	status = cs_config(sybase_state->cp, CS_SET, CS_MESSAGE_CB,
@@ -93,7 +93,7 @@ static CS_RETCODE sybase_setup(struct sybase_state *sybase_state,
 	if (status != CS_SUCCEED) {
 		complain("cs_config CS_MESSAGE_CB %d", status);
 		sybase_teardown(sybase_state);
-		return (status);
+		return status;
 	}
 
 	status = ct_init(sybase_state->cp, CS_VERSION_100);
@@ -101,7 +101,7 @@ static CS_RETCODE sybase_setup(struct sybase_state *sybase_state,
 	if (status != CS_SUCCEED) {
 		complain("ct_init %d", status);
 		sybase_teardown(sybase_state);
-		return (status);
+		return status;
 	}
 
 	sybase_state->inited = 1;
@@ -111,7 +111,7 @@ static CS_RETCODE sybase_setup(struct sybase_state *sybase_state,
 	if (status != CS_SUCCEED) {
 		complain("CS_CLIENTMSG_CB %d", status);
 		sybase_teardown(sybase_state);
-		return (status);
+		return status;
 	}
 
 	status = ct_callback(sybase_state->cp, (CS_CONNECTION *)NULL, CS_SET,
@@ -120,7 +120,7 @@ static CS_RETCODE sybase_setup(struct sybase_state *sybase_state,
 	if (status != CS_SUCCEED) {
 		complain("CS_SERVERMSG_CB %d", status);
 		sybase_teardown(sybase_state);
-		return (status);
+		return status;
 	}
 
 	status = ct_con_alloc(sybase_state->cp, &sybase_state->conn);
@@ -128,7 +128,7 @@ static CS_RETCODE sybase_setup(struct sybase_state *sybase_state,
 	if (status != CS_SUCCEED) {
 		complain("ct_con_alloc %d", status);
 		sybase_teardown(sybase_state);
-		return (status);
+		return status;
 	}
 
 	status = ct_con_props(sybase_state->conn, CS_SET, CS_USERNAME,
@@ -138,7 +138,7 @@ static CS_RETCODE sybase_setup(struct sybase_state *sybase_state,
 	if (status != CS_SUCCEED) {
 		complain("ct_con_props CS_USERNAME %d", status);
 		sybase_teardown(sybase_state);
-		return (status);
+		return status;
 	}
 
 	status = ct_con_props(sybase_state->conn, CS_SET, CS_PASSWORD,
@@ -148,7 +148,7 @@ static CS_RETCODE sybase_setup(struct sybase_state *sybase_state,
 	if (status != CS_SUCCEED) {
 		complain("ct_con_props CS_PASSWORD %d", status);
 		sybase_teardown(sybase_state);
-		return (status);
+		return status;
 	}
 
 	status = ct_con_props(sybase_state->conn, CS_SET, CS_APPNAME,
@@ -158,7 +158,7 @@ static CS_RETCODE sybase_setup(struct sybase_state *sybase_state,
 	if (status != CS_SUCCEED) {
 		complain("ct_con_props CS_APPNAME %d", status);
 		sybase_teardown(sybase_state);
-		return (status);
+		return status;
 	}
 
 #ifndef VMS
@@ -171,7 +171,7 @@ static CS_RETCODE sybase_setup(struct sybase_state *sybase_state,
 		if (status != CS_SUCCEED) {
 			complain("ct_con_props CS_HOSTNAME %d", status);
 			sybase_teardown(sybase_state);
-			return (status);
+			return status;
 		}
 	}
 
@@ -183,7 +183,7 @@ static CS_RETCODE sybase_setup(struct sybase_state *sybase_state,
 		         sybase_user, sybase_pw,
 		         sybase_app, status);
 		sybase_teardown(sybase_state);
-		return (status);
+		return status;
 	}
 
 	sybase_state->connected = 1;
@@ -192,10 +192,10 @@ static CS_RETCODE sybase_setup(struct sybase_state *sybase_state,
 	if (status != CS_SUCCEED) {
 		complain("ct_cmd_alloc %d", status);
 		sybase_teardown(sybase_state);
-		return (status);
+		return status;
 	}
 
-	return (status);
+	return status;
 }
 
 static CS_RETCODE sybase_teardown(struct sybase_state *sybase_state)
@@ -227,7 +227,7 @@ static CS_RETCODE sybase_teardown(struct sybase_state *sybase_state)
 		sybase_state->cp = NULL;
 	}
 
-	return (status);
+	return status;
 }
 
 static char *getarg(LISP l, char *name, char *dflt)
@@ -239,7 +239,7 @@ static char *getarg(LISP l, char *name, char *dflt)
 		if EQ(car(cell), key)
 			return (get_c_string(cadr(cell)));
 
-	return (dflt);
+	return dflt;
 }
 
 static LISP statcons(CS_RETCODE n)
@@ -258,15 +258,15 @@ struct sybase_state *get_sybase_state(LISP ptr, long openp)
 
 	if TYPEP(ptr, tc_sybase_state) {
 		if ((s = (struct sybase_state *)ptr->storage_as.string.data))
-			return (s);
+			return s;
 		else if (openp) {
 			err("sybase connection not open", ptr);
-			return (NULL);
+			return NULL;
 		} else
-			return (NULL);
+			return NULL;
 	} else {
 		err("not a sybase object", ptr);
-		return (NULL);
+		return NULL;
 	}
 }
 
@@ -294,7 +294,7 @@ LISP sybase_open(LISP args)
 	if NULLP(leval(sym_sybase, NIL))
 		setvar(sym_sybase, value, NIL);
 
-	return (value);
+	return value;
 }
 
 LISP sybase_close(LISP value)
@@ -337,7 +337,7 @@ LISP sybase_status(LISP value)
 		obj = value;
 
 	if (!(sybase_state = get_sybase_state(obj, 0)))
-		return (NIL);
+		return NIL;
 
 	iflag = no_interrupt(1);
 	status = ct_con_props(sybase_state->conn, CS_GET, CS_CON_STATUS,
@@ -403,18 +403,18 @@ CS_RETCODE CS_PUBLIC fetch_data(CS_COMMAND *cmd, LISP *header, LISP *items)
 
 	if (retcode != CS_SUCCEED) {
 		complain("fetch_data: ct_res_info() failed %d", retcode);
-		return (retcode);
+		return retcode;
 	}
 
 	if (num_cols <= 0) {
 		complain("fetch_data: ct_res_info() returned zero columns");
-		return (CS_FAIL);
+		return CS_FAIL;
 	}
 
 	if (num_cols >= MAX_COL_RETURNS) {
 		complain("fetch_data: ct_res_info() returned too many columns, %d",
 		         num_cols);
-		return (CS_FAIL);
+		return CS_FAIL;
 	}
 
 	if (siod_verbose_check(5))
@@ -515,7 +515,7 @@ CS_RETCODE CS_PUBLIC fetch_data(CS_COMMAND *cmd, LISP *header, LISP *items)
 
 		if (retcode != CS_SUCCEED) {
 			complain("fetch_data: ct_bind() failed %d", retcode);
-			return (retcode);
+			return retcode;
 		}
 	}
 
@@ -586,14 +586,14 @@ CS_RETCODE CS_PUBLIC fetch_data(CS_COMMAND *cmd, LISP *header, LISP *items)
 
 	case CS_FAIL:
 		complain("fetch_data: ct_fetch() failed, %d rows", rows_read);
-		return (retcode);
+		return retcode;
 
 	default:
 		complain("fetch_data: ct_fetch() returned an expected retcode %d",
 		         retcode);
 	}
 
-	return (retcode);
+	return retcode;
 }
 
 #define MAX_PARAM_ARGS 50
@@ -858,7 +858,7 @@ static CS_RETCODE server_err_handler(CS_CONTEXT *cp,
 	                            cons(cintern("severity"), flocons(msgp->severity)),
 	                            cons(cintern("state"), flocons(msgp->state)),
 	                            cons(cintern("text"), strcons(strlen(msgp->text), msgp->text)))));
-	return (CS_SUCCEED);
+	return CS_SUCCEED;
 }
 
 static CS_RETCODE client_err_handler(CS_CONTEXT *cp,
@@ -888,7 +888,7 @@ static CS_RETCODE client_err_handler(CS_CONTEXT *cp,
 		                  NIL));
 
 	push_sybase_messages(note);
-	return (CS_SUCCEED);
+	return CS_SUCCEED;
 }
 
 static CS_RETCODE cs_err_handler(CS_CONTEXT *cp, CS_CLIENTMSG *msg)
@@ -921,7 +921,7 @@ static CS_RETCODE cs_err_handler(CS_CONTEXT *cp, CS_CLIENTMSG *msg)
 		                  NIL));
 
 	push_sybase_messages(note);
-	return (CS_SUCCEED);
+	return CS_SUCCEED;
 }
 
 void sybase_prin1(LISP ptr, struct gen_printio *f)

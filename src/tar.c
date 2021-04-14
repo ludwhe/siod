@@ -71,7 +71,7 @@ LISP decode_tartype(char c)
 		return (cintern("FIFO"));
 
 	default:
-		return (NIL);
+		return NIL;
 	}
 }
 

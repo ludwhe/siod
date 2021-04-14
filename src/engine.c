@@ -170,7 +170,7 @@ int eflags;
 	}
 
 	if (stop < start)
-		return (REG_INVARG);
+		return REG_INVARG;
 
 	/* prescreening; this does wonders for this rather slow code */
 	if (g->must != NULL) {
@@ -180,7 +180,7 @@ int eflags;
 				break;
 
 		if (dp == stop) /* we didn't find g->must */
-			return (REG_NOMATCH);
+			return REG_NOMATCH;
 	}
 
 	/* match struct setup */
@@ -205,7 +205,7 @@ int eflags;
 		if (endp == NULL) {
 			/* a miss */
 			STATETEARDOWN(m);
-			return (REG_NOMATCH);
+			return REG_NOMATCH;
 		}
 
 		if (nmatch == 0 && !g->backrefs)
@@ -235,7 +235,7 @@ int eflags;
 
 		if (m->pmatch == NULL) {
 			STATETEARDOWN(m);
-			return (REG_ESPACE);
+			return REG_ESPACE;
 		}
 
 		for (i = 1; i <= (int)m->g->nsub; i++)
@@ -252,7 +252,7 @@ int eflags;
 			if (g->nplus > 0 && m->lastpos == NULL) {
 				free(m->pmatch);
 				STATETEARDOWN(m);
-				return (REG_ESPACE);
+				return REG_ESPACE;
 			}
 
 			NOTE("backref dissect");
@@ -325,7 +325,7 @@ int eflags;
 		free((char *)m->lastpos);
 
 	STATETEARDOWN(m);
-	return (0);
+	return 0;
 }
 
 /*
@@ -552,7 +552,7 @@ sopno stopst;
 	}
 
 	assert(sp == stop);
-	return (sp);
+	return sp;
 }
 
 /*
@@ -589,13 +589,13 @@ sopno lev; /* PLUS nesting level */
 		switch (OP(s = m->g->strip[ss])) {
 		case OCHAR:
 			if (sp == stop || *sp++ != (char)OPND(s))
-				return (NULL);
+				return NULL;
 
 			break;
 
 		case OANY:
 			if (sp == stop)
-				return (NULL);
+				return NULL;
 
 			sp++;
 			break;
@@ -604,7 +604,7 @@ sopno lev; /* PLUS nesting level */
 			cs = &m->g->sets[OPND(s)];
 
 			if (sp == stop || !CHIN(cs, *sp++))
-				return (NULL);
+				return NULL;
 
 			break;
 
@@ -614,7 +614,7 @@ sopno lev; /* PLUS nesting level */
 			     (m->g->cflags & REG_NEWLINE))) {
 				/* yes */
 			} else
-				return (NULL);
+				return NULL;
 
 			break;
 
@@ -624,7 +624,7 @@ sopno lev; /* PLUS nesting level */
 			     (m->g->cflags & REG_NEWLINE))) {
 				/* yes */
 			} else
-				return (NULL);
+				return NULL;
 
 			break;
 
@@ -637,7 +637,7 @@ sopno lev; /* PLUS nesting level */
 			    (sp < m->endp && ISWORD(*sp))) {
 				/* yes */
 			} else
-				return (NULL);
+				return NULL;
 
 			break;
 
@@ -649,7 +649,7 @@ sopno lev; /* PLUS nesting level */
 			    (sp > m->beginp && ISWORD(*(sp - 1)))) {
 				/* yes */
 			} else
-				return (NULL);
+				return NULL;
 
 			break;
 
@@ -676,9 +676,9 @@ sopno lev; /* PLUS nesting level */
 	if (!hard) {
 		/* that was it! */
 		if (sp != stop)
-			return (NULL);
+			return NULL;
 
-		return (sp);
+		return sp;
 	}
 
 	ss--; /* adjust for the for's final increment */
@@ -692,19 +692,19 @@ sopno lev; /* PLUS nesting level */
 		assert(0 < i && i <= m->g->nsub);
 
 		if (m->pmatch[i].rm_eo == -1)
-			return (NULL);
+			return NULL;
 
 		assert(m->pmatch[i].rm_so != -1);
 		len = m->pmatch[i].rm_eo - m->pmatch[i].rm_so;
 		assert(stop - m->beginp >= len);
 
 		if (sp > stop - len)
-			return (NULL); /* not enough left to match */
+			return NULL; /* not enough left to match */
 
 		ssp = m->offp + m->pmatch[i].rm_so;
 
 		if (memcmp(sp, ssp, len) != 0)
-			return (NULL);
+			return NULL;
 
 		while (m->g->strip[ss] != SOP(O_BACK, i))
 			ss++;
@@ -716,7 +716,7 @@ sopno lev; /* PLUS nesting level */
 		dp = backref(m, sp, stop, ss + 1, stopst, lev);
 
 		if (dp != NULL)
-			return (dp); /* not */
+			return dp; /* not */
 
 		return (backref(m, sp, stop, ss + OPND(s) + 1, stopst, lev));
 		break;
@@ -739,7 +739,7 @@ sopno lev; /* PLUS nesting level */
 		if (dp == NULL)
 			return (backref(m, sp, stop, ss + 1, stopst, lev - 1));
 		else
-			return (dp);
+			return dp;
 
 		break;
 
@@ -753,11 +753,11 @@ sopno lev; /* PLUS nesting level */
 			dp = backref(m, sp, stop, ssub, esub, lev);
 
 			if (dp != NULL)
-				return (dp);
+				return dp;
 
 			/* that one missed, try next one */
 			if (OP(m->g->strip[esub]) == O_CH)
-				return (NULL); /* there is none */
+				return NULL; /* there is none */
 
 			esub++;
 			assert(OP(m->g->strip[esub]) == OOR2);
@@ -780,10 +780,10 @@ sopno lev; /* PLUS nesting level */
 		dp = backref(m, sp, stop, ss + 1, stopst, lev);
 
 		if (dp != NULL)
-			return (dp);
+			return dp;
 
 		m->pmatch[i].rm_so = offsave;
-		return (NULL);
+		return NULL;
 		break;
 
 	case ORPAREN: /* must undo assignment if rest fails */
@@ -794,10 +794,10 @@ sopno lev; /* PLUS nesting level */
 		dp = backref(m, sp, stop, ss + 1, stopst, lev);
 
 		if (dp != NULL)
-			return (dp);
+			return dp;
 
 		m->pmatch[i].rm_eo = offsave;
-		return (NULL);
+		return NULL;
 		break;
 
 	default: /* uh oh */
@@ -808,7 +808,7 @@ sopno lev; /* PLUS nesting level */
 	/* "can't happen" */
 	assert(nope);
 	/* NOTREACHED */
-	return (NULL);
+	return NULL;
 }
 
 /*
@@ -902,9 +902,9 @@ sopno stopst;
 	m->coldp = coldp;
 
 	if (ISSET(st, stopst))
-		return (p + 1);
+		return p + 1;
 	else
-		return (NULL);
+		return NULL;
 }
 
 /*
@@ -993,7 +993,7 @@ sopno stopst;
 		p++;
 	}
 
-	return (matchp);
+	return matchp;
 }
 
 /*
@@ -1154,7 +1154,7 @@ register states aft; /* states already known reachable after */
 		}
 	}
 
-	return (aft);
+	return aft;
 }
 
 #ifdef REDEBUG
@@ -1239,7 +1239,7 @@ pchar(ch) int ch;
 	else
 		sprintf(pbuf, "\\%o", ch);
 
-	return (pbuf);
+	return pbuf;
 }
 #endif
 #endif

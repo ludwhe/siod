@@ -37,7 +37,7 @@ LISP lgdImageCreate(LISP sx, LISP sy)
 	result->storage_as.string.data = (char *)gdImageCreate(get_c_long(sx),
 	                                 get_c_long(sy));
 	no_interrupt(iflag);
-	return (result);
+	return result;
 }
 
 LISP lgdImageCreateFromGif(LISP f)
@@ -50,7 +50,7 @@ LISP lgdImageCreateFromGif(LISP f)
 	result->storage_as.string.data =
 	    (char *)gdImageCreateFromGif(get_c_file(f, NULL));
 	no_interrupt(iflag);
-	return (result);
+	return result;
 }
 
 LISP lgdImageCreateFromXbm(LISP f)
@@ -63,7 +63,7 @@ LISP lgdImageCreateFromXbm(LISP f)
 	result->storage_as.string.data =
 	    (char *)gdImageCreateFromXbm(get_c_file(f, NULL));
 	no_interrupt(iflag);
-	return (result);
+	return result;
 }
 
 gdImagePtr get_gdImagePtr(LISP ptr)
@@ -76,7 +76,7 @@ gdImagePtr get_gdImagePtr(LISP ptr)
 	if (!(im = (gdImagePtr)ptr->storage_as.string.data))
 		err("gd Image deallocated", ptr);
 
-	return (im);
+	return im;
 }
 
 LISP lcgdFontCreate(gdFontPtr font)
@@ -89,7 +89,7 @@ LISP lcgdFontCreate(gdFontPtr font)
 	result->storage_as.string.data = (char *)font;
 	result->storage_as.string.dim = 0;
 	no_interrupt(iflag);
-	return (result);
+	return result;
 }
 
 gdFontPtr get_gdFontPtr(LISP ptr)
@@ -102,7 +102,7 @@ gdFontPtr get_gdFontPtr(LISP ptr)
 	if (!(fn = (gdFontPtr)ptr->storage_as.string.data))
 		err("gd Font deallocated", ptr);
 
-	return (fn);
+	return fn;
 }
 
 LISP lgdPoint(LISP args)
@@ -128,7 +128,7 @@ LISP lgdPoint(LISP args)
 		pt[j].y = get_c_long(cadr(l));
 	}
 
-	return (result);
+	return result;
 }
 
 gdPointPtr get_gdPointPtr(LISP ptr, long *n)
@@ -142,7 +142,7 @@ gdPointPtr get_gdPointPtr(LISP ptr, long *n)
 		err("gd point deallocated", ptr);
 
 	*n = ptr->storage_as.string.dim;
-	return (pt);
+	return pt;
 }
 
 LISP lgdPointx(LISP ptr, LISP j, LISP value)
@@ -160,7 +160,7 @@ LISP lgdPointx(LISP ptr, LISP j, LISP value)
 	else
 		value = flocons(pt[i].x);
 
-	return (value);
+	return value;
 }
 
 LISP lgdPointy(LISP ptr, LISP j, LISP value)
@@ -178,7 +178,7 @@ LISP lgdPointy(LISP ptr, LISP j, LISP value)
 	else
 		value = flocons(pt[i].y);
 
-	return (value);
+	return value;
 }
 
 LISP lgdImageGif(LISP im, LISP f)
@@ -187,7 +187,7 @@ LISP lgdImageGif(LISP im, LISP f)
 	iflag = no_interrupt(1);
 	gdImageGif(get_gdImagePtr(im), get_c_file(f, stdout));
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 #if 1
@@ -296,7 +296,7 @@ LISP lgdImageLine(LISP l)
 	y2 = get_c_long(poparg(&l, NIL));
 	color = get_c_long(poparg(&l, NIL));
 	gdImageLine(im, x1, y1, x2, y2, color);
-	return (NIL);
+	return NIL;
 }
 
 LISP lgdImageSetPixel(LISP l)
@@ -308,7 +308,7 @@ LISP lgdImageSetPixel(LISP l)
 	y = get_c_long(poparg(&l, NIL));
 	color = get_c_long(poparg(&l, NIL));
 	gdImageSetPixel(im, x, y, color);
-	return (NIL);
+	return NIL;
 }
 
 LISP lgdImagePolygon(LISP im, LISP points, LISP color)
@@ -320,7 +320,7 @@ LISP lgdImagePolygon(LISP im, LISP points, LISP color)
 	               pt,
 	               n,
 	               get_c_long(color));
-	return (NIL);
+	return NIL;
 }
 
 LISP lgdImageFilledPolygon(LISP im, LISP points, LISP color)
@@ -332,7 +332,7 @@ LISP lgdImageFilledPolygon(LISP im, LISP points, LISP color)
 	                     pt,
 	                     n,
 	                     get_c_long(color));
-	return (NIL);
+	return NIL;
 }
 
 LISP lgdImageRectangle(LISP l)
@@ -346,7 +346,7 @@ LISP lgdImageRectangle(LISP l)
 	y2 = get_c_long(poparg(&l, NIL));
 	color = get_c_long(poparg(&l, NIL));
 	gdImageRectangle(im, x1, y1, x2, y2, color);
-	return (NIL);
+	return NIL;
 }
 
 LISP lgdImageFilledRectangle(LISP l)
@@ -360,7 +360,7 @@ LISP lgdImageFilledRectangle(LISP l)
 	y2 = get_c_long(poparg(&l, NIL));
 	color = get_c_long(poparg(&l, NIL));
 	gdImageFilledRectangle(im, x1, y1, x2, y2, color);
-	return (NIL);
+	return NIL;
 }
 
 LISP lgdImageArc(LISP l)
@@ -376,7 +376,7 @@ LISP lgdImageArc(LISP l)
 	e = get_c_long(poparg(&l, NIL));
 	color = get_c_long(poparg(&l, NIL));
 	gdImageArc(im, cx, cy, w, h, s, e, color);
-	return (NIL);
+	return NIL;
 }
 
 LISP lgdImageFillToBorder(LISP l)
@@ -389,7 +389,7 @@ LISP lgdImageFillToBorder(LISP l)
 	border = get_c_long(poparg(&l, NIL));
 	color = get_c_long(poparg(&l, NIL));
 	gdImageFillToBorder(im, x, y, border, color);
-	return (NIL);
+	return NIL;
 }
 
 LISP lgdImageFill(LISP l)
@@ -401,7 +401,7 @@ LISP lgdImageFill(LISP l)
 	y = get_c_long(poparg(&l, NIL));
 	color = get_c_long(poparg(&l, NIL));
 	gdImageFill(im, x, y, color);
-	return (NIL);
+	return NIL;
 }
 
 /*
@@ -424,7 +424,7 @@ LISP lgdImageChar(LISP l)
 	c = get_c_long(poparg(&l, NIL));
 	color = get_c_long(poparg(&l, NIL));
 	gdImageChar(im, font, x, y, c, color);
-	return (NIL);
+	return NIL;
 }
 
 LISP lgdImageCharUp(LISP l)
@@ -439,7 +439,7 @@ LISP lgdImageCharUp(LISP l)
 	c = get_c_long(poparg(&l, NIL));
 	color = get_c_long(poparg(&l, NIL));
 	gdImageCharUp(im, font, x, y, c, color);
-	return (NIL);
+	return NIL;
 }
 
 LISP lgdImageString(LISP l)
@@ -455,7 +455,7 @@ LISP lgdImageString(LISP l)
 	c = get_c_string(poparg(&l, NIL));
 	color = get_c_long(poparg(&l, NIL));
 	gdImageString(im, font, x, y, c, color);
-	return (NIL);
+	return NIL;
 }
 
 LISP lgdImageStringUp(LISP l)
@@ -471,19 +471,19 @@ LISP lgdImageStringUp(LISP l)
 	c = get_c_string(poparg(&l, NIL));
 	color = get_c_long(poparg(&l, NIL));
 	gdImageStringUp(im, font, x, y, c, color);
-	return (NIL);
+	return NIL;
 }
 
 LISP lgdImageColorTransparent(LISP im, LISP color)
 {
 	gdImageColorTransparent(get_gdImagePtr(im), get_c_long(color));
-	return (NIL);
+	return NIL;
 }
 
 LISP lgdImageInterlace(LISP im, LISP interlace)
 {
 	gdImageInterlace(get_gdImagePtr(im), get_c_long(interlace));
-	return (NIL);
+	return NIL;
 }
 
 void gdimage_prin1(LISP ptr, struct gen_printio *f)

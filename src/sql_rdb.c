@@ -119,7 +119,7 @@ static LISP extcons(long length, long typec)
 	s->storage_as.string.dim = typec;
 	memset(s->storage_as.string.data, 0, length);
 	no_interrupt(flag);
-	return (s);
+	return s;
 }
 
 LISP sqlrtl_associate(LISP l)
@@ -197,7 +197,7 @@ LISP sqlrtl_associate(LISP l)
 	if (status == SQL_SUCCESS) {
 		associations = cons(obj, associations);
 		no_interrupt(iflag);
-		return (obj);
+		return obj;
 	}
 
 	if (a->id)
@@ -230,16 +230,16 @@ struct association *get_association(LISP assoc, long oflag)
 	a = (struct association *)assoc->storage_as.string.data;
 
 	if (a->id || !oflag)
-		return (a);
+		return a;
 	else {
 		err("sqlsrv association has been released", assoc);
-		return (NULL);
+		return NULL;
 	}
 }
 
 LISP sqlrtl_associations(void)
 {
-	return (associations);
+	return associations;
 }
 
 LISP sqlrtl_release(LISP assoc)
@@ -346,7 +346,7 @@ LISP sqlrtl_describe_association(LISP assoc)
 	} else
 		put_st("which has been released\n");
 
-	return (NIL);
+	return NIL;
 }
 
 LISP sqlrtl_sqlda_alist(SQLDA_ID x)
@@ -467,7 +467,7 @@ LISP sqlrtl_prepare(LISP assoc, LISP sql)
 	}
 
 	no_interrupt(iflag);
-	return (st);
+	return st;
 }
 
 struct statement *get_statement(LISP st)
@@ -475,7 +475,7 @@ struct statement *get_statement(LISP st)
 	if ((TYPE(st) != tc_extra) ||
 	    (st->storage_as.string.dim != extra_tc_statement)) {
 		err("not a statement", st);
-		return (NULL);
+		return NULL;
 	} else
 		return ((struct statement *)st->storage_as.string.data);
 }
@@ -566,7 +566,7 @@ LISP sqlrtl_describe_statement(LISP x)
 		put_st("\n");
 	}
 
-	return (NIL);
+	return NIL;
 }
 
 LISP sqlrtl_release_statement(LISP x)
@@ -586,7 +586,7 @@ LISP sqlrtl_release_statement(LISP x)
 		sqlrtl_error(a->id);
 
 	no_interrupt(iflag);
-	return (NIL);
+	return NIL;
 }
 
 LISP sqlrtl_declare_cursor(LISP stmt, LISP type, LISP mode)
@@ -603,7 +603,7 @@ LISP sqlrtl_declare_cursor(LISP stmt, LISP type, LISP mode)
 		return (err("statement has no cursor", stmt));
 
 	if (NULLP(type) && NULLP(mode))
-		return (NIL);
+		return NIL;
 	else {
 		if EQ(type, sym_table)
 			itype = SQLSRV_TABLE_CURSOR;
@@ -712,7 +712,7 @@ LISP sqlrtl_fetch(LISP stmt)
 
 	case SQL_EOS:
 		no_interrupt(iflag);
-		return (NIL);
+		return NIL;
 
 	default:
 		sqlrtl_error(a->id);
@@ -747,7 +747,7 @@ LISP sqlrtl_fetch_many(LISP stmt, LISP count)
 
 	case SQL_EOS:
 		no_interrupt(iflag);
-		return (NIL);
+		return NIL;
 
 	default:
 		sqlrtl_error(a->id);
@@ -834,7 +834,7 @@ LISP sqlrtl_get_datum(SQLDA_ID x, long k)
 
 		sqlsrv_sqlda_unmap_data(x, k);
 		no_interrupt(iflag);
-		return (result);
+		return result;
 	}
 
 	sqlrtl_status_error(status);
@@ -960,7 +960,7 @@ LISP sqlrtl_set_param(LISP x, LISP n, LISP value)
 	sqlrtl_put_datum(c->params,
 	                 get_datum_index(n, c->param_alist),
 	                 value);
-	return (NIL);
+	return NIL;
 }
 
 LISP sqlrtl_release_generic(LISP x)
@@ -986,7 +986,7 @@ LISP sqlrtl_error_buffer(LISP assoc, LISP resetp)
 
 	if NNULLP(resetp) {
 		memset(a->error_buffer, 0, a->error_buffer_size);
-		return (NIL);
+		return NIL;
 	}
 
 	iflag = no_interrupt(1);
@@ -998,14 +998,14 @@ LISP sqlrtl_error_buffer(LISP assoc, LISP resetp)
 
 	s = strcons(len, a->error_buffer);
 	no_interrupt(iflag);
-	return (s);
+	return s;
 }
 
 LISP sqlrtl_association_statements(LISP assoc)
 {
 	struct association *a;
 	a = get_association(assoc, 0);
-	return (a->statements);
+	return a->statements;
 }
 
 void extra_gc_scan(LISP ptr)
@@ -1057,7 +1057,7 @@ LISP extra_gc_mark(LISP ptr)
 		errswitch();
 	}
 
-	return (NIL);
+	return NIL;
 }
 
 void extra_gc_free(LISP ptr)
